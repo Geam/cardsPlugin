@@ -1,0 +1,820 @@
+/*
+*	KeeeX Cards
+*	
+*	Copyright (c) 2016 KeeeX SAS 
+*
+*	This is an open source project available under the MIT license.
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+*
+*
+*	Author: Cheikh Ahmadou K. Savadogo   - savacheikh@gmail.com
+*	
+*	Date: June-August 2016
+*/
+
+html, body {
+	height: 100%;
+	overflow:auto;
+	color: #333;
+	font-family: helvetica !important;
+	font-size: 0.95rem;
+	-webkit-user-select: none;
+  	background:  rgba(205, 203, 205, 0.1);
+}
+
+#pageContainer{
+	display: none;
+	height: 100%;
+}
+
+/* mainBar & conceptBar
+***************************************************************************
+*/
+
+.mainBar{
+	background: #252344;
+	padding: 5px;
+	padding-left: 20px;
+	width: 100%;
+	height: 40px;
+}
+
+.mainBarAvatar, .mainBarSubmitBtn, .mainBarSearch, 
+.mainBarEmptySpace {
+	margin-left: 5px;
+	height: 30px;
+}
+
+.mainBarAvatar{
+	width: 100px;
+	padding: 0;
+	border-radius: 5px;
+	color: #2980b9;
+	float: left;
+	display: inline-block;
+}
+
+#mainBarAvatarImg{	/* <img>*/
+	width: 30px;
+	height: 30px;
+	border-radius: 5px;
+}
+
+.mainBarSubmitBtn{
+	width: auto;
+	background: linear-gradient(to bottom, #84A100, #566B00);
+	color: #e5e5e5;
+	padding: 5px 15px;
+}
+
+.mainBarSubmitBtn:hover{
+	color:white;
+}
+
+.mainBarSubmitBtn:active{
+	background: linear-gradient(to top, #566B00, #566B00);
+}
+
+.labelSeparator{
+	height:30px;
+	width: auto;
+	padding-top: 10px;
+	margin-left:45px;
+	background-color:#2980b9;
+}
+
+.mainBarEmptySpace{
+	width: 40%;
+}
+
+#conceptBar{
+	margin-top: 5px;
+	width:100%;
+	height: 70px;
+	overflow: hidden;
+}
+
+.conceptBtn{
+	position: relative;
+	height: 100%;
+	display:inline-block;
+	vertical-align: top;
+	border-radius:0;
+	background-color:#2980b9;
+	color: white;
+}
+
+#concepts{
+	position: relative;
+	width: calc(100% - 60px);
+	height: 70px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background-color: rgba(224, 224, 224, 0.6);
+	display:inline-block;
+}
+
+.conceptsLabel{
+	border-radius:5px;
+	margin-top: 5px;
+	margin-left: 5px;
+	float:left;
+	color: sandybrown !important;
+	background-color: #FFF;
+}
+
+.conceptsLabel span{
+	font-size:12px;
+}
+
+.conceptGlyphicon{
+	margin-left: 5px;
+	color:rgb(176, 176, 176);
+}
+
+.negTopic{
+	background-color: #FFCD28;
+}
+
+#principalContainer{
+	margin-top: 20px;
+	height: calc(100% - 135px);
+}
+
+#mainContainer
+{	
+	width: 85%;
+	left:20px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	height: 100%;
+	float: left; 
+}
+
+#mainContainer2
+{	
+	width: 75%;
+	left:20px;
+	display:none;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	height: 100%; 
+	float: left; 	
+}
+
+#sideContainer
+{
+	width:250px;
+	position: absolute;
+	right: 0px;
+	z-index: 10;
+}
+
+#sideContainerItemInfoContent{
+	background-color: rgba(45,182,207,.1);		
+}
+
+.sideDivHead{
+	text-align: center;
+	color:white;
+	background-color:#2980b9;
+	padding: 10px 15px;		
+}
+
+.sideDivHead a{
+	list-style: none;
+	float: right;
+	color:white;
+}
+
+#sideMainContainer{
+	position:relative;
+	width: 100%;
+	height: 100%;
+	padding:5px;
+	background: linear-gradient(to bottom, rgba(219,219,219,1) 0%, rgba(255,255,255,1) 100%);
+}
+
+.sideDivs{
+	position: relative;
+	width: 100%;
+	min-height: 80px;
+	max-height: 170px;
+	margin-top: 10px;
+	border-bottom: 1px solid #C0C0C0;
+	overflow-y: scroll;
+}
+
+.sideDivsUl{
+	padding:0;
+}
+
+.sideDivsUl li{
+	background: -webkit-linear-gradient(top,rgba(45,182,207,0.2) 200%,rgba(45,182,207,.25) 50%,rgba(45,182,207,.3) 100%);
+	margin-bottom:1px;
+}
+
+.sideSubDivHead{
+	font-weight: bold;
+	text-align: center;
+}
+
+/* Loader
+***************************************************************************
+*/
+#loaderDiv{
+	position: relative;
+	left:30%;
+	margin-top:150px;
+	width: 200px;
+	padding:0;
+	text-align: center;
+}
+
+#loaderDiv span, #loaderDiv img{
+	display:block;
+}
+
+#loaderDiv span{
+	color: #252344;
+}
+
+#mainContainerLoader{
+	position: relative;
+	height: 20px;
+	width:190px
+}
+
+/* Contacts
+***************************************************************************
+*/
+
+.popover{
+  	position: fixed;
+  	border-radius:0px;  
+}
+
+.popover-content{
+	width: 200px;
+	padding:2px;
+	height: 300px;
+	overflow-y:scroll;
+}
+
+#contactsArea{
+	position: absolute;
+	display:none;
+	width: 200px;
+	height: 300px;
+	border: 1px solid;
+	border-radius:5px;
+	background-color: white;
+	max-height:160px;	
+}
+
+.contactAreaHead{
+	color:white;
+	text-align: center;
+	background-color:#2980b9;
+}
+
+#contactList{
+	list-style: none;
+	padding:0;
+}
+
+.contactLi{
+	white-space: nowrap;
+	border-bottom: 1px solid #CECECE;
+ 	padding-bottom: 2px;
+}
+
+.contactLi:hover{
+	background-color: rgba(45,182,207,.1);
+	cursor: pointer;
+}
+
+.contactAvatar{
+	width: 30px;
+	height: 30px;
+}
+
+.contactName{
+	margin-left: 5px;
+	width: 100px;
+}
+
+
+
+/* Grid
+***************************************************************************
+*/
+.divGrid{
+	width: 270px;
+	height: 100%;
+	vertical-align:top;
+	margin: 2px 5px 0px 5px;
+	padding-bottom: 20px;
+	display: inline-block;
+}
+
+/* Columns
+***************************************************************************
+*/
+
+div.column{
+	position: relative;
+	width: 100%;
+	height: 100%;
+	vertical-align:top;
+	display: inline-block;
+	border-radius: 4px;	
+}
+
+div.columnUp{
+	position: relative;
+	min-height: 40px;
+	background-color: #C0C0C0;
+	border-left:1px solid #C0C0C0;
+	border-right:1px solid #C0C0C0;
+}
+
+div.columnUpTitle{
+	position: relative;
+	margin: 0 auto;
+	float: right;
+	width: 100%;
+	margin-top: 10px;
+	padding: 5px;
+	text-align: center;	
+}
+
+.columnUpTitleInput{
+	width: 80%;
+	height:30px;
+	padding-left:5px
+}
+
+.titleSubmitBtn{
+	margin-left: -40px;
+	padding: 0;
+	width: 40px;
+	height: 30px;
+	border:0;
+	color:white;
+	background-color: #428bca; 
+}
+
+.spanColumnTitle{
+	width:50%;
+	font-weight: bold;
+}
+
+.spanColumnTitleWrapper{
+	color: #2980b9;
+}
+
+.spanColumnTitleWrapper:hover{	
+	text-decoration: none;
+}
+
+/* Tooltip for column title display */
+.spanColumnTitleWrapper + .tooltip > .tooltip-inner,
+.sharedListImgLink + .tooltip > .tooltip-inner {
+	background-color: #428bca; 
+	color: #FFFFFF;  
+	padding: 5px;
+	font-size: 12px;
+}
+
+/* Btn tooltip*/
+.mainBarSubmitBtn + .tooltip > .tooltip-inner, 
+.mainBarSubmitBtn span + .tooltip > .tooltip-inner {
+      background-color: #428bca; 
+      color: #FFFFFF;  
+}
+
+/* End of title tooltip*/
+
+.divColumnTitleDisplay{
+	position:absolute;
+	display: none;
+	width: 100%;
+	height: 30px;
+	border: 1px solid blue;
+	background-color: #FFF;
+	border-radius: 5px;
+	z-index: 10;
+}
+
+.columnUpRightIcon2Wrapper{
+	position: absolute;
+	right: 10px;
+	text-decoration: none;
+	color: white;
+}
+
+.columnUpRightIconWrapper{
+	position: absolute;
+	right: 30px;
+	text-decoration: none;
+	color: white;
+}
+
+.formTags{
+	position: relative;
+	width:100%;
+	height: auto;
+	overflow-x: auto;
+	background-color: #D0D0D0;
+}
+
+.tagit-label{
+	color:sandybrown !important;
+}
+
+.formSubmitBtn{
+	position: relative;
+	margin: 0 auto;
+	display: block;
+}
+
+div.columnMiddle{
+	min-height: 60px;
+	max-height: calc(100% - 70px);
+	padding: 0px 5px 02px 2px;
+	background-color: #FCFCFC; 
+	overflow-x: hidden;
+	overflow-y: scroll;
+  	border-left: 1px solid #C0C0C0;
+  	border-right: 1px solid #C0C0C0;
+}
+
+.columnMiddleUl{
+	min-height: 50px;
+	padding:0;
+	height:auto;	
+}
+
+div.columnDown{
+	position: relative;
+	height: 5px;
+	background-color: #c0c0c0;
+}
+
+/*columnItem
+*************************************************************************
+*/
+
+.itemLiWrapper{
+	position:relative;
+	list-style-type: none;
+	width: 100%;
+	height: auto;
+}
+
+.sortablePlaceholder{
+	position:relative;
+	list-style-type: none;
+	width: 100%;
+	height: 50px;
+	border: 2px dotted #E0E0E0;
+	border-radius: 5px ;
+	background-color: #E0E0E0; 
+	box-shadow: 0 0 3px #000000;
+}
+
+.itemWrapper{
+	position: relative;
+	width: 100%;
+	height: auto;
+	margin: 5px 0px 5px 0px;
+	background: rgba(45,182,207,.3);
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+.addItemWrapper{
+	display:none;
+	position: relative;
+	width: 100%;
+	height: auto;
+	margin: 5px 0px 5px 0px;
+	background-color: #F8F8F8;
+	border: 1px solid rgba(0,0,0,0.2);
+	border-radius:5px;
+	z-index: 5;
+	overflow: hidden;
+	box-shadow: 0px 0px 29px -13px rgba(0,0,0,0.92);
+}
+
+.itemWrapper:hover{
+	background: -webkit-linear-gradient(top,rgba(45,182,207,0.3) 0,rgba(45,182,207,.15) 50%,rgba(45,182,207,.2) 100%);
+	cursor: pointer;
+}
+
+.itemInput, .itemTextarea{
+	display: block;  
+}
+
+.itemInput{
+	width: 100%;
+	margin-bottom: 5px;
+	border: none;
+	padding: 5px;
+}
+
+.itemTextarea{
+	overflow: hidden;
+	word-wrap: break-word;
+	resize: none;
+	border:none;
+	background-color: #FDFDFD;
+	width: 100%;
+	height: 50px;
+}
+
+.itemContent{
+	display:inline-block;
+	width: 80%;
+	height: 100%;
+	white-space: normal;
+	border: 2px;
+	padding: 3%;
+	overflow: hidden;
+}
+
+.itemImg{
+	position: relative;
+	width: 30px;
+	height: 30px;
+	border-radius: 4px;
+	border: 1px solid #C0C0C0;
+}
+
+.itemAvatar{
+	vertical-align: top;
+	text-align: center;
+	display:inline-block;
+	width: 15%;
+	height: 30px;
+	border-radius: 4px;
+	margin-left:5px;
+	padding: 5px;
+}
+
+.itemFooterIcon{
+	margin-left: 10px;
+}
+
+.shareWithBtn{
+  border: none;
+  border-radius: 2px;
+  color: white;
+  vertical-align: top;
+}
+
+.addItemShareList{
+  list-style: none;
+  padding: 0px 0px 0px 2px;
+  width: calc(100% - 48px);
+  height: 17px;
+  display: inline-block;
+  background-color: rgba(192, 192, 192, 0.09);
+}
+
+.addItemShareList li{
+	display: inline-block;
+}
+
+.addItemSubmit {
+	color:white;
+	margin-left: 10px;
+	height: auto;
+}
+
+.addItemCancelWrapper {
+	color:white;
+	vertical-align: text-top;
+	margin-left:10px;
+}
+
+.addItemBtn{
+	border: none;
+	border-radius: 2px;
+	overflow: hidden;
+	position: relative;
+	color: white;
+	background: linear-gradient(to bottom, #84A100, #566B00);
+}
+
+.itemFooter{
+	position: relative;
+	width: 100%;
+	height: auto;
+}
+
+.itemFooter2{
+	position: relative;
+	width: 100%;
+	height: 30px;
+	padding-left: 10px;
+	padding-top: 2px;
+	background: -webkit-linear-gradient(top,rgba(45,182,207,0.5) 0,rgba(45,182,207,.35) 50%,rgba(45,182,207,.3) 100%);
+}
+
+.sharedList{
+	padding:0;
+	overflow: hidden;
+	height:auto;
+}
+
+.sharedListLi{
+	display: inline-block;
+	margin-right: 3px;
+	list-style:none;
+	padding:0;
+}
+
+.sharedListImgLink img{
+	width: 20px;
+	height: 20px;
+	border-radius: 2px;
+	border:1px solid;
+}
+
+.sharedListImgLink span{
+	margin-top:5px;	
+	border:1px solid;
+}
+
+/****************************************************************************/
+
+
+
+/* Board save/restore
+****************************************
+*/
+
+#save-modal .modal-dialog, #crTag-modal .modal-dialog {
+    width: 350px;
+}
+
+#save-modal input[type=text], #crTag-modal input[type=text]{
+	margin-top: 10px;
+}
+
+#div-save-msg, #div-crTag-msg{
+    border: 1px solid #dadfe1;
+    height: 30px;
+    line-height: 28px;
+    transition: all ease-in-out 500ms;
+    text-align: center;
+}
+
+#icon-save-msg, #icon-crTag-msg{
+    width: 30px;
+    float: left;
+    line-height: 28px;
+    text-align: center;
+    background-color: #dadfe1;
+    margin-right: 5px;
+    transition: all ease-in-out 500ms;
+}
+
+#tableDiv{
+	max-height:400px;
+	margin-top:50px;
+	overflow:auto;
+}
+
+#loadBoardInputDiv{
+	margin:5px;
+	width: 400px;
+}
+
+#loadBoardInputDiv input{
+	width: 200px;
+	height: 35px;
+	float:left;
+}
+
+#loadBoardInputDiv button{
+	border-radius:2px;
+	height: 35px;
+}
+
+.saved-board-table{
+}
+
+.tdLinks{
+	display: block;
+	width: 100%;
+}
+
+.results tr[visible='false'],
+.no-result{
+  display:none;
+}
+
+.results tr[visible='true']{
+  display:table-row;
+}
+
+/* #########################################
+   #    override the bootstrap configs     #
+   ######################################### */
+
+.modal-backdrop.in {
+    filter: alpha(opacity=50);
+    opacity: .6;
+}
+
+.modal-content {
+    background-color: #ececec;
+    border: 1px solid #bdc3c7;
+    border-radius: 0px;
+    outline: 0;
+}
+
+.modal-header {
+    min-height: 16.43px;
+    padding: 15px 15px 15px 15px;
+    border-bottom: 0px;
+}
+
+.modal-body {
+    position: relative;
+    padding: 5px 15px 5px 15px;
+}
+
+.modal-footer {
+    padding: 15px 15px 15px 15px;
+    text-align: left;
+    border-top: 0px;
+}
+
+.checkbox {
+    margin-bottom: 0px;
+}
+
+.btn {
+    border-radius: 0px;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+    outline: none;
+}
+
+.btn-lg, .btn-group-lg>.btn {
+    border-radius: 0px;
+}
+
+.btn-link {
+    padding: 5px 10px 0px 0px;
+    color: #95a5a6;
+}
+
+.btn-link:hover, .btn-link:focus {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.glyphicon {
+    top: 0px;
+}
+
+/* Generals
+*****************************************************************
+*/
+
+textarea{
+	resize: none;
+}
+/*
+keeex self xupor-vazer-lypom-dobem-zucug-lacud-cokyk-guvys-cydys-solab-cuzes-zanol-lolas-nykas-zecih-codol-muxax , {main} xeeek
+keeex self 1xnWo9pGxx2V5JDh3q3JweSgY72mF3h6UShLkuw , {alg:sha224,enc:b58,recursive:1} xeeek
+keeex name "style.css" , {main} xeeek
+keeex prop "kx.author", "resat-tutym-betav-binoh-refav-kobic-pehos-halig-lymar-rageb-bafoc-rikus-hulak-bukof-budeg-lerek-byxor" xeeek
+keeex ref "ropoh-zigec-vulun-zocok-gezin-mazim-kemov-somuh-bacoc-bonut-kogef-duzev-bykom-tofyl-nusuc-vupyl-pyxyr" , {mine} xeeek
+keeex signer rerom-cityz-bivyc-ralav-bumon-mudyh-hocyr-pikyv-sysyz-cunat-gesiz-lipig-cozof-harif-sapor-gacaf-nixer xeeek
+keeex prop "kx.time", "Fri, 12 Aug 2016 09:40:16 GMT" xeeek
+keeex prop "kx.pattern", "%f_kx_$1-$2" xeeek
+keeex prop "kx.publickey", "1Lht9GuEcDvF3m7WUUv8igY4zKcQs6tyBR", {bitcoin} xeeek
+keeex protected "HCA6nmhbzYaG91L4tByh0cTZwiPY2uQgZEm9kkDRUGYuGbiB5GF17E64w5j9h7fik0Q0jNNsaKxao1DCc6YdFuw=" , {bitcoin} xeeek
+
+*/

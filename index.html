@@ -1,0 +1,240 @@
+<!--
+*	KeeeX Cards
+*	
+*	Copyright (c) 2016 KeeeX SAS 
+*
+*	This is an open source project available under the MIT license.
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+*
+*
+*	Author: Cheikh Ahmadou K. Savadogo   - savacheikh@gmail.com
+*	
+*	Date: June-August 2016
+* -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Keeex Cards</title>
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="./css/bootstrap.min.css">
+	<link rel="stylesheet" href="./css/style.css">
+	<!-- libraries -->
+	<!-- css-->
+    <link href="./css/jquery-ui.css" rel="stylesheet" type="text/css">
+	<link href="./css/jquery.tagit.css" rel="stylesheet" type="text/css">
+    <link href="./css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+	<!-- js-->
+	<script type="text/javascript" src="./js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="./js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="./js/libs/bootstrap.min.js"></script>
+	<!-- tag_it js-->
+	<script type="text/javascript" src="./js/tag-it.js"></script>
+	<!-- plugin scripts -->
+	<script type="text/javascript" src="./js/components.js"></script>
+	<script type="text/javascript" src="./js/cards.main.js"></script>
+</head>
+<body onload="_init()">
+	<div id="pageContainer" class="container-fluid">
+		<nav id="navBar" class="row">
+			<div class="mainBar">
+		        <div class="mainBarAvatar">
+		        	<img id="mainBarAvatarImg" title="John Doe" src="">
+		        	<span id="mainBarProfileName" class="label"></span>
+		        </div>
+        		<!--  -->
+        		<div class="labelSeparator col-sm-1 label">Modes:</div>
+        		<!--  -->
+	        	<button type="submit" data-toggle='tooltip' data-placement='bottom' title="New board" onclick="resetDisplay(0)" id="addBtn" class="mainBarSubmitBtn col-sm-1 btn  btn-sm"><span class="glyphicon glyphicon-object-align-top" aria-hidden="true"></span></button>
+	         
+	        	<button type="submit" data-toggle='tooltip' data-placement='bottom' title="Work tracking" onclick="scrum()" id="trackingBtn" class="mainBarSubmitBtn col-sm-2 btn ">SCRUM</button>
+	         
+	        	<button type="submit" data-toggle='tooltip' data-placement='bottom' title="CRM" onclick="crm()" id="crmBtn" class="mainBarSubmitBtn col-sm-2 btn ">CRM</button>
+				<!--  -->
+	        	<div class="labelSeparator col-sm-1 label">Board:</div>
+	        	<!--  -->
+	         	<button type="submit" data-toggle='tooltip' data-placement='bottom' title="Reset display" onclick="resetDisplay(1)" id="resetBtn" class="mainBarSubmitBtn col-sm-2 btn "><span class="glyphicon glyphicon-off" aria-hidden="true"></span></button>
+	        	<button type="submit" data-toggle='tooltip' data-placement='bottom' title="Reload tags" onclick="searchTags(1)" id="refreshBtn" class="mainBarSubmitBtn col-sm-2 btn "><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+	        	<button type="submit" data-toggle='tooltip' data-placement='bottom' title="Add column" onclick="addNewColumn()" id="addBtn" class="mainBarSubmitBtn col-sm-1 btn  btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+	        	<button type="submit" data-toggle='modal' data-target="#crTag-modal" data-placement='bottom'  onclick="createConcept()" id="" class="mainBarSubmitBtn col-sm-1 btn  btn-sm"><span title="Create new tag" data-toggle='tooltip' data-placement='bottom' class="glyphicon glyphicon-tag" aria-hidden="true"></span></button>
+	        	<button type="submit"  data-toggle='modal' data-target="#save-modal" data-placement='bottom' onclick="saveBoardPopover()" id="" class="mainBarSubmitBtn col-sm-1 btn  btn-sm"><span data-toggle='tooltip' data-placement='bottom' title="Save current configuration" class="glyphicon glyphicon-save" aria-hidden="true"></span></button>
+	        	<button type="submit"  data-toggle='modal' data-target="#load-modal" data-placement='bottom'  onclick="loadBoards()" id="" class="mainBarSubmitBtn col-sm-1 btn  btn-sm"><span data-toggle='tooltip' data-placement='bottom' title="Load boards" class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></button>
+	        	 
+		    </div>
+		</nav>
+		<div id="conceptBar" class="row">
+			<button type="submit" title="" class="conceptBtn btn">Tag</button>
+			<div id="concepts" class="">
+			</div>
+		</div>
+		<!-- BEGIN CONTACT LIST -->
+		<div id="contactsArea">
+			<div class="contactAreaHead ">Contacts</div>
+			<ul id="contactList">				
+			</ul>
+		</div>
+		<!-- END CONTACT LIST -->
+		<!-- BEGIN # MODAL SAVE -->
+		<div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+	    	<div class="modal-dialog">
+				<div class="modal-content">
+	                <!-- Begin # DIV Form -->
+	                <div id="div-forms">
+	                
+	                    <!-- Begin # Save Form -->
+	                    <form id="save-form">
+			                <div class="modal-body">
+					    		<div id="div-save-msg">
+	                                <div id="icon-save-msg" class="glyphicon glyphicon-save"></div>
+	                                <span id="text-save-msg">Save current configuration</span>
+	                            </div>
+					    		<input id="save_topicname" class="form-control" type="text" placeholder="Title" required>
+					    		<textarea id="save_topicdesc" class="form-control" type="text" placeholder="Description"></textarea>
+	                        </div>
+					        <div class="modal-footer">
+	                            <div>
+	                                <button type="submit" id="saveBoardSubmitBtn" class="btn btn-primary btn-lg btn-block">Save</button>
+	                            </div>				    	  
+					        </div>
+	                    </form>
+	                    <!-- End # Save Form -->
+	                </div>
+	                <!-- End # DIV Form -->
+	            </div>
+			</div>
+		</div>
+	    <!-- END # MODAL SAVE -->
+	    <!-- BEGIN # MODAL CREATE TAG -->
+		<div class="modal fade" id="crTag-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+	    	<div class="modal-dialog">
+				<div class="modal-content">
+	                <!-- Begin # DIV Form -->
+	                <div id="div-forms">	                
+	                    <!-- Begin # crTag Form -->
+	                    <form id="crTag-form">
+			                <div class="modal-body">
+					    		<div id="div-crTag-msg">
+	                                <div id="icon-crTag-msg" class="glyphicon glyphicon-tag"></div>
+	                                <span id="text-crTag-msg">Create Tag</span>
+	                            </div>
+					    		<input id="crTagName" class="form-control" type="text" name="name" placeholder="Title" required>
+					    		<textarea id="crTagDesc" class="form-control" type="text" name="description" placeholder="Description"></textarea>
+	                        </div>
+					        <div class="modal-footer">
+	                            <div>
+	                                <button type="submit" id="crTagBoardSubmitBtn" class="btn btn-primary btn-lg btn-block">Create</button>
+	                            </div>				    	  
+					        </div>
+	                    </form>
+	                    <!-- End # crTag Form -->
+	                </div>
+	                <!-- End # DIV Form -->
+	            </div>
+			</div>
+		</div>
+	    <!-- END # MODAL CREATE TAG -->
+	    <!-- BEGIN # MODAL LOAD -->
+		<div class="modal fade" id="load-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+	    	<div class="modal-dialog">
+				<div class="modal-content">
+	                <div id="div-save-msg">
+                        <div id="icon-save-msg" class="glyphicon glyphicon-folder-open"></div>
+                        <span id="text-save-msg">Load board</span>
+                    </div>
+	                <!-- <div id="loadBoardInputDiv" class="form-group pull-left">
+					    <input type="text" class="search form-control" placeholder="board title">
+					    <button id="loadBoardBtn" class="mainBarSubmitBtn col-sm-1 btn  btn-sm" data-dismiss="modal">Load</button>
+					</div> -->
+					<div id="tableDiv">
+		                <table id="saved-board-table" class="table table-hover table-bordered results">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>
+										Board
+									</th>
+									<th>
+										Saved on
+									</th>
+								</tr>
+								<tr class="warning no-result">
+							      <td colspan="2"><i class="fa fa-warning"></i> No result</td>
+							    </tr>
+							</thead>
+							<tbody id="tableBody">
+							</tbody>
+						</table>
+		            </div>
+	            </div>
+			</div>
+		</div>
+	    <!-- END # MODAL LOAD -->
+		<div id="principalContainer" class="row">
+			<div id="mainContainer2" class="col-sm-8">		
+				<div id="loaderDiv">
+				  <span>loading...</span>
+				  <img src="./css/images/ajax-loader.gif " id="mainContainerLoader">
+				</div>
+			</div>
+			<div id="mainContainer" class="">			
+			</div>
+			<!-- <div class="col-sm-3"> -->
+				<div id="sideContainer" class="">			
+					<div class="sideDivHead"><span id="sideDivHeadText">Board Info</span><a onclick="sideContainerHide()"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a></div>
+					<div id="sideMainContainer" class="">
+						<div id="sideContainerColumns" class="sideDivs">
+							<div class="sideSubDivHead ">Columns</div>
+							<ul id="sideContainerColumnsUl" class="sideDivsUl"></ul>
+						</div>
+						<div id="sideContainerItemInfo" class="sideDivs">
+							<div class="sideSubDivHead panel-heading">Topic info</div>
+							<div id="sideContainerItemInfoContent"></div>
+						</div>
+						<div id="sideContainerLogs" class="sideDivs">
+							<div class="sideSubDivHead panel-heading">Activity</div>
+							<ul id="sideContainerLogsUl" class="sideDivsUl"></ul>
+						</div>
+					</div>
+				</div>
+			<!-- </div> -->
+		</div>
+	</div>
+</body>	
+</html>
+
+
+
+<!--
+keeex self xisan-nebud-ruhon-dezac-vefyn-muvim-bokyp-tunih-zahuf-labeb-tuges-lidod-zudas-ninof-vyrev-cyhib-zoxux , {main} xeeek
+keeex self 2Z1PvrSRTukenbUa3CQZUiFFnkUczt7q9H7u9uZ , {alg:sha224,enc:b58,recursive:1} xeeek
+keeex name "index.html" , {main} xeeek
+keeex prop "kx.author", "resat-tutym-betav-binoh-refav-kobic-pehos-halig-lymar-rageb-bafoc-rikus-hulak-bukof-budeg-lerek-byxor" xeeek
+keeex ref "ropoh-zigec-vulun-zocok-gezin-mazim-kemov-somuh-bacoc-bonut-kogef-duzev-bykom-tofyl-nusuc-vupyl-pyxyr" , {mine} xeeek
+keeex signer rerom-cityz-bivyc-ralav-bumon-mudyh-hocyr-pikyv-sysyz-cunat-gesiz-lipig-cozof-harif-sapor-gacaf-nixer xeeek
+keeex prop "kx.time", "Fri, 12 Aug 2016 09:17:23 GMT" xeeek
+keeex prop "kx.pattern", "%f_kx_$1-$2" xeeek
+keeex prop "kx.publickey", "1Lht9GuEcDvF3m7WUUv8igY4zKcQs6tyBR", {bitcoin} xeeek
+keeex protected "GyMHu84hC4G:ZTpEBUp7hhFFQ3YTfGXLelVMJKch6!uusEBCnAb!0rWTtY5wxf3ELQsmn0RjcXSwEItMqGmJY5A=" , {bitcoin} xeeek
+
+-->
+<!--
+keeex self xisan-nebud-ruhon-dezac-vefyn-muvim-bokyp-tunih-zahuf-labeb-tuges-lidod-zudas-ninof-vyrev-cyhib-zoxux , {main} xeeek
+keeex self 2Z1PvrSRTukenbUa3CQZUiFFnkUczt7q9H7u9uZ , {alg:sha224,enc:b58,recursive:1} xeeek
+keeex name "index.html" , {main} xeeek
+keeex prop "kx.author", "resat-tutym-betav-binoh-refav-kobic-pehos-halig-lymar-rageb-bafoc-rikus-hulak-bukof-budeg-lerek-byxor" xeeek
+keeex ref "ropoh-zigec-vulun-zocok-gezin-mazim-kemov-somuh-bacoc-bonut-kogef-duzev-bykom-tofyl-nusuc-vupyl-pyxyr" , {mine} xeeek
+keeex signer rerom-cityz-bivyc-ralav-bumon-mudyh-hocyr-pikyv-sysyz-cunat-gesiz-lipig-cozof-harif-sapor-gacaf-nixer xeeek
+keeex prop "kx.time", "Fri, 12 Aug 2016 09:44:28 GMT" xeeek
+keeex prop "kx.pattern", "%f_kx_$1-$2" xeeek
+keeex prop "kx.publickey", "1Lht9GuEcDvF3m7WUUv8igY4zKcQs6tyBR", {bitcoin} xeeek
+keeex protected "HGkxmOF0nbwwsFnOhTq4d1ZpKkqgHVlXXzJk0xaLLT3kvRAQfNRloFDmTEG8sl8mRGPoF6L8IF8fHup4fE8okHA=" , {bitcoin} xeeek
+
+-->

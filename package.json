@@ -1,0 +1,36 @@
+{
+  "name": "KeeeX Cards",
+  "version": "1.0.0",
+  "description": "Keeex plugin for the cards feature",
+  "main": "index.html",
+  "icon": "keeex_cards.png",
+  "single-instance": true,
+  "terms": "",
+  "author": "Cheikh SAVADOGO",
+  "license": "free",
+  "window": {
+    "width": 1200,
+    "height": 700,
+    "min_width": 1200,
+    "min_height": 700,
+    "toolbar": false
+  },
+  "dependencies": {
+    "async": "^2.0.0-rc.5",
+    "request": "^2.72.0"
+  }
+}
+
+/*
+keeex self xivin-tifon-cimeh-canor-folad-nelum-zagap-katep-nyfol-ninol-hunyt-kebac-kecev-leban-begid-muvuh-noxex , {main} xeeek
+keeex self 1v6rQH5ifKLHFLHrg61Xa6Lk1SoCYKCh7Vdp5v7 , {alg:sha224,enc:b58,recursive:1} xeeek
+keeex name "package.json" , {main} xeeek
+keeex prop "kx.author", "resat-tutym-betav-binoh-refav-kobic-pehos-halig-lymar-rageb-bafoc-rikus-hulak-bukof-budeg-lerek-byxor" xeeek
+keeex ref "ropoh-zigec-vulun-zocok-gezin-mazim-kemov-somuh-bacoc-bonut-kogef-duzev-bykom-tofyl-nusuc-vupyl-pyxyr" , {mine} xeeek
+keeex signer rerom-cityz-bivyc-ralav-bumon-mudyh-hocyr-pikyv-sysyz-cunat-gesiz-lipig-cozof-harif-sapor-gacaf-nixer xeeek
+keeex prop "kx.time", "Fri, 12 Aug 2016 09:37:29 GMT" xeeek
+keeex prop "kx.pattern", "%f_kx_$1-$2" xeeek
+keeex prop "kx.publickey", "1Lht9GuEcDvF3m7WUUv8igY4zKcQs6tyBR", {bitcoin} xeeek
+keeex protected "GyOPOYqrI9ppwumbtbTyhoEmLiieeQJ:ndmcGNXctRUnSKMMVwbkQElHO5d7Y!HEJGDawKQAJbVVUXeZLj!a:no=" , {bitcoin} xeeek
+
+*/

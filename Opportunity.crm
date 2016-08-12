@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>{{title-short}}</title>
+
+		<meta charset="UTF-8">
+		<meta name="author" content="System KeeeX">
+		<meta name="keywords" content="xetok-vuryz-pokez-fakuh-vimah-riroc-gymak-sysun-mupog-segas-tovyg-fofup-ticoh-tosar-garig-kecez-zuxex">
+		<meta name="generator" content="KeeeX - https://keeex.me">
+
+		<style type="text/css">
+			.container { width: 800px; margin: 0 auto; font-family: Helvetica,Arial,sans-serif; }
+			.title { color: darkblue; font-size: 22px; font-weight: bold; padding: 10px 0;}
+			.idx { color: lightgray; font-size: 14px; }
+			.description { color: dimgray; font-size: 14px; font-style: italic; padding: 0px 30px; text-align: justify;}
+			.body { color: dimgray; font-size: 15px; text-align: justify; padding: 10px 0;}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="title"><!--keeex name "-->Opportunity<!--" , {main} xeeek --></div>
+			<div class="description"><!--keeex prop "kx.description", "--><!--" xeeek --></div>
+			<div class="body"></div>
+			<div class="idx">xetok-vuryz-pokez-fakuh-vimah-riroc-gymak-sysun-mupog-segas-tovyg-fofup-ticoh-tosar-garig-kecez-zuxex</div>
+		</div>
+	</body>
+</html>
+<!--
+keeex self xetok-vuryz-pokez-fakuh-vimah-riroc-gymak-sysun-mupog-segas-tovyg-fofup-ticoh-tosar-garig-kecez-zuxex , {main} xeeek
+keeex self 3Z7xno4ZVcSZzMLnzoT3L2b7Jzm8BxieNRx22i5 , {alg:sha224,enc:b58,recursive:1} xeeek
+keeex prop "kx.author", "rumod-zusyl-kotug-carar-mefan-geruv-hihud-bumom-keteb-movil-lemef-syriv-cutur-lomym-tymyv-bocic-nexer" xeeek
+keeex ref "ripoh-corid-copol-mazyf-kikup-votag-gypis-mefiz-porag-mibup-refup-ziced-mihom-sinod-pyses-notob-koxor" , {mine} xeeek
+keeex signer rerom-cityz-bivyc-ralav-bumon-mudyh-hocyr-pikyv-sysyz-cunat-gesiz-lipig-cozof-harif-sapor-gacaf-nixer xeeek
+keeex prop "kx.time", "Wed, 27 Jul 2016 12:37:07 GMT" xeeek
+keeex prop "kx.pattern", "%f_kx_$1-$2" xeeek
+keeex prop "kx.publickey", "1Ah6bMjq6HD75hFWs9h4WVhH4BxdexNzQd", {bitcoin} xeeek
+keeex protected "HJEXBIBd0exo8LPwZNzBNlbJDYZ!FWLjtKfvOxi9k38sIneyVx!x8dHQi!dcLHVB2I0S2M2J44Nsi58:Fpm6et0=" , {bitcoin} xeeek
+keeex ref "recag-muges-vocul-tuvan-ryhar-rovap-hizit-zaget-rurot-zekyz-kazur-ganed-rofeg-kemul-kolig-luput-byxir" xeeek
+keeex ref "rikaz-cadir-retyf-bekyk-gytyt-kupun-rylog-rudyz-lycet-rutin-kotad-selec-venus-taril-birif-gopyl-gaxur" xeeek
+
+-->

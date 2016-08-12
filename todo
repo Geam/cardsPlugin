@@ -1,0 +1,17 @@
+---- Might need to be Done:
+	display current board mode
+	if token invalid, re-get
+	Allow 'refresh button to display next 20 comments' [!!!!]
+
+---- Fixes, not to forget
+
+
+|||-- To improve
+- sanitize input fields
+- copyright wrappers (versions !)
+- Some holes in contactList !!!!! due to Not ACCEPTED !
+- interconnexion with trello, JIRA
+
+
+Used frameworks:
+	credit: tag-it, "Modal Login with jQuery Effects" by  rodrigockamarante
