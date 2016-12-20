@@ -710,25 +710,25 @@ function displayConcepts(content, conceptNumb){
  *
  * @param {Integer} column number
  */
-function sideContainerColumnsList(columnNumber){
+function sideContainerColumnsList(columnNumber, nbItems) {
+	const column = columnsNameArray[columnNumber];
 	var sideContainerColumnsLi = $('<li></li>');
 	var numbSpan = $('<span></span>');
 	var nameSpan = $('<span></span>');
 
 	sideContainerColumnsLi.attr('class', 'list-group-item');
-	sideContainerColumnsLi.attr('id', 'list-group-li-'+columnNumber);
-	nameSpan.attr('id', 'sideNameSpan'+columnNumber);
-	numbSpan.attr('id', 'sideNumbSpan'+columnNumber);
+	sideContainerColumnsLi.attr('id', 'list-group-li-' + column.id);
+	nameSpan.attr('id', 'sideNameSpan'+column.id);
+	numbSpan.attr('id', 'sideNumbSpan'+column.id);
 	numbSpan.attr('class', 'badge');
 
-	if($("#list-group-li-"+columnNumber).length){
+	if ($("#list-group-li-"+columnNumber).length) {
 		$("#list-group-li-"+columnNumber).find('span').empty();
-		$("#sideNumbSpan"+columnNumber).text(columnsNameArray[columnNumber].nbItems);
-		$('#sideNameSpan'+columnNumber).text(columnsNameArray[columnNumber].name);
-	}
-	else{
-		numbSpan.text(columnsNameArray[columnNumber].nbItems);
-		nameSpan.text(columnsNameArray[columnNumber].name);
+		$("#sideNumbSpan"+columnNumber).text(nbItems || column.nbItems);
+		$('#sideNameSpan'+columnNumber).text(column.name);
+	} else {
+		numbSpan.text(nbItems || column.nbItems);
+		nameSpan.text(column.name);
 		sideContainerColumnsLi.append(nameSpan);
 		sideContainerColumnsLi.append(numbSpan);
 		$('#sideContainerColumnsUl').append(sideContainerColumnsLi);

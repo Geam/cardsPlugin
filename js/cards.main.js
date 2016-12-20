@@ -346,7 +346,6 @@ const searchTags = (reload) => {
  * Add content to column
  */
 const addColumnContent = (column, topicsReturned) => {
-
 	topicsReturned.forEach((topic) => {
 		const topicObject = { "data": topic, 'avatar': '', 'shared': [] };
 
@@ -361,10 +360,10 @@ const addColumnContent = (column, topicsReturned) => {
 				generateColumnItem(column, column.nbItems, topicObject, 0);
 				column.nbItems += 1;
 			})
-			.catch(logDisplay);
-	});
-	columnsNameArray.forEach((e, i) => {
-		sideContainerColumnsList(i);
+			.catch((error) => {
+				logDisplay(error);
+				sideContainerColumnsList(column.id);
+			});
 	});
 };
 
@@ -383,6 +382,7 @@ function  customSearchTopics(columnId) {
 			if(!topicsReturned.length){
 				return logDisplay(":/ No topics returned");
 			}
+			sideContainerColumnsList(column.id, topicsReturned.length);
 			addColumnContent(column, topicsReturned);
 		})
 		.catch(logDisplay);
@@ -415,6 +415,7 @@ const displayBoardFromSearchParam = (searchParams) => {
 
 		kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 			.then((topicsReturned) => {
+				sideContainerColumnsList(column.id, topicsReturned.length);
 				if (!topicsReturned.length) {
 					logDisplay(`${eachOption.name}: No topicsReturned!`);
 				} else {
@@ -428,10 +429,7 @@ const displayBoardFromSearchParam = (searchParams) => {
 
 	$('#mainContainer').css('display', 'block');
 	$('#mainContainer2').css('display', 'none');
-	$('#mainContainer').animate({scrollLeft: $('#mainContainer').get(0).scrollWidth}, 1000);
-	columnsNameArray.forEach((e, i) => {
-		sideContainerColumnsList(i);
-	});
+	//$('#mainContainer').animate({scrollLeft: $('#mainContainer').get(0).scrollWidth}, 1000);
 };
 
 /*
@@ -473,6 +471,22 @@ function crm() {
  */
 function restoreBoard(columnsArray) {
 	resetDisplay(true);
+	// detect if older board version
+	if (columnsArray[0].hasOwnProperty("columnSearchTopics")) {
+		logDisplay("Old board detected, converting to new format");
+		columnsArray = columnsArray.map((e) => {
+			//var tmp = Object.assign({}, e);
+			if (e.hasOwnProperty("columnSearchTopics")) {
+				e.topics = e.columnSearchTopics;
+				delete e.columnSearchTopics;
+			}
+			if (e.hasOwnProperty("columnSearchNegtopics")) {
+				e.negtopics = e.columnSearchNegtopics;
+				delete e.columnSearchNegtopics;
+			}
+			return e;
+		});
+	}
 	displayBoardFromSearchParam(columnsArray);
 }
 /*-- End of restoreBoard --*/
@@ -672,7 +686,7 @@ function shareTopic(topicIdx, topicPath,  shareObj, callback){
  * @param {String} tag name
  * @param {Integer} tag number
  */
-function saveBoard(confName){
+function saveBoard(confName) {
 	var filePath = path.join(boardsPath, confName.topicName + "_bd.json");
 	fs.open(filePath, "w", function(error, fd){
 		if(error)
@@ -710,66 +724,59 @@ function saveBoard(confName){
  * Function used to load saved boards configuration
  *
  */
-function loadBoards(){
-	$("#tableBody").empty();
-	kxapi.search("", [boardTypeIdx], [], null, maxToUpload, searchContentType("document").theObject, function(error, topicsReturned){
-		if(error){
-			logDisplay("error on searching board: "+error);
-			return ;
-		}
-		if(!topicsReturned.length){
-			logDisplay("No board saved");
-			return;
-		}
-		var i = 0;
-		savedBoardsArray = [];
-		async.eachSeries(topicsReturned, function(eachTopic, callback){
-			kxapi.getLocations([eachTopic.idx], function(error, location){
-				if(error){
-					logDisplay("error on geting location: "+error);
-					return callback(error);
+function loadBoards() {
+	const getTopicsLocation = (topicsReturned, i) => {
+		const topic = topicsReturned[i];
+		return kxapiPromise.getLocations([topic.idx])
+			.then((loc) => {
+				const tmpPath = loc[0].location[0];
+				listingSavedBoards({
+					"name": (path.parse(tmpPath).name).split("_bd_")[0],
+					"saved": topic.creationDate
+				}, i);
+				savedBoardsArray.push({"idx": topic.idx, "path": tmpPath});
+				if (i < topicsReturned.length - 1) {
+					return getTopicsLocation(topicsReturned, i + 1);
+				} else {
+					return Promise.resolve();
 				}
-				var boardObj={
-					name:(path.parse(location[0].location[0]).name).split("_bd_")[0],
-					saved: eachTopic.creationDate
-				};
-				listingSavedBoards(boardObj, i);
-				i++;
-				savedBoardsArray.push({'idx':eachTopic.idx, 'path':location[0].location[0]});
-				callback(null);
 			});
+	};
 
-		},function(error){
-			if(error)
-				console.log(error);
-		});
-		logDisplay("Boards loaded");
-	});
+	$("#tableBody").empty();
+	kxapiPromise.searchTopics([boardTypeIdx], [], maxToUpload, searchContentType("document"))
+		.then((topicsReturned) => {
+			if (!topicsReturned.length) {
+				logDisplay("No board saved");
+				return;
+			}
+			savedBoardsArray = [];
+			getTopicsLocation(topicsReturned, 0)
+			.then(() => {
+				logDisplay("Boards loaded");
+			})
+			.catch((error) => {
+				logDisplay(error);
+				console.error(error);
+			});
+		})
+		.catch(logDisplay);
 }
 
 //Sanitize inputs
 //Verify file
-function readLoadedBoard(flag){
+function readLoadedBoard(flag) {
 	filePath = savedBoardsArray[flag].path;
-	if (filePath !== "" && filePath.length > 1) {
+	if (!filePath || filePath === "" || filePath.length <= 1) return ;
 
-		fs.open(filePath, 'r', function(error, fd){
-			if(error)
-				console.log("Opening file error: ", error);
-			console.log('File Opened');
-			fs.readFile(filePath , 'utf8', function(error, fileContent){
-				if (error)
-					return console.log("Reading file error");
-				if(fileContent && fileContent.length >0){
-					var processedContent = JSON.parse(fileContent.replace(/ *\/\*[^/]*\*\/ */g, ""));
-				restoreBoard(processedContent);
-			}else{
-				logDisplay("Empty board file");
-			}
-			});
-			fs.close(fd);
-		});
-	}
+	fs.readFile(filePath, 'utf8', (error, fileContent) => {
+		if (error)
+			return console.error("readfile error:", error.message);
+		if (!fileContent || fileContent.length < 1)
+			return logDisplay("Empty board file");
+		const processedContent = JSON.parse(fileContent.replace(/ *\/\*[^/]*\*\/ */g, ""));
+		restoreBoard(processedContent);
+	});
 }
 
 /*

@@ -45,9 +45,19 @@ module.exports = (kxapi) => {
 			});
 		},
 
-		"searchTopics": (topics, negTopics, maxToUpload, searchContentType) => {
+		"getLocations": (topicsIdx) => {
 			return new Promise((resolve, reject) => {
-				kxapi.search("", topics, negTopics, null, maxToUpload, searchContentType.theObject, function(error, topicsReturned){
+				kxapi.getLocations(topicsIdx, (error, loc) => {
+					if (error) reject(`getLocations error: ${error}`);
+					resolve(loc);
+				});
+			});
+		},
+
+		"searchTopics": (topicsidx, negTopics, maxToUpload, searchContentType) => {
+			return new Promise((resolve, reject) => {
+				kxapi.search("", topicsidx, negTopics, null, maxToUpload,
+						searchContentType.theObject, (error, topicsReturned) => {
 					if (error) reject(`search error: ${error}`);
 					resolve(topicsReturned);
 				});
@@ -78,6 +88,15 @@ module.exports = (kxapi) => {
 				kxapi.getUsers(sharedList.shared, (error, users) => {
 					if (error) reject(`getUsersFromList error: ${error}`);
 					resolve(users);
+				});
+			});
+		},
+
+		"getLocationsFromTopic": (topic) => {
+			return new Promise((resolve, reject) => {
+				kxapi.getLocations(topic.idx, (error, sharedList) => {
+					if (error) reject(`getSharedFromTopicIdx error: ${error}`);
+					resolve(sharedList);
 				});
 			});
 		},
