@@ -108,80 +108,64 @@ var predefinedTags = [
 		Init function
  ***********************
  ****************************/
-function _init(){
-	kxapi.getToken("Keeex cards", function(error, tok) {
-		if (error)
-			return console.log(error);
-
-		kxapi.setToken(tok.token);
-		console.log(tok.token);
-
-		async.series([
-			function getKeeexedFolderPath(callback){
-				kxapi.env('KEEEXED_PATH', function(error, apath){
-					if(error)
-						callback("KEEEXED_PATH");
-					thisKEEEXED_PATH = apath.value;
-					boardsPath = path.join(thisKEEEXED_PATH, '/boards/');
-					fs.mkdir(boardsPath , function(error){
-						if(error && error.code != 'EEXIST')
-							console.error("Creating folder error", error);
-					});
-					callback(null);
-				});
-			},
-			function verifyTags(callback){
-				rootPath = path.dirname(utils.getDirName());
-				async.eachSeries(predefinedTags, function(eachConcept, callback){
-					kxapi.verify(rootPath+'/sys_tags/'+eachConcept.name, {'import':true}, function(error, verified){
-						if(error){
-							logDisplay("Verify "+eachConcept+" :"+error);
-							return callback("verifyTags: "+error);
-						}
-						if (verified.verifiedStatus == 100)
-						{
-							setJSONArray(predefinedTags, eachConcept.name, verified.idx);
-							predefinedTags2[eachConcept.name] = verified.idx;
-						}
-						// console.log("Verify "+eachConcept+" Ok. Status: ", verified.verifiedStatus);
-						callback(null);
-					});
-				}, callback);
-			},
-			function loadContacts(callback){
-				kxapi.getUsers(null, function(error, data){
-					if(error)
-						console.error("getting contacts error:", error);
-					var contactObj = {};
-					for (var i = 0; i < data.length; i++) {
-						if(data[i].state == "ACCEPTED"){
-							contactObj = {
-								"name":data[i].name,
-								"avatar":data[i].avatar,
-								"profileIdx":data[i].profileIdx
-							};
-							displayContactList(contactObj, i);
-						}
-						contactList.push(contactObj);
-					}
-					callback(null);
-				});
-			},
-			function interfaceEarly(callback){
-				displayCurrentProfileAvatar();
-				searchTags();
-				saveBoardPopover();
-				clicksOrKeyEvent();
-				$('[data-toggle="tooltip"]').tooltip();
-				$('#pageContainer').css('display', 'block');
-				callback(null);
-			}
-		], function initSeries(error){
-			if(error)
-				console.error('Init series error', error);
-			logDisplay('KeeeX Cards ready');
+function _init() {
+	kxapiPromise.getToken("Keeex cards")
+	.then((token) => {
+		//console.log(`my token: ${token.token}`);
+		return kxapiPromise.env('KEEEXED_PATH');
+	})
+	.then((varObj) => {
+		//console.log(`KEEEXED_PATH: ${varObj.value}`);
+		thisKEEEXED_PATH = varObj.value;
+		boardsPath = path.join(thisKEEEXED_PATH, '/boards/');
+		fs.mkdir(boardsPath, (error) => {
+			if (error && error.code != 'EEXIST')
+				console.error(`Creating folder error`, error);
 		});
-	});
+
+		// just to separate env stuff from concept
+		return Promise.resolve();
+	})
+	.then(() => {
+		rootPath = path.dirname(utils.getDirName());
+		//console.log(`rootPath: ${rootPath}`);
+		Object.keys(predefinedTags2).forEach((concept) => {
+			//console.log(`verifying ${concept}`);
+			kxapiPromise.verify(`${rootPath}/sys_tags/${concept}`, {'import': true})
+			.then((verified) => {
+				predefinedTags2[concept] = verified.idx;
+			})
+			.catch((error) => {
+				logDisplay(error);
+				//console.error(error);
+			});
+		});
+		return kxapiPromise.getUsers(null);
+	})
+	.then((usersList) => {
+		contactList = usersList
+			.filter(user => user.state === "ACCEPTED")
+			.map(user => {
+				return {
+					"name": user.name,
+					"avatar": user.avatar,
+					"profileIdx": user.profileIdx
+				};
+			});
+		contactList.forEach((user) => displayContactList);
+		// just to separate users stuff from end of initialisation
+		return Promise.resolve();
+	})
+	.then(() => {
+		displayCurrentProfileAvatar();
+		searchTags();
+		saveBoardPopover();
+		clicksOrKeyEvent();
+		$('[data-toggle="tooltip"]').tooltip();
+		$('#pageContainer').css('display', 'block');
+		logDisplay('KeeeX Cards ready');
+	})
+	.catch(console.log);
 }
 
 /*
