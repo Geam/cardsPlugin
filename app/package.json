@@ -19,8 +19,5 @@
   "bugs": {
     "url": "https://github.com/KeeeX/cardsPlugin/issues"
   },
-  "homepage": "https://github.com/KeeeX/cardsPlugin#readme",
-  "dependencies": {
-    "grunt": "^1.0.1"
-  }
+  "homepage": "https://github.com/KeeeX/cardsPlugin#readme"
 }
