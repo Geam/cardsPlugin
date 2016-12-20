@@ -259,7 +259,7 @@ function displayCurrentProfileAvatar(){
 	kxapiPromise.getMine()
 		.then((profile) => {
 			currentProfileAvatar = profile.avatar;
-			$('#mainBarAvatarImg').attr('src', profile.avatar);
+			$('#mainBarAvatarImg').attr('src', "file://" + profile.avatar);
 			$('#mainBarProfileName').text(''+profile.name.split(' ')[0]);
 			logDisplay(`Current user: ${profile.name}`);
 		})
@@ -333,11 +333,11 @@ const searchTags = (reload) => {
  */
 const addColumnContent = (column, topicsReturned) => {
 	topicsReturned.forEach((topic) => {
-		const topicObject = { "data": topic, 'avatar': '', 'shared': [] };
+		const topicObject = { "data": topic, 'author': '', 'shared': [] };
 
 		kxapiPromise.getAuthorFromTopic(topicObject.data)
 			.then((author) => {
-				topicObject.avatar = author;
+				topicObject.author = author;
 				return kxapiPromise.getSharedFromTopic(topicObject.data);
 			})
 			.then(kxapiPromise.getUsersFromList)

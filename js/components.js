@@ -58,7 +58,7 @@ function addSharedAvatars(COLUMN_ITEM_ID, data, i){
 	sharedListLi.attr('class', 'sharedListLi');
 	sharedListLi.attr('id', 'sharedListLi'+i);
 	sharedListSpan.attr('class', "sharedListSpan glyphicon glyphicon-option-horizontal");
-	sharedListImg.attr('src', data.avatar);
+	sharedListImg.attr('src', "file://" + data.avatar);
 	sharedListImgLink.attr('class', 'sharedListImgLink');
 	sharedListImgLink.attr('data-toggle', 'tooltip');
 	sharedListImgLink.attr('data-placement', 'right');
@@ -85,7 +85,7 @@ function addSharedAvatars(COLUMN_ITEM_ID, data, i){
  * @param {Integer} data to be inserted in column element
  * @param {Integer} flag to rule inserting order
  */
-function generateColumnItem(column, columnItemNumber, columnItemData, order){
+function generateColumnItem(column, columnItemNumber, columnItemData, order) {
 	var COLUMN_ITEM_ID = `${column.id}-${columnItemNumber}`;
 	var itemWrapper = $('<div></div>');
 	var itemContent = $('<div></div>');
@@ -103,7 +103,7 @@ function generateColumnItem(column, columnItemNumber, columnItemData, order){
 	itemAvatar.attr('class', 'itemAvatar');
 	itemImg.attr('class', 'itemImg');
 	itemImg.attr('id', 'itemImg'+COLUMN_ITEM_ID);
-	itemImg.attr('src', columnItemData.avatar);
+	itemImg.attr('src', "file://" + columnItemData.author.avatar);
 	itemFooter.attr('id', 'itemFooter'+COLUMN_ITEM_ID);
 	itemFooter.attr('class', 'itemFooter');
 	sharedList.attr('id', 'sharedList'+COLUMN_ITEM_ID);
@@ -889,7 +889,7 @@ function displayContactList(data, i){
 	var nameSpan = $('<span></span>');
 
 	avatarImg.attr("class", 'contactAvatar');
-	avatarImg.attr("src", data.avatar);
+	avatarImg.attr("src", "file://" + data.avatar);
 	nameSpan.attr("class", 'contactName');
 	nameSpan.text(data.name);
 	item.attr('class', 'contactLi');
