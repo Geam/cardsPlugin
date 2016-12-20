@@ -25,7 +25,7 @@
  ***********************
  ****************************/
 
-const kxapi = require("./js/kxapi.js");
+const kxapi = require("keeex-api");
 const components = require("./js/components.js");
 const utils = require('./js/utils.js').utils;
 const async = require("async");

@@ -2,7 +2,7 @@
   "name": "keeex_cards_plugin",
   "version": "2.0.0",
   "description": "A task management plugin allowing to track work in scrum-like display working model",
-  "main": "index.js",
+  "main": "index.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KeeeX/cardsPlugin.git"
@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/KeeeX/cardsPlugin/issues"
   },
-  "homepage": "https://github.com/KeeeX/cardsPlugin#readme"
+  "homepage": "https://github.com/KeeeX/cardsPlugin#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "jquery": "1.12.0",
+    "jquery-ui-dist": "^1.12.1",
+    "keeex-api": "^0.2.1"
+  }
 }
