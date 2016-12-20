@@ -640,31 +640,34 @@ function saveBoard(confName) {
 		if (error)
 			return console.log("Writing configuration error: "+error);
 		console.log('File created');
-	});
-	// Keeex file now
-	const prev = currentBoard && !confName.topicNewVersion ? [currentBoard.idx] : [];
-	console.log(prev);
-	const opt = {
-		targetFolder:boardsPath,
-		timestamp:false,
-		name:confName.topicName
-	};
-	kxapiPromise.keeex(filePath, [boardTypeIdx], prev, confName.topicDescription, opt)
-		.then((keeexedFile) => {
-			currentBoard = {
-				"idx": keeexedFile.topic.idx,
-				"name": opt.name,
-				"path": keeexedFile.path,
-				"description": keeexedFile.description
-			};
-			logDisplay("Board saved ! ");
-			// Delete original file
-			fs.unlink(filePath, function(error){
-				if (error)
-					console.log("Deleting file "+ path.parse(filePath).base +" error");
+
+		// Keeex file now
+		const prev = currentBoard && !confName.topicNewVersion ? [currentBoard.idx] : [];
+		const opt = {
+			targetFolder:boardsPath,
+			timestamp:false,
+			name:confName.topicName
+		};
+
+		kxapiPromise.keeex(filePath, [boardTypeIdx], prev, confName.topicDescription, opt)
+			.then((keeexedFile) => {
+				currentBoard = {
+					"idx": keeexedFile.topic.idx,
+					"name": opt.name,
+					"path": keeexedFile.path,
+					"description": keeexedFile.description
+				};
+				logDisplay("Board saved ! ");
+			})
+			.catch((error) => {
+				// Delete original file
+				fs.unlink(filePath, function(error){
+					if (error)
+						console.log("Deleting file "+ path.parse(filePath).base +" error");
+				});
+				logDisplay(error);
 			});
-		})
-		.catch(logDisplay);
+	});
 }
 
 
