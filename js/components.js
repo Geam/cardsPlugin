@@ -814,7 +814,7 @@ function logDisplay(msg){
 	$('#sideContainerLogsUl').append(sideContainerLogsLi);
 	$('#sideContainerLogs').animate({scrollTop: $('#sideContainerLogsUl').css('height')}, 500);
 	console.log(msg);
-};
+}
 
 /* Creating/Saving/Listing Board
  **************************************************************************
@@ -824,21 +824,30 @@ function logDisplay(msg){
  * Function used to genarate saving board pop up
  *
  */
-function saveBoardPopover(){
+function saveBoardPopover() {
+	const newversionWrapper = $("#save_newversion_wrapper");
+	const nameInput = $("#save_topicname");
+	const descInput = $("#save_topicdesc");
+	const newversionInput = $("#save_newversion");
+
+	if (currentBoard) {
+		newversionWrapper.show();
+		nameInput.val(currentBoard.name);
+		descInput.val(currentBoard.description);
+	}
 	$("#save-form").submit(function (e) {
 		e.preventDefault();
 		$("#save-modal").modal('hide');
-		var topicname=$('#save_topicname').val();
-		var topicdesc=$('#save_topicdesc').val();
-		if (topicname != "" && topicname.length >1) {
-			$('#save_topicname').val("");
-			$('#save_topicdesc').val("");
-			var confName = {
-				topicName: topicname,
-				topicDescription: topicdesc
-			};
-			saveBoard(confName);
-		}
+		newversionWrapper.hide();
+		if (nameInput.val() === "" || nameInput.val().length <= 1) return ;
+		saveBoard({
+			topicName: nameInput.val(),
+			topicDescription: descInput.val(),
+			topicNewVersion: newversionInput.prop("checked")
+		});
+		nameInput.val("");
+		descInput.val("");
+		newversionInput.prop("checked", false);
 	});
 }
 
@@ -864,7 +873,7 @@ function listingSavedBoards(boardObj, i){
 
 	tdLink.click(function(event){
 		boardToLoadFlag = Number($(this).parent().attr("id").replace('brd', ''));
-		readLoadedBoard(boardToLoadFlag);
+		readLoadedBoard(savedBoardsArray[boardToLoadFlag]);
 	});
 	$("#tableBody").append(appendingLine);
 }

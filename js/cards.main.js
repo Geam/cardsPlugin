@@ -51,6 +51,7 @@ var crmCategory = "xikaz-cadir-retyf-bekyk-gytyt-kupun-rylog-rudyz-lycet-rutin-k
 var scrumCategory = "";
 
 var savedBoardsArray = [];
+var currentBoard = null;
 var columnsNameArray = [];
 var conceptsIdxArray = [];
 var contactList = [];
@@ -287,6 +288,7 @@ function resetDisplay(empty) {
 	boardToLoadFlag = null;
 	negToken = 0;
 	// Reset arrays
+	currentBoard = null;
 	columnsNameArray = [];
 	columnsArrayIndex = 0;
 	//Clear tags & re-generate
@@ -699,16 +701,24 @@ function saveBoard(confName) {
 			fs.close(fd);
 		});
 		// Keeex file now
-		var  opt = {
+		let prev = currentBoard && !confName.topicNewVersion ? [currentBoard.idx] : [];
+		console.log(prev);
+		let  opt = {
 			targetFolder:boardsPath,
 			timestamp:false,
 			name:confName.topicName
 		};
-		kxapi.keeex(filePath, [boardTypeIdx], [], confName.topicDescription,  opt, function(error, keeexedFile){
+		kxapi.keeex(filePath, [boardTypeIdx], prev, confName.topicDescription, opt, function(error, keeexedFile){
 			if(error){
 				logDisplay("Keeexing file error: "+error);
 				return;
 			}
+			currentBoard = {
+				"idx": keeexedFile.topic.idx,
+				"name": opt.name,
+				"path": keeexedFile.path,
+				"description": keeexedFile.description
+			};
 			logDisplay("Board saved ! ");
 			// Delete original file
 			fs.unlink(filePath, function(error){
@@ -734,7 +744,12 @@ function loadBoards() {
 					"name": (path.parse(tmpPath).name).split("_bd_")[0],
 					"saved": topic.creationDate
 				}, i);
-				savedBoardsArray.push({"idx": topic.idx, "path": tmpPath});
+				savedBoardsArray.push({
+					"idx": topic.idx,
+					"path": tmpPath,
+					"name": topic.name,
+					"description": topic.description,
+				});
 				if (i < topicsReturned.length - 1) {
 					return getTopicsLocation(topicsReturned, i + 1);
 				} else {
@@ -765,8 +780,8 @@ function loadBoards() {
 
 //Sanitize inputs
 //Verify file
-function readLoadedBoard(flag) {
-	filePath = savedBoardsArray[flag].path;
+function readLoadedBoard(board) {
+	filePath = board.path;
 	if (!filePath || filePath === "" || filePath.length <= 1) return ;
 
 	fs.readFile(filePath, 'utf8', (error, fileContent) => {
@@ -776,6 +791,7 @@ function readLoadedBoard(flag) {
 			return logDisplay("Empty board file");
 		const processedContent = JSON.parse(fileContent.replace(/ *\/\*[^/]*\*\/ */g, ""));
 		restoreBoard(processedContent);
+		currentBoard = board;
 	});
 }
 
