@@ -260,10 +260,10 @@ const searchParamsArray = (array) => {
 };
 
 const cloneColumnsArray = () => {
-	return columnsNameArray.map((e, i) => {
+	return columnsNameArray.map((e) => {
 		return {
+			'id': e.id,
 			'name': e.name,
-			'columnsNumber': i,
 			'topics': e.topics,
 			'negtopics': e.negtopics
 		};
