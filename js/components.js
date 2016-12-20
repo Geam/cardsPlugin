@@ -29,10 +29,10 @@
  *
  * @param {Integer} grid number
  */
-function generateGrid(girdNumber){
+function generateGrid(gridNumber){
 	var divGrid = $("<div></div>");
 	divGrid.attr('class', 'divGrid');
-	divGrid.attr('id', 'divGrid'+girdNumber);
+	divGrid.attr('id', 'divGrid'+gridNumber);
 	$("#mainContainer").append(divGrid);
 }
 
@@ -344,11 +344,11 @@ function generateColumn(columnNumber, columnTitle){
 		afterTagRemoved:function(event, ui){
 			var target = $(ui.tag);
 			if (target.hasClass('negTopic')) {
-				var indexToRemoveAt = columnsNameArray[columnNumber].columnSearchNegtopics.concept.indexOf(ui.tagLabel);
+				let indexToRemoveAt = columnsNameArray[columnNumber].columnSearchNegtopics.concept.indexOf(ui.tagLabel);
 				columnsNameArray[columnNumber].columnSearchNegtopics.concept.splice(indexToRemoveAt, 1);
 				columnsNameArray[columnNumber].columnSearchNegtopics.idx.splice(indexToRemoveAt, 1);
 			} else {
-				var indexToRemoveAt = columnsNameArray[columnNumber].columnSearchTopics.concept.indexOf(ui.tagLabel);
+				let indexToRemoveAt = columnsNameArray[columnNumber].columnSearchTopics.concept.indexOf(ui.tagLabel);
 				columnsNameArray[columnNumber].columnSearchTopics.concept.splice(indexToRemoveAt, 1);
 				columnsNameArray[columnNumber].columnSearchTopics.idx.splice(indexToRemoveAt, 1);
 			}
@@ -421,16 +421,19 @@ function generateColumn(columnNumber, columnTitle){
 	});
 
 	/* Record column in columnsNameArray*/
-	columnsNameArray.push({	name:columnTitle,
-		columnNumber: columnNumber,
-		nbItems:0,
-		columnSearchTopics:{'concept':[],
-			'idx':[]
+	columnsNameArray.push({
+		"name": columnTitle,
+		"columnNumber": columnNumber,
+		"nbItems": 0,
+		"columnSearchTopics": {
+			"concept": [],
+			"idx": []
 		},
-		columnSearchNegtopics:{'concept':[],
-			'idx':[]
+		columnSearchNegtopics: {
+			"concept": [],
+			"idx": []
 		},
-		listedTopics:[]
+		listedTopics: []
 	});
 	columnsArrayIndex +=1;
 }
@@ -579,9 +582,9 @@ function titleTooltipRoutine(columnNumber){
 	var titleText = columnsNameArray[columnNumber].columnSearchTopics.concept;
 	var tmpText = columnsNameArray[columnNumber].columnSearchNegtopics.concept;
 	var titleText2 ='';
-	for(var i = 0; i<titleText.length;i++)
+	for(let i = 0; i<titleText.length;i++)
 		titleText2 = titleText2.concat("+"+titleText[i]+"<br>");
-	for(var i = 0; i<tmpText.length;i++)
+	for(let i = 0; i<tmpText.length;i++)
 		titleText2 = titleText2.concat("--"+tmpText[i]+"<br>");
 	$("#spanColumnTitleWrapper"+columnNumber).attr('title', titleText2);
 	$('[data-toggle="tooltip"]').tooltip();

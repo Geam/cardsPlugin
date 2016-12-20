@@ -25,12 +25,12 @@
  ***********************
  ****************************/
 
-var kxapi = require("./js/kxapi.js");
-var components = require("./js/components.js");
-var utils = require('./js/utils.js').utils;
-var async = require("async");
-var path = require("path");
-var fs = require('fs');
+const kxapi = require("./js/kxapi.js");
+const components = require("./js/components.js");
+const utils = require('./js/utils.js').utils;
+const async = require("async");
+const path = require("path");
+const fs = require('fs');
 
 /*
 ####################-End of Modules-####################
@@ -49,7 +49,7 @@ var boardTypeIdx = "xedof-becod-pipon-kolec-peseb-popyk-zogul-ticas-zevus-rulis-
 var crmCategory = "xikaz-cadir-retyf-bekyk-gytyt-kupun-rylog-rudyz-lycet-rutin-kotad-selec-venus-taril-birif-gopyl-gaxux";
 var scrumCategory = "";
 
-var savedBoardsArray =[];
+var savedBoardsArray = [];
 var columnsNameArray = [];
 var conceptsIdxArray = [];
 var contactList = [];
@@ -67,19 +67,19 @@ var boardToLoadFlag;
 var	negToken = 0;	//To make tag appear negated in columnUpSearchForm
 
 var predefinedTags = [
-	{name:"Prospect.crm", idx:""},
-	{name:"Lead.crm", idx:""},
-	{name:"Opportunity.crm", idx:""},
-	{name:"In progress.crm", idx:""},
-	{name:"Won.crm", idx:""},
-	{name:"Abandoned.crm", idx:""},
-	{name:"Todo.scrum", idx:""},
-	{name:"Feature.scrum", idx:""},
-	{name:"Bug report.scrum", idx:""},
-	{name:"Wait for validation.scrum", idx:""},
-	{name:"Done.scrum", idx:""},
-	{name:"Board Category.scrum", idx:""},
-	{name:"CRM Category.crm", idx:""}
+	{ name: "Prospect.crm"              , idx: "" },
+	{ name: "Lead.crm"                  , idx: "" },
+	{ name: "Opportunity.crm"           , idx: "" },
+	{ name: "In progress.crm"           , idx: "" },
+	{ name: "Won.crm"                   , idx: "" },
+	{ name: "Abandoned.crm"             , idx: "" },
+	{ name: "Todo.scrum"                , idx: "" },
+	{ name: "Feature.scrum"             , idx: "" },
+	{ name: "Bug report.scrum"          , idx: "" },
+	{ name: "Wait for validation.scrum" , idx: "" },
+	{ name: "Done.scrum"                , idx: "" },
+	{ name: "Board Category.scrum"      , idx: "" },
+	{ name: "CRM Category.crm"          , idx: "" }
 ];
 
 /*
@@ -107,7 +107,7 @@ function _init(){
 					boardsPath = path.join(thisKEEEXED_PATH, '/boards/');
 					fs.mkdir(boardsPath , function(error){
 						if(error && error.code != 'EEXIST')
-							console.log("Creating folder error", error);
+							console.error("Creating folder error", error);
 					});
 					callback(null);
 				});
@@ -132,7 +132,7 @@ function _init(){
 			function loadContacts(callback){
 				kxapi.getUsers(null, function(error, data){
 					if(error)
-						console.log("getting contacts error:", error);
+						console.error("getting contacts error:", error);
 					var contactObj = {};
 					for (var i = 0; i < data.length; i++) {
 						if(data[i].state == "ACCEPTED"){
@@ -159,7 +159,7 @@ function _init(){
 			}
 		], function initSeries(error){
 			if(error)
-				console.log('Init series error', error);
+				console.error('Init series error', error);
 			logDisplay('KeeeX Cards ready');
 		});
 	});
@@ -745,9 +745,9 @@ function createConcept(){
 		var data = $(this).serializeFormJSON();
 		$("#crTagName").val("");
 		$("#crTagDesc").val("");
-		if((data.name !="") && (data.name.length >1)){
+		if (data.name !== "" && data.name.length > 1) {
 			kxapi.generateFile(data.name, data.description, null, function(error, filePath){
-				if(error){
+				if (error) {
 					logDisplay("Generate file error: "+error);
 					return;
 				}
@@ -787,7 +787,7 @@ function createTopic(columnNumber, topicName, topicDescription, toShareIds){
 	var columnTopics = columnsNameArray[columnNumber].columnSearchTopics.idx.slice(0);
 	columnTopics.push(keeexMsgTypeIdx);
 
-	if((topicName !="") && (topicName.length >1)){
+	if (topicName !== "" && topicName.length > 1) {
 		kxapi.generateFile(topicName, topicDescription, null, function(error, filePath){
 			if(error){
 				logDisplay("Generate file error: "+error);
@@ -834,7 +834,7 @@ function createTopic(columnNumber, topicName, topicDescription, toShareIds){
 					callback(null);
 				}
 			], function(error) {
-				console.log(error);
+				console.error(error);
 			});
 		});
 	}
@@ -951,7 +951,7 @@ function loadBoards(){
 //Verify file
 function readLoadedBoard(flag){
 	filePath = savedBoardsArray[flag].path;
-	if(filePath !="" && filePath.length > 1){
+	if (filePath !== "" && filePath.length > 1) {
 
 		fs.open(filePath, 'r', function(error, fd){
 			if(error)
@@ -1036,7 +1036,7 @@ function drop(ev) {
 	}
 	if(upForm.css('display') != 'none'){
 		$('#'+ev.toElement.id).tagit('createTag', conceptVal);
-		var columnName = upColumn.parent().parent().parent().attr('id');
+		let columnName = upColumn.parent().parent().parent().attr('id');
 		columnIndex =  Number((ev.toElement.id).replace("formTags", ''));
 	}
 	else{
@@ -1044,7 +1044,7 @@ function drop(ev) {
 		upForm.css('display', 'block');
 		upColumn.css('background-color', '#F0F0F0');
 		upForm.find('ul').tagit('createTag', conceptVal);
-		var columnName = upColumn.parent().attr('id');
+		let columnName = upColumn.parent().attr('id');
 		columnIndex =  Number(targetId.replace("columnUp", ''));
 	}
 	// push tag value in search array
@@ -1078,7 +1078,7 @@ function clicksOrKeyEvent(){
 	$(".search").keyup(function () {
 		var searchTerm = $(".search").val();
 		var listItem = $('.results tbody').children('tr');
-		var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+		var searchSplit = searchTerm.replace(/ /g, "'):containsi('");
 
 		$.extend($.expr[':'], {'containsi': function(elem, i, match, array){
 			return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
