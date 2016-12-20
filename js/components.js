@@ -95,9 +95,9 @@ function generateColumnItem(column, tile, first) {
  */
 function generateAddColumnItem(column) {
 	/* Actions */
-	$('#itemInput'+column.id+'-x').focus();
+	$(`#itemInput${column.id}-x`).focus();
 	$('#shareWithBtn'+column.id).click(function(e){
-		$(this).popover('show');
+		//$(this).popover('show');
 	});
 	$(".addItemCancelWrapper").click(function(e){
 		$(this).parent().parent().css('display', 'none');
@@ -133,10 +133,8 @@ function generateColumn(columnNumber, columnTitle) {
 
 	// generate grid before generating column
 	dom.generateGrid(column.id);
-	//$("#divGrid"+column.id).append(divColumn);
 	const domColumn = dom.generateColumn(column);
-	$("#divGrid"+column.id).append(domColumn);
-	// TODO remove the grid it's useless, imply css modification
+	$(`#divGrid${column.id}`).append(domColumn);
 
 	/*------------------------------ Actions/Events ----------------------------*/
 	/*
@@ -192,18 +190,20 @@ function generateColumn(columnNumber, columnTitle) {
 		e.preventDefault();
 	});
 
-	$("#colInput" + column.id).click((e) => {
+	// validate form by clickig button
+	$(`#colInput${column.id}`).click((e) => {
 		e.preventDefault();
-		$("#columnUp" + column.id).prepend($("#columnUpTitle" + column.id));
+		$(`#columnUp${column.id}`).prepend($(`#columnUpTitle${column.id}`));
 		onSubmitSearch(column);
 	});
 
-	//Edit column
-	$("#columnUpRightIcon2Wrapper" + column.id).click((e) => {
+	// Edit column
+	$(`#columnUpRightIcon2Wrapper${column.id}`).click((e) => {
 		dom.showColumnEdit(column);
 	});
 
-	$("#columnUpTitleInput"+columnNumber).keyup(function(e){
+	// change title by pressing enter
+	$(`#columnUpTitleInput${column.id}`).keyup(function(e){
 		if (e.which == 13) {
 			titleChange(column);
 		}
@@ -227,7 +227,7 @@ function generateColumn(columnNumber, columnTitle) {
 	});
 
 	/*Apply sortable*/
-	$('#columnMiddleUl' + column.id).sortable({
+	$(`#columnMiddleUl${column.id}`).sortable({
 		connectWith: ".columnMiddleUl",
 		handle: ".itemLiWrapper, .itemWrapper",
 		placeholder: "sortablePlaceholder",
@@ -246,8 +246,8 @@ function generateColumn(columnNumber, columnTitle) {
 			const guenuineItem = oldColumn.listedTopics[oldItemNumb];
 
 			//Change itemId
-			$('#' + itemId).attr('id', 'itemLiWrapper' + newColumnId + '-' + newItemNumb);
-			$('#item' + oldColumnId + '-' + oldItemNumb)
+			$('#' + itemId).attr('id', `itemLiWrapper${newColumnId}-${newItemNumb}`);
+			$(`#item${oldColumnId}-${oldItemNumb}`)
 				.attr('id', 'item' + newColumnId + '-' + newItemNumb);
 			//push
 			newColumn.listedTopics.push(guenuineItem);
@@ -279,7 +279,7 @@ function generateColumn(columnNumber, columnTitle) {
  *
  */
 function addNewColumn() {
-	generateColumn(columnsArrayIndex, "column"+columnsArrayIndex);
+	generateColumn(columnsArrayIndex, `column${columnsArrayIndex}`);
 	$(".columnUpRightIconWrapper").css('display', 'inline');
 	$(".columnUpRightIcon2Wrapper").css('display', 'inline');
 }
@@ -307,19 +307,6 @@ function onSubmitSearch(column) {
 	titleChange(column);
 }
 
-/**
- * Function to handle columnUp right icon event
- *
- * @param {Integer} column number
- */
-function columnUpRightIconEvent(columnNumber){
-	$('#item'+columnNumber+'-x').css('display', 'block');
-	$('[data-toggle="popover"]').popover({
-		content: $('#contactsArea').html(),
-		html: true
-	});
-}
-
 /* Editing
  ***************************************************************************
  */
@@ -328,10 +315,7 @@ function columnUpRightIconEvent(columnNumber){
  * Function used by titleEditRoutine
  */
 function titleChange(column) {
-	const newTitle = $("#columnUpTitleInput" + column.id).val();
-	//var that = obj;
-	console.log(column);
-	console.log(newTitle);
+	const newTitle = $(`#columnUpTitleInput${column.id}`).val();
 
 	if (newTitle !== "" && newTitle != column.name) {
 		//Update array

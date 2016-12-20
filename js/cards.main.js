@@ -463,7 +463,6 @@ function restoreBoard(columnsArray) {
 	if (columnsArray[0].hasOwnProperty("columnSearchTopics")) {
 		logDisplay("Old board detected, converting to new format");
 		columnsArray = columnsArray.map((e) => {
-			//var tmp = Object.assign({}, e);
 			if (e.hasOwnProperty("columnSearchTopics")) {
 				e.topics = e.columnSearchTopics;
 				delete e.columnSearchTopics;
@@ -787,7 +786,7 @@ function drop(ev) {
  ***************************
  *******************************/
 
-function clicksOrKeyEvent(){
+function clicksOrKeyEvent() {
 	$(".search").keyup(function () {
 		var searchTerm = $(".search").val();
 		var listItem = $('.results tbody').children('tr');
