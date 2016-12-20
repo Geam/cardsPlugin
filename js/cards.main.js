@@ -69,7 +69,7 @@ var boardToLoadFlag = null;
 var	negToken = 0;	//To make tag appear negated in columnUpSearchForm
 
 /* predefined tags and their idx */
-var predefinedTags2 = {
+var predefinedTags = {
 	"Prospect.crm": "",
 	"Lead.crm": "",
 	"Opportunity.crm": "",
@@ -84,22 +84,6 @@ var predefinedTags2 = {
 	"Board Category.scrum": "",
 	"CRM Category.crm": ""
 };
-
-var predefinedTags = [
-	{ name: "Prospect.crm"              , idx: "" },
-	{ name: "Lead.crm"                  , idx: "" },
-	{ name: "Opportunity.crm"           , idx: "" },
-	{ name: "In progress.crm"           , idx: "" },
-	{ name: "Won.crm"                   , idx: "" },
-	{ name: "Abandoned.crm"             , idx: "" },
-	{ name: "Todo.scrum"                , idx: "" },
-	{ name: "Feature.scrum"             , idx: "" },
-	{ name: "Bug report.scrum"          , idx: "" },
-	{ name: "Wait for validation.scrum" , idx: "" },
-	{ name: "Done.scrum"                , idx: "" },
-	{ name: "Board Category.scrum"      , idx: "" },
-	{ name: "CRM Category.crm"          , idx: "" }
-];
 
 /*
 ####################-End of data structure declarations-####################
@@ -130,11 +114,11 @@ function _init() {
 	.then(() => {
 		rootPath = path.dirname(utils.getDirName());
 		//console.log(`rootPath: ${rootPath}`);
-		Object.keys(predefinedTags2).forEach((concept) => {
+		Object.keys(predefinedTags).forEach((concept) => {
 			//console.log(`verifying ${concept}`);
 			kxapiPromise.verify(`${rootPath}/sys_tags/${concept}`, {'import': true})
 			.then((verified) => {
-				predefinedTags2[concept] = verified.idx;
+				predefinedTags[concept] = verified.idx;
 			})
 			.catch((error) => {
 				logDisplay(error);
@@ -440,12 +424,12 @@ const displayBoardFromSearchParam = (searchParams) => {
 function scrum() {
 	resetDisplay(true);
 	const workTrackingList = [
-		{ "concept": "Todo"                , "idx": predefinedTags2["Todo.scrum"] || "" },
-		{ "concept": "Feature"             , "idx": predefinedTags2["Feature.scrum"] || "" },
-		{ "concept": "Bug Report"          , "idx": predefinedTags2["Bug Report.scrum"] || "" },
-		{ "concept": "In Progress"         , "idx": predefinedTags2["In Progress.scrum"] || "" },
-		{ "concept": "Wait for Validation" , "idx": predefinedTags2["Wait for Validation.scrum"] || "" },
-		{ "concept": "Done"                , "idx": predefinedTags2["Done.scrum"] || "" }
+		{ "concept": "Todo"                , "idx": predefinedTags["Todo.scrum"] || "" },
+		{ "concept": "Feature"             , "idx": predefinedTags["Feature.scrum"] || "" },
+		{ "concept": "Bug Report"          , "idx": predefinedTags["Bug Report.scrum"] || "" },
+		{ "concept": "In Progress"         , "idx": predefinedTags["In Progress.scrum"] || "" },
+		{ "concept": "Wait for Validation" , "idx": predefinedTags["Wait for Validation.scrum"] || "" },
+		{ "concept": "Done"                , "idx": predefinedTags["Done.scrum"] || "" }
 	];
 	displayBoardFromSearchParam(searchParamsArray(workTrackingList));
 }
@@ -457,12 +441,12 @@ function scrum() {
 function crm() {
 	resetDisplay(true);
 	const workTrackingList = [
-		{ "concept": ["Prospect"]    , "idx": [predefinedTags2["Prospect.crm"] || ""] },
-		{ "concept": ["Lead"]        , "idx": [predefinedTags2["Lead.crm"] || ""] },
-		{ "concept": ["Opportunity"] , "idx": [predefinedTags2["Opportunity.crm"] || ""] },
-		{ "concept": ["In progress"] , "idx": [predefinedTags2["In progress.crm"] || ""] },
-		{ "concept": ["Won"]         , "idx": [predefinedTags2["Won.crm"] || ""] },
-		{ "concept": ["Abandoned"]   , "idx": [predefinedTags2["Abandoned.crm"] || ""] }
+		{ "concept": ["Prospect"]    , "idx": [predefinedTags["Prospect.crm"] || ""] },
+		{ "concept": ["Lead"]        , "idx": [predefinedTags["Lead.crm"] || ""] },
+		{ "concept": ["Opportunity"] , "idx": [predefinedTags["Opportunity.crm"] || ""] },
+		{ "concept": ["In progress"] , "idx": [predefinedTags["In progress.crm"] || ""] },
+		{ "concept": ["Won"]         , "idx": [predefinedTags["Won.crm"] || ""] },
+		{ "concept": ["Abandoned"]   , "idx": [predefinedTags["Abandoned.crm"] || ""] }
 	];
 	displayBoardFromSearchParam(searchParamsArray(workTrackingList));
 }
