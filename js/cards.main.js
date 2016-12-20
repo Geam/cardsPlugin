@@ -330,7 +330,7 @@ const searchTags = (reload) => {
  */
 const addColumnContent = (column, topicsReturned) => {
 	topicsReturned.forEach((topic) => {
-		const topicObject = { "data": topic, 'author': '', 'shared': [] };
+		const topicObject = { "data": topic, 'author': {}, 'shared': [] };
 
 		kxapiPromise.getAuthorFromTopic(topicObject.data)
 			.then((author) => {
@@ -339,7 +339,7 @@ const addColumnContent = (column, topicsReturned) => {
 			})
 			.then(kxapiPromise.getUsersFromList)
 			.then((users) => {
-				topicObject.shared = users;
+				topicObject.shared = users || [];
 				topicObject.domId = `${column.id}-${column.nbItems}`;
 				generateColumnItem(column, topicObject, false);
 				column.nbItems += 1;
@@ -351,25 +351,30 @@ const addColumnContent = (column, topicsReturned) => {
 	});
 };
 
+const doSeach = (column) => {
+	kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
+		.then((topicsReturned) => {
+			sideContainerColumnsList(column.id, topicsReturned.length);
+			if (!topicsReturned.length) {
+				return logDisplay(`${column.name}: No topics returned!`);
+			}
+			addColumnContent(column, topicsReturned);
+		})
+		.catch((error) => {
+			logDisplay(`${error} on ${column.name}`);
+		});
+};
+
 /*
  * Search function used when forming board in custom mode
  */
-function  customSearchTopics(columnId) {
-	if(columnId <= -1){
+function customSearchTopics(columnId) {
+	if (columnId <= -1) {
 		return console.error("customSearchTopics: columnIndex error");
 	}
 
 	const column = columnsNameArray[columnId];
-
-	kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
-		.then((topicsReturned) => {
-			if(!topicsReturned.length){
-				return logDisplay(":/ No topics returned");
-			}
-			sideContainerColumnsList(column.id, topicsReturned.length);
-			addColumnContent(column, topicsReturned);
-		})
-		.catch(logDisplay);
+	doSeach(column);
 }
 /*--End of customSearchTopics--*/
 
@@ -397,18 +402,7 @@ const displayBoardFromSearchParam = (searchParams) => {
 		addTagToColumnUp(column.id, column.negtopics.concept, 1);
 		titleTooltipRoutine(column);
 
-		kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
-			.then((topicsReturned) => {
-				sideContainerColumnsList(column.id, topicsReturned.length);
-				if (!topicsReturned.length) {
-					logDisplay(`${eachOption.name}: No topicsReturned!`);
-				} else {
-					addColumnContent(column, topicsReturned);
-				}
-			})
-			.catch((error) => {
-				logDisplay(`${error} scrum on ${eachOption.name}`);
-			});
+		doSeach(column);
 	});
 
 	$('#mainContainer').css('display', 'block');
