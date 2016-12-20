@@ -28,6 +28,21 @@ module.exports = (window) => {
 		}
 	};
 
+	const addContentBeforeLastChild = (el, content) => {
+	if (typeof el === "string")
+			el = qs(el);
+		if (!(el instanceof Element)) { return; }
+		if (typeof content === "string") {
+			el.insertBefore(document.createTextNode(content), el.lastChild);
+		} else if (Array.isArray(content)) {
+			content.forEach((subContent) => {
+				addContentBeforeLastChild(el, subContent);
+			});
+		} else if (content instanceof Element) {
+			el.insertBefore(content, el.lastChild);
+		}
+	};
+
 	const newEl = (tag, attr, content) => {
 		var el = document.createElement(tag);
 		addAttribute(el, attr);
@@ -35,7 +50,7 @@ module.exports = (window) => {
 		return el;
 	};
 
-	const delEl = (el) => {
+	const delElContent = (el) => {
 		if (typeof el === "string")
 			el = qs(el);
 		if (el instanceof Element) {
@@ -59,10 +74,10 @@ module.exports = (window) => {
 	};
 
 	/* start: tile related function */
-	const returnSharedAvatar = (domId, user, i) => {
+	const returnSharedAvatar = (user, i) => {
 		return newEl("li", { "id": `sharedListLi${i}`, "class": "sharedListLi" },
 			newEl("a", {
-				"id": `sharedListImgLink${domId}-${i}`, "class": "sharedListImgLink",
+				"class": "sharedListImgLink",
 				"data-toggle": "tooltip", "data-placement": "bottom", "data-html": "true",
 				"title": user.name, "href": "#"
 			},
@@ -72,15 +87,28 @@ module.exports = (window) => {
 	};
 
 	const returnSharedList = (tile) => {
-		var list = tile.shared.map((user, i) => returnSharedAvatar(tile.domId, user, i));
-		// TODO add sharing option
+		var list = tile.shared.map((user, i) => returnSharedAvatar(user, i));
 		list.push(newEl("li", { "class": "sharedListLi" },
 			newEl("button", {
-				"id": `addShare${tile.domId}`, "class": "shareWithBtn btn-primary", "data-toggle": "popover",
-				"data-placement": "right", "data-trigger": "focus",
-			}, "Share")
+				"id": `addShare${tile.domId}`, "class": "shareWithBtn addItemContact btn-primary",
+				"data-toggle": "popover", "data-placement": "auto bottom", "data-trigger": "focus",
+			},
+				newEl("span", { "class": "glyphicon glyphicon-plus" })
+			)
 		));
 		return list;
+	};
+
+	const returnTileFooter = (tile) => {
+		return newEl("div", {
+			"id": `tileCtrlDiv${tile.domId}`, "style": "display: none"
+		}, [
+			newEl("hr", { "style": "margin: 5px 0" }),
+			newEl("div", {}, [
+				newEl("button", { "id": `tileAddContactValidate${tile.domId}` }, "Add"),
+				newEl("button", { "id": `tileAddContactCancel${tile.domId}` }, "Cancel")
+			])
+		]);
 	};
 
 	const returnTileAuthor = (tile) => {
@@ -95,11 +123,12 @@ module.exports = (window) => {
 	const returnTileContent = (tile, desc) => {
 		return newEl("div", { "class": "itemContent" }, [
 			newEl("p", {}, desc),
-			newEl("div", { "id": `itemFooter${tile.domId}`, "class": "itemFooter" },
+			newEl("div", { "id": `itemFooter${tile.domId}`, "class": "itemFooter" }, [
 				newEl("ul", { "id": `sharedList${tile.domId}`, "class": "sharedList" },
 					returnSharedList(tile)
-				)
-			)
+				),
+				returnTileFooter(tile)
+			])
 		]);
 	};
 	/* end: tile related function */
@@ -199,8 +228,9 @@ module.exports = (window) => {
 		"searchParentByClass": searchParentByClass,
 
 		"generateContactList": (contactList) => {
-			addContent("#contactList", contactList.map((e, i) => {
-				return newEl("li", { "id": `contact${i}`, "class": "contactLi" }, [
+			delElContent("#contactList");
+			addContent("#contactList", contactList.map((e) => {
+				return newEl("li", { "id": `contact${e.profileIdx}`, "class": "contactLi" }, [
 					newEl("img", { "class": "contactAvatar", "src": `file:///${e.avatar}`}),
 					newEl("span", { "class": "contactName"}, e.name)
 				]);
@@ -221,7 +251,7 @@ module.exports = (window) => {
 			const domTile = newEl("li", {
 				"id": `itemLiWrapper${tile.domId}`, "class": "itemLiWrapper"
 			},
-				newEl("div", { "id": `item${tile.domId}`, "class": "itemWrapper"}, [
+				newEl("div", { "id": `item${tile.domId}`, "class": "itemWrapper" }, [
 					returnTileAuthor(tile),
 					returnTileContent(tile, desc)
 				])
@@ -267,6 +297,38 @@ module.exports = (window) => {
 			qs(`#columnUpRightIcon2Wrapper${column.id}`).style.display = "inline";
 			qs(`#columnUpTitle${column.id}`).style.backgroundColor = "#C0C0C0";
 			qs(`#columnUpTitleInput${column.id}`).style.display = "none";
+		},
+
+		"tileShowAddShare": (tile) => {
+			qs(`#tileCtrlDiv${tile.domId}`).style.display = "";
+		},
+
+		"tileHideAddShare": (tile) => {
+			qs(`#tileCtrlDiv${tile.domId}`).style.display = "none";
+			const ulLst = qs(`#sharedList${tile.domId}`);
+			const liBtn = qs(`#addShare${tile.domId}`).parentNode;
+			while (ulLst.lastChild !== liBtn) {
+				ulLst.removeChild(ulLst.lastChild);
+			}
+		},
+
+		"addShare": (target, contact, beforeLast) => {
+			if (typeof target === "string")
+				target = qs(target);
+			if (!(target instanceof Element)) { return; }
+
+			var nbChild = target.childElementCount;
+			if (nbChild && target.lastChild.childNodes[0].classList.contains("shareWithBtn"))
+				nbChild--;
+			const newContact = (Array.isArray(contact)) ?
+				contact.map((e, i) => returnSharedAvatar(e, i + nbChild)) :
+				returnSharedAvatar(contact, nbChild);
+
+			if (beforeLast) {
+				addContentBeforeLastChild(target, newContact);
+			} else {
+				addContent(target, newContact);
+			}
 		},
 	};
 };

@@ -57,6 +57,7 @@ var columnsNameArray = [];
 var conceptsIdxArray = [];
 var contactList = [];
 var columnsArrayIndex = 0;
+var addSharing = {};
 var currentUser = {};
 var maxToUpload; //Set the maximum content to upload in one call of search api
 
@@ -147,7 +148,7 @@ function _init() {
 		$('#pageContainer').css('display', 'block');
 		logDisplay('KeeeX Cards ready');
 	})
-	.catch(console.log);
+	.catch(console.error);
 }
 
 /*
@@ -329,6 +330,16 @@ const searchTags = (reload) => {
  * Add content to column
  */
 const addColumnContent = (column, topicsReturned) => {
+	// get location of the topics, doesn't need to have the data when building
+	// the board hence the tile creation not in the "then"
+	kxapiPromise.getLocations(topicsReturned.map((topic) => topic.idx))
+		.then((locations) => {
+			topicsReturned.forEach((topic) => {
+				let topicResp = locations.find((e) => e.idx = topic.idx);
+				topic.location = topicResp ? topicResp.location : [""];
+			});
+		});
+
 	topicsReturned.forEach((topic) => {
 		const topicObject = { "data": topic, 'author': {}, 'shared': [] };
 
@@ -566,8 +577,7 @@ function createConcept(){
 /*
  * Function to create new topic/file from column
  */
-function createTopic(columnNumber, topicName, topicDescription, toShareIds){
-	const column = columnsNameArray[columnNumber];
+function createTopic(column, topicName, topicDescription) {
 	var columnTopics = column.topics.idx.slice(0);
 	columnTopics.push(keeexMsgTypeIdx);
 
@@ -575,16 +585,26 @@ function createTopic(columnNumber, topicName, topicDescription, toShareIds){
 
 	createAndKeeex({ "name": topicName, "description": topicDescription, "ref": columnTopics })
 		.then((keeexedFile) => {
-			if (toShareIds && toShareIds.length > 0) {
-				const shareIdxList = toShareIds.map((e) => e.profileIdx);
-				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path, toShareIds);
-			}
 			const tile = {
 				"data": keeexedFile.topic,
 				"domId": `${column.id}-${column.nbItems}`,
 				"author": currentUser,
-				"shared": toShareIds || []
+				"shared": []
 			};
+
+			// share with other users if needed
+			if (addSharing.users.length > 0) {
+				const userList = addSharing.users;
+				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path,
+						addSharing.users.map(e => e.profileIdx))
+					.then((sharedFile) => {
+						tile.shared = userList;
+						dom.addShare(`#sharedList${tile.domId}`, userList, true);
+					})
+					.catch(console.error);
+			}
+
+			// display the tile
 			generateColumnItem(column, tile, true);
 			column.nbItems++;
 			logDisplay("Topic created !");
@@ -787,16 +807,20 @@ function clicksOrKeyEvent(){
 
 	//Listener on contact list elements when sharing
 	$(document).on("click", ".contactLi", function(e) {
-		var columnId = (e.originalEvent.path[5].id).split('-')[0].replace('item', '');
-		var contactId = Number((e.toElement.parentNode.id).replace('contact', ''));
-		console.log("clicked");
-		if(!isNaN(contactId)){
-			var data = contactList[contactId];
-			var av = addSharedAvatars(columnId, data, contactId);
-			$(av).addClass("addShare");
-			$('.addItemShareList').append(av);
-			shareBtnClicked = -1;
+		const target = dom.searchParentByClass(e.toElement, "contactLi");
+		const contactIdx = (target.id).replace('contact', '');
+		contact = contactList.find(e => e.profileIdx === contactIdx);
+		if (! contact) return console.error("No contact matching selection");
+
+		// if already shared with contact or already in sharing process do nothing
+		if (addSharing.tile &&
+			addSharing.tile.shared.find(e => e.profileIdx === contact.profileIdx) ||
+			addSharing.users.find(e => e.profileIdx === contact.profileIdx)) {
+			return ;
 		}
+
+		dom.addShare(addSharing.target, contact);
+		addSharing.users.push(contact);
 	});
 }
 

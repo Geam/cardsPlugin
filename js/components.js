@@ -39,16 +39,59 @@ function generateColumnItem(column, tile, first) {
 		itemInfo(tile.data);
 	});
 	$(domTile).find('[data-toggle="tooltip"]').tooltip({ "container": "body" });
-	$(domTile).find("#addShare" + tile.domId).popover({
+
+	const addShare = $(domTile).find(`#addShare${tile.domId}`);
+
+	// init contact list
+	addShare.popover({
 		content: $('#contactsArea').html(),
 		html: true
+	});
+
+	// display tile ctrl div
+	addShare.click((e) => {
+		if (tile === addSharing.tile) {
+			return ;
+		} else if (addSharing.tile) {
+			dom.tileHideAddShare(addSharing.tile);
+		}
+		dom.tileShowAddShare(tile);
+		addSharing = {
+			column,
+			tile,
+			users: [],
+			target: dom.qs(`#sharedList${tile.domId}`),
+		};
+	});
+
+	// validate sharing
+	$(`#tileAddContactValidate${tile.domId}`).click((e) => {
+		dom.tileHideAddShare(tile);
+		const userList = addSharing.users;
+		const target = addSharing.target;
+		addSharing = {};
+		kxapiPromise.share(tile.data.idx, tile.data.location[0],
+				userList.map((e) => e.profileIdx), {})
+			.then((sharedAnswer) => {
+				userList.forEach((user) => {
+					tile.shared.push(user);
+					dom.addShare(target, user, true);
+				});
+			})
+			.catch(console.error);
+	});
+
+	// cancel sharing
+	$(`#tileAddContactCancel${tile.domId}`).click((e) => {
+		dom.tileHideAddShare(tile);
+		addSharing = {};
 	});
 }
 
 /**
  * Function for genarating column element manually
  *
- * @param {Integer} column number
+ * @param {Object} column
  */
 function generateAddColumnItem(column) {
 	/* Actions */
@@ -60,17 +103,9 @@ function generateAddColumnItem(column) {
 		$(this).parent().parent().css('display', 'none');
 	});
 	$(".addItemBtn").click(function(e) {
-		var topicName = $('#itemInput'+column.id).val();
-		var topicDescription = $('#itemTextarea'+column.id).val();
-		var liIds=[];
-		$('.addShare').each(function(){
-			var liId = Number($(this).attr('id').replace('sharedListLi', ''));
-			if(contactList[liId] && (liIds.indexOf(contactList[liId])<= -1)){
-				liIds.push(contactList[liId]);
-				$(this).remove();
-			}
-		});
-		createTopic(column.id, topicName, topicDescription, liIds);
+		const topicName = $(`#itemInput${column.id}`).val();
+		const topicDescription = $('#itemTextarea'+column.id).val();
+		createTopic(column, topicName, topicDescription);
 	});
 }
 
@@ -174,9 +209,21 @@ function generateColumn(columnNumber, columnTitle) {
 		}
 	});
 
-	//Add item
-	$("#columnUpRightIconWrapper" + column.id).click((e) => {
-		columnUpRightIconEvent(column.id);
+	// init popover contact list
+	$(`#shareWithBtn${column.id}`).popover({
+		content: $('#contactsArea').html(),
+		html: true
+	});
+
+	// Clicking on column + to add topic
+	$(`#columnUpRightIconWrapper${column.id}`).click((e) => {
+		$(`#item${column.id}-x`).css('display', 'block');
+		if (addSharing.tile) dom.tileHideAddShare(addSharing.tile);
+		addSharing = {
+			column,
+			users: [],
+			target: dom.qs(`#addItemShareList${column.id}`)
+		};
 	});
 
 	/*Apply sortable*/
