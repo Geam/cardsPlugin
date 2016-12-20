@@ -63,7 +63,7 @@ var boardsPath;
 
 /***Flag***/
 var newDrop;
-var boardToLoadFlag;
+var boardToLoadFlag = null;
 var	negToken = 0;	//To make tag appear negated in columnUpSearchForm
 
 /* predefined tags and their idx */
@@ -103,12 +103,60 @@ var predefinedTags = [
 ####################-End of data structure declarations-####################
 */
 
+/* wrapping keeex api in promise */
+const getMine = () => {
+	return new Promise((resolve, reject) => {
+		kxapi.getMine((error, profile) => {
+			if (error) reject(`getMine error: ${error}`);
+			resolve(profile);
+		});
+	});
+};
+
+const searchTopics = (topics, negTopics, searchContentType) => {
+	return new Promise((resolve, reject) => {
+		kxapi.search("", topics, negTopics, null, maxToUpload, searchContentType.theObject, function(error, topicsReturned){
+			if (error) reject(`search error: ${error}`);
+			resolve(topicsReturned);
+		});
+	});
+};
+
+const getAuthorFromTopic = (topic) => {
+	return new Promise((resolve, reject) => {
+		kxapi.getAuthor(topic.idx, (error, author) => {
+			if (error) reject(`getAuthorFromTopicIdx error: ${error}`);
+			resolve(author);
+		});
+	});
+};
+
+const getSharedFromTopic = (topic) => {
+	return new Promise((resolve, reject) => {
+		kxapi.getShared(topic.idx, (error, sharedList) => {
+			if (error) reject(`getSharedFromTopicIdx error: ${error}`);
+			resolve(sharedList);
+		});
+	});
+};
+
+const getUsersFromList = (sharedList) => {
+	return new Promise((resolve, reject) => {
+		if (!sharedList || !sharedList.shared || sharedList.shared.length < 1) resolve(null);
+		kxapi.getUsers(sharedList.shared, (error, users) => {
+			if (error) reject(`getUsersFromList error: ${error}`);
+			resolve(users);
+		});
+	});
+};
+/* / wrapping keeex api in promise */
+
 /****************************
 		Init function
  ***********************
  ****************************/
 function _init(){
-	kxapi.getToken("Keeex cards", function(error, tok){
+	kxapi.getToken("Keeex cards", function(error, tok) {
 		if (error)
 			return console.log(error);
 
@@ -168,7 +216,7 @@ function _init(){
 			},
 			function interfaceEarly(callback){
 				displayCurrentProfileAvatar();
-				searchTags(0);
+				searchTags();
 				saveBoardPopover();
 				clicksOrKeyEvent();
 				$('[data-toggle="tooltip"]').tooltip();
@@ -211,7 +259,7 @@ function _init(){
 })(jQuery);
 
 const searchContentType = (type) => {
-	const validOpt = [ "document", "description", "discussion", "comment", "agreed", "older_version" ];
+	const validOpt = [ "document", "description", "discussion", "comment", "agreed", "older_version", "concept" ];
 	if (type === null || type === "" || validOpt.indexOf(type) == -1) {
 		return {
 			"theObject": {
@@ -233,31 +281,27 @@ const searchContentType = (type) => {
 	return option;
 };
 
-function traverseJSONArray(theArray, key, val, retKey){
+const traverseJSONArray = (theArray, key, val, retKey) => {
 	return theArray.reduce((prev, cur) => {
 		if (cur[key] === val) {
 			return cur[retKey];
 		}
 		return prev;
 	}, "");
-}
+};
 
-function setJSONArray(theArray, name, val){
-	var e = theArray.find((e) => { return e.name === name; });
+const setJSONArray = (theArray, name, val) => {
+	let e = theArray.find((e) => { return e.name === name; });
 	if (e) {
 		e.idx = val;
 	}
-}
+};
 
-function sortByKey(array, key) {
-	return array.sort(function(a, b) {
-		var x = a[key]; var y = b[key];
-		return (x.toLowerCase() < y.toLowerCase()) ? -1:
-			(x.toLowerCase() > y.toLowerCase()) ? 1:0;
-	});
-}
+const sortByKey = (array, key) => {
+	return array.sort((a, b) => a[key].toLowerCase().localeCompare(b[key].toLowerCase()));
+};
 
-function columnNegTags(array, cur, key1, key2){
+const columnNegTags = (array, cur, key1, key2) => {
 	return array.filter((e) => {
 		if (e === cur)
 			return false;
@@ -267,77 +311,56 @@ function columnNegTags(array, cur, key1, key2){
 		prev.concept.push(cur[key2]);
 		return prev;
 	}, {'idx': [], 'concept': []});
-}
+};
 
-function searchParamsArray(array){
+const searchParamsArray = (array) => {
 	return array.map((e) => {
 		return {
-			'columnSearchTopics': { "idx": [e.idx], "concept": [e.concept] },
-			'columnSearchNegTopics': columnNegTags(array, e, "idx", "concept")
+			'topics': { "idx": [e.idx], "concept": [e.concept] },
+			'negtopics': columnNegTags(array, e, "idx", "concept")
 		};
 	});
-}
+};
 
-function cloneColumnsArray(){
+const cloneColumnsArray = () => {
 	return columnsNameArray.map((e, i) => {
 		return {
 			'name': e.name,
 			'columnsNumber': i,
-			'columnSearchTopics': e.columnSearchTopics,
-			'columnSearchNegTopics': e.columnSearchNegTopics
+			'topics': e.topics,
+			'negtopics': e.negtopics
 		};
 	});
-}
+};
 
 function displayCurrentProfileAvatar(){
-	kxapi.getMine(function(error, profile){
-		if(error)
-			return logDisplay("getMine error");
-		var profilName = ((profile.name).split(' '));
-		//Display in main interface
-		currentProfileAvatar = profile.avatar;
-		$('#mainBarAvatarImg').attr('src', profile.avatar);
-		$('#mainBarProfileName').text(''+profilName[0]);
-		logDisplay("Current user"+": "+profilName[0] +' '+profilName[1]);
-	});
+	getMine()
+		.then((profile) => {
+			currentProfileAvatar = profile.avatar;
+			$('#mainBarAvatarImg').attr('src', profile.avatar);
+			$('#mainBarProfileName').text(''+profile.name.split(' ')[0]);
+			logDisplay(`Current user: ${profile.name}`);
+		})
+		.catch(logDisplay);
 }
 
-function sharedListAvatars(idx, callback){
-	kxapi.getShared(idx, function(error, lists){
-		if(error){
-			logDisplay("getShared error: " + error);
-		}
-		if(lists && lists.shared.length >0){
-			kxapi.getUsers(lists.shared, function(error, users){
-				if(error)
-					logDisplay("Getting users error: "+error);
-				else{
-					callback(users);
-				}
-			});
-		}else{
-			callback(null);
-		}
-	});
-}
-
-function resetDisplay(tmp){
+function resetDisplay(empty) {
 	//Reset flags
 	newDrop = -1;
-	boardToLoadFlag;
+	boardToLoadFlag = null;
 	negToken = 0;
 	// Reset arrays
 	columnsNameArray = [];
 	columnsArrayIndex = 0;
 	//Clear tags & re-generate
 	$('#concepts').empty();
-	searchTags(0);
+	searchTags();
 	$('#conceptBar').css('display', 'block');
 	$('#concepts').css('display', 'inline-block');
 	$(".mainBarSubmitBtn").attr('disabled', false);
 	//Empty mainContainer
 	clearComponents();
-	if(!tmp){
+	if (!empty) {
 		//Generate first column
 		generateColumn(0, "column0");
 	}
@@ -358,66 +381,29 @@ function resetDisplay(tmp){
 /*
  * Loads all tags and displays them
  */
-function searchTags(tmp){
-	kxapi.search("", [conceptTypeIdx], [], null, null, {"concept":true}, function(error, conceptsReturned){
-		if (error)
-			return logDisplay("Get concepts error");
-		conceptsIdxArray = conceptsReturned.map((e) => {
-			return {
-				'name': e.name,
-				'idx': e.idx
-			};
+const searchTags = (reload) => {
+	searchTopics([conceptTypeIdx], [], searchContentType("concept"))
+		.then((conceptsReturned) => {
+			conceptsIdxArray = conceptsReturned.map((e) => {
+				return {
+					'name': e.name,
+					'idx': e.idx
+				};
+			});
+			conceptsIdxArray = sortByKey(conceptsIdxArray, 'name');
+			conceptsIdxArray.forEach((e, i) => {
+				displayConcepts(e.name, i);
+				if (e.name === "")
+					$("#cncpt"+i).css('display', 'none');
+			});
+			if(reload)
+				logDisplay("Concepts reloaded");
+		})
+		.catch((error) => {
+			logDisplay("Get concepts error");
 		});
-		conceptsIdxArray = sortByKey(conceptsIdxArray, 'name');
-		conceptsIdxArray.forEach((e, i) => {
-			displayConcepts(e.name, i);
-			if (e.name === "")
-				$("#cncpt"+i).css('display', 'none');
-		});
-		if(tmp)
-			logDisplay("Concepts reloaded");
-	});
-}
+};
 /*--End of searchTags--*/
-
-/* wrapping keeex api in promise */
-const searchTopics = (topics, negTopics, searchContentType) => {
-	return new Promise((resolve, reject) => {
-		kxapi.search("", topics, negTopics, null, maxToUpload, searchContentType.theObject, function(error, topicsReturned){
-			if (error) reject(`search error: ${error}`);
-			resolve(topicsReturned);
-		});
-	});
-};
-
-const getAuthorFromTopic = (topic) => {
-	return new Promise((resolve, reject) => {
-		kxapi.getAuthor(topic.idx, (error, author) => {
-			if (error) reject(`getAuthorFromTopicIdx error: ${error}`);
-			resolve(author);
-		});
-	});
-};
-
-const getSharedFromTopic = (topic) => {
-	return new Promise((resolve, reject) => {
-		kxapi.getShared(topic.idx, (error, sharedList) => {
-			if (error) reject(`getSharedFromTopicIdx error: ${error}`);
-			resolve(sharedList);
-		});
-	});
-};
-
-const getUsersFromList = (sharedList) => {
-	return new Promise((resolve, reject) => {
-		if (!sharedList || !sharedList.shared || sharedList.shared.length < 1) resolve(null);
-		kxapi.getUsers(sharedList.shared, (error, users) => {
-			if (error) reject(`getUsersFromList error: ${error}`);
-			resolve(users);
-		});
-	});
-};
-/* / wrapping keeex api in promise */
 
 /*
  * Add content to column
@@ -435,7 +421,7 @@ const addColumnContent = (column, topicsReturned) => {
 			.then(getUsersFromList)
 			.then((users) => {
 				topicObject.shared = users;
-				generateColumnItem(column.columnNumber, column.nbItems, topicObject, 0);
+				generateColumnItem(column, column.nbItems, topicObject, 0);
 				column.nbItems += 1;
 			})
 			.catch(logDisplay);
@@ -448,14 +434,14 @@ const addColumnContent = (column, topicsReturned) => {
 /*
  * Search function used when forming board in custom mode
  */
-function  customSearchTopics(columnId){
+function  customSearchTopics(columnId) {
 	if(columnId <= -1){
 		return console.error("customSearchTopics: columnIndex error");
 	}
 
 	const column = columnsNameArray[columnId];
 
-	searchTopics(column.columnSearchTopics.idx, column.columnSearchNegtopics.idx, searchContentType())
+	searchTopics(column.topics.idx, column.negtopics.idx, searchContentType())
 		.then((topicsReturned) => {
 			if(!topicsReturned.length){
 				return logDisplay(":/ No topics returned");
@@ -471,28 +457,26 @@ const displayBoardFromSearchParam = (searchParams) => {
 	$('#mainContainer2').css('display', 'block');
 	$('#mainContainer').css('display', 'none');
 
-	var err = "";
-	searchParams.some((eachOption) => {
+	searchParams.forEach((eachOption) => {
 		if (!eachOption.name)
-			eachOption.name = eachOption.columnSearchTopics.concept[0];
+			eachOption.name = eachOption.topics.concept[0];
 
 		//Generate new column
-		generateColumn(columnsNameArray.length, eachOption.name);
-		const columnId = columnsNameArray.length - 1;
-		const column = columnsNameArray[columnId];
+		const columnId = columnsNameArray.length;
+		const column = generateColumn(columnId, eachOption.name);
 
-		column.columnSearchTopics = eachOption.columnSearchTopics;
-		if (eachOption.columnSearchNegTopics) {
-			column.columnSearchNegTopics = eachOption.columnSearchNegTopics;
+		column.topics = eachOption.topics;
+		if (eachOption.negtopics) {
+			column.negtopics = eachOption.negtopics;
 		} else {
-			column.columnSearchNegTopics = { "idx": [], "concept": [] };
+			column.negtopics = { "idx": [], "concept": [] };
 		}
 
-		addTagToColumnUp(column.columnNumber, column.columnSearchTopics.concept, 0);
-		addTagToColumnUp(column.columnNumber, column.columnSearchNegTopics.concept, 1);
-		titleTooltipRoutine(column.columnNumber);
+		addTagToColumnUp(column.id, column.topics.concept, 0);
+		addTagToColumnUp(column.id, column.negtopics.concept, 1);
+		titleTooltipRoutine(column);
 
-		searchTopics(column.columnSearchTopics.idx, column.columnSearchNegTopics.idx, searchContentType())
+		searchTopics(column.topics.idx, column.negtopics.idx, searchContentType())
 			.then((topicsReturned) => {
 				if (!topicsReturned.length) {
 					logDisplay(`${eachOption.name}: No topicsReturned!`);
@@ -501,14 +485,10 @@ const displayBoardFromSearchParam = (searchParams) => {
 				}
 			})
 			.catch((error) => {
-				logDisplay(`error on search: ${eachOption.name}`);
-				err = error;
-				return true;
+				logDisplay(`${error} scrum on ${eachOption.name}`);
 			});
 	});
 
-	if (err !== "")
-		console.error("scrum error: ", error);
 	$('#mainContainer').css('display', 'block');
 	$('#mainContainer2').css('display', 'none');
 	$('#mainContainer').animate({scrollLeft: $('#mainContainer').get(0).scrollWidth}, 1000);
@@ -520,8 +500,8 @@ const displayBoardFromSearchParam = (searchParams) => {
 /*
  * Search function used in scrum mode
  */
-function scrum(){
-	resetDisplay(1);
+function scrum() {
+	resetDisplay(true);
 	const workTrackingList = [
 		{ "concept": "Todo"                , "idx": predefinedTags2["Todo.scrum"] || "" },
 		{ "concept": "Feature"             , "idx": predefinedTags2["Feature.scrum"] || "" },
@@ -537,8 +517,8 @@ function scrum(){
 /*
  * Search function used in crm mode
  */
-function crm(){
-	resetDisplay(1);
+function crm() {
+	resetDisplay(true);
 	const workTrackingList = [
 		{ "concept": ["Prospect"]    , "idx": [predefinedTags2["Prospect.crm"] || ""] },
 		{ "concept": ["Lead"]        , "idx": [predefinedTags2["Lead.crm"] || ""] },
@@ -551,12 +531,11 @@ function crm(){
 }
 /*--End of crm--*/
 
-
 /*
  * Function used to restore a saved board
  */
-function restoreBoard(columnsArray){
-	resetDisplay(1);
+function restoreBoard(columnsArray) {
+	resetDisplay(true);
 	displayBoardFromSearchParam(columnsArray);
 }
 /*-- End of restoreBoard --*/
@@ -574,20 +553,18 @@ function restoreBoard(columnsArray){
  * Function used to add new reference to a topic
  */
 function addRefToTopic(theTopicIdx, theType, columnId){
-	var From;
+	var From = "";
 
 	//Get topic idx
-	if(theType == "reference" || theType == "version"){
+	if ([ "reference", "version" ].indexOf(theType) > -1) {
 		From = theTopicIdx;
 	}
-	else if(theType == "agreement"){
-		From = "";
-	}
-	else{
+	else if (theType !== "agreement") {
 		return logDisplay("Specify topic type");
 	}
+
 	//Get column topics
-	var topicsIdxs = columnsNameArray[columnId].columnSearchTopics.idx;
+	var topicsIdxs = columnsNameArray[columnId].topics.idx;
 
 	//Make sure theTopicIdx is not already referenced by one/all of topicsIdxs
 	kxapi.getRefs(theTopicIdx, function(error, theReferences) {
@@ -657,7 +634,7 @@ function createConcept(){
 						return;
 					}
 					logDisplay("Concept created ! ");
-					searchTags(1);
+					searchTags();
 				});
 			});
 		}
@@ -669,7 +646,8 @@ function createConcept(){
  * Function to create new topic/file from column
  */
 function createTopic(columnNumber, topicName, topicDescription, toShareIds){
-	var columnTopics = columnsNameArray[columnNumber].columnSearchTopics.idx.slice(0);
+	const column = columnsNameArray[columnNumber];
+	var columnTopics = column.topics.idx.slice(0);
 	columnTopics.push(keeexMsgTypeIdx);
 
 	if (topicName !== "" && topicName.length > 1) {
@@ -705,17 +683,17 @@ function createTopic(columnNumber, topicName, topicDescription, toShareIds){
 					shareTopic(keeexedFile.topic.idx, keeexedFile.path,  toShareIds, callback);
 				},
 				function crTpDisplay(callback) {
-					var columnItemNumber = columnsNameArray[columnNumber].nbItems;
+					var columnItemNumber = column.nbItems;
 					var columnItemData = {'data':keeexedFile.topic, 'avatar':currentProfileAvatar, 'shared':toShareIds};
-					generateColumnItem(columnNumber, columnItemNumber, columnItemData, 1);
-					columnsNameArray[columnNumber].nbItems +=1;
+					generateColumnItem(column, columnItemNumber, columnItemData, 1);
+					column.nbItems +=1;
 					logDisplay("Topic created ! ");
 					//Clean file lds
-					$('#itemTextarea'+columnNumber).val("");
-					$('#itemInput'+columnNumber).val("");
+					$('#itemTextarea'+column.id).val("");
+					$('#itemInput'+column.id).val("");
 					$('.addShare').remove();
 					//hide block
-					$('#item'+columnNumber+'-x').css('display', 'none');
+					$('#item'+column.id+'-x').css('display', 'none');
 					callback(null);
 				}
 			], function(error) {
@@ -938,14 +916,14 @@ function drop(ev) {
 		clearColumnElements(columnIndex, 1);
 	}
 	if(concept.hasClass('negTopic')){
-		if(columnsNameArray[columnIndex].columnSearchNegtopics.concept.indexOf(conceptVal) == -1){
-			columnsNameArray[columnIndex].columnSearchNegtopics.concept.push(conceptVal);
-			columnsNameArray[columnIndex].columnSearchNegtopics.idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
+		if(columnsNameArray[columnIndex].negtopics.concept.indexOf(conceptVal) == -1){
+			columnsNameArray[columnIndex].negtopics.concept.push(conceptVal);
+			columnsNameArray[columnIndex].negtopics.idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
 		}
 	}else{
-		if(columnsNameArray[columnIndex].columnSearchTopics.concept.indexOf(conceptVal) == -1){
-			columnsNameArray[columnIndex].columnSearchTopics.concept.push(conceptVal);
-			columnsNameArray[columnIndex].columnSearchTopics.idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
+		if(columnsNameArray[columnIndex].topics.concept.indexOf(conceptVal) == -1){
+			columnsNameArray[columnIndex].topics.concept.push(conceptVal);
+			columnsNameArray[columnIndex].topics.idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
 		}
 	}
 }

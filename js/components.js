@@ -57,15 +57,14 @@ function addSharedAvatars(COLUMN_ITEM_ID, data, i){
 
 	sharedListLi.attr('class', 'sharedListLi');
 	sharedListLi.attr('id', 'sharedListLi'+i);
+	sharedListSpan.attr('class', "sharedListSpan glyphicon glyphicon-option-horizontal");
+	sharedListImg.attr('src', data.avatar);
 	sharedListImgLink.attr('class', 'sharedListImgLink');
 	sharedListImgLink.attr('data-toggle', 'tooltip');
 	sharedListImgLink.attr('data-placement', 'right');
 	sharedListImgLink.attr('data-html', "true");
 	sharedListImgLink.attr('href', '#');
 	sharedListImgLink.attr('id', 'sharedListImgLink'+COLUMN_ITEM_ID+'-'+i);
-	sharedListSpan.attr('class', "sharedListSpan glyphicon glyphicon-option-horizontal");
-	sharedListImgLink.attr('id', 'sharedListImgLink'+COLUMN_ITEM_ID+'-'+i);
-	sharedListImg.attr('src', data.avatar);
 	sharedListImgLink.attr('title', data.name);
 	sharedListImgLink.append(sharedListImg);
 
@@ -86,8 +85,8 @@ function addSharedAvatars(COLUMN_ITEM_ID, data, i){
  * @param {Integer} data to be inserted in column element
  * @param {Integer} flag to rule inserting order
  */
-function generateColumnItem(columnNumber, columnItemNumber, columnItemData, order){
-	var COLUMN_ITEM_ID = columnNumber+'-'+columnItemNumber;
+function generateColumnItem(column, columnItemNumber, columnItemData, order){
+	var COLUMN_ITEM_ID = `${column.id}-${columnItemNumber}`;
 	var itemWrapper = $('<div></div>');
 	var itemContent = $('<div></div>');
 	var itemAvatar =  $('<div></div>');
@@ -113,7 +112,7 @@ function generateColumnItem(columnNumber, columnItemNumber, columnItemData, orde
 	var desc = (columnItemData.data.name).substring(0, 50);
 	if(columnItemData.data.name.length >50) desc += "...";
 	$(itemContent).append('<p>'+desc+'</p>');
-	columnsNameArray[columnNumber].listedTopics.push(columnItemData);
+	column.listedTopics.push(columnItemData);
 
 	/*Appending children*/
 	itemAvatar.append(itemImg);
@@ -130,12 +129,12 @@ function generateColumnItem(columnNumber, columnItemNumber, columnItemData, orde
 	itemWrapper.append(itemContent);
 	/*Append in corresponding column*/
 	itemLiWrapper.append(itemWrapper);
-	var columnMiddleSelector = $("#column"+columnNumber).find(".columnMiddleUl");
+	var columnMiddleSelector = $("#column"+column.id).find(".columnMiddleUl");
 	if(!order) {
 		columnMiddleSelector.append(itemLiWrapper);
 	}
 	else{
-		$('#columnMiddleUl'+columnNumber).find('.top-ele').after(itemLiWrapper);
+		$('#columnMiddleUl'+column.id).find('.top-ele').after(itemLiWrapper);
 	}
 	$("#itemLiWrapper"+COLUMN_ITEM_ID).click(function(e){
 		e.preventDefault();
@@ -148,8 +147,8 @@ function generateColumnItem(columnNumber, columnItemNumber, columnItemData, orde
  *
  * @param {Integer} column number
  */
-function generateAddColumnItem(columnNumber){
-	var COLUMN_ITEM_ID = columnNumber+'-x';
+function generateAddColumnItem(column) {
+	var COLUMN_ITEM_ID = `${column.id}-x`;
 	var itemWrapper = $('<div></div>');
 	var itemContent = $('<div></div>');
 	var itemFooter =  $('<div></div>');
@@ -168,18 +167,18 @@ function generateAddColumnItem(columnNumber){
 	itemWrapper.attr('class', 'addItemWrapper');
 	itemContent.attr('class', 'itemContent');
 	itemInput.attr('class', 'itemInput');
-	itemInput.attr('id', 'itemInput'+columnNumber);
+	itemInput.attr('id', 'itemInput' + column.id);
 	itemInput.attr('type', 'text');
 	itemInput.attr('name', 'itemInput');
 	itemInput.attr('placeholder', 'name...');
 	shareWithBtn.attr('class', 'shareWithBtn btn-primary');
-	shareWithBtn.attr('id', 'shareWithBtn'+columnNumber);
+	shareWithBtn.attr('id', 'shareWithBtn' + column.id);
 	shareWithBtn.attr("data-toggle", "popover");
 	shareWithBtn.attr("data-placement", "right");
 	shareWithBtn.attr("data-trigger", "focus");
 	addItemShareList.attr('class', 'addItemShareList');
-	addItemShareList.attr('id', 'addItemShareList'+columnNumber);
-	itemTextarea.attr('id', 'itemTextarea'+columnNumber);
+	addItemShareList.attr('id', 'addItemShareList' + column.id);
+	itemTextarea.attr('id', 'itemTextarea' + column.id);
 	itemTextarea.attr("class", 'itemTextarea');
 	itemTextarea.attr("name", 'itemTextarea');
 	itemTextarea.attr('placeholder', 'description...');
@@ -200,21 +199,21 @@ function generateAddColumnItem(columnNumber){
 	itemWrapper.append(itemFooter);
 
 	/*Append in corresponding column*/
-	var columnMiddleSelector = $("#column"+columnNumber).find(".columnMiddleUl");
+	var columnMiddleSelector = $("#column"+column.id).find(".columnMiddleUl");
 	itemLiWrapper.append(itemWrapper);
 	columnMiddleSelector.prepend(itemLiWrapper);
 
 	/* Actions */
-	$('#itemInput'+columnNumber+'-x').focus();
-	$('#shareWithBtn'+columnNumber).click(function(e){
+	$('#itemInput'+column.id+'-x').focus();
+	$('#shareWithBtn'+column.id).click(function(e){
 		$(this).popover('show');
 	});
 	$(".addItemCancelWrapper").click(function(e){
 		$(this).parent().parent().css('display', 'none');
 	});
 	$(".addItemBtn").click(function(e){
-		var topicName = $('#itemInput'+columnNumber).val();
-		var topicDescription = $('#itemTextarea'+columnNumber).val();
+		var topicName = $('#itemInput'+column.id).val();
+		var topicDescription = $('#itemTextarea'+column.id).val();
 		var liIds=[];
 		$('.addShare').each(function(){
 			var liId = Number($(this).attr('id').replace('sharedListLi', ''));
@@ -223,10 +222,9 @@ function generateAddColumnItem(columnNumber){
 				$(this).remove();
 			}
 		});
-		createTopic(columnNumber, topicName, topicDescription, liIds);
+		createTopic(column.id, topicName, topicDescription, liIds);
 	});
 }
-
 
 /**
  * Function genarating column
@@ -235,9 +233,24 @@ function generateAddColumnItem(columnNumber){
  * @param {String} column title
  */
 function generateColumn(columnNumber, columnTitle){
+	let column = {
+		"id": columnNumber,
+		"name": columnTitle,
+		"nbItems": 0,
+		"topics": {
+			"concept": [],
+			"idx": []
+		},
+		"negtopics": {
+			"concept": [],
+			"idx": []
+		},
+		listedTopics: []
+	};
+
 	/* Declarations */
 	var spanColumnTitleWrapper = $('<a></a>');
-	var spanColumnTitle = $('<span>'+columnTitle+'</span>');
+	var spanColumnTitle = $('<span>' + column.name + '</span>');
 	var divColumn = $('<div></div>');
 	var divColumnUp = $('<div></div>');
 	var divColumnUpRightIconWrapper = $('<a></a>');
@@ -260,53 +273,53 @@ function generateColumn(columnNumber, columnTitle){
 	var formSubmitBtn = $('<input/>');
 
 	/* Attributes setting*/
-	divColumn.attr('id', 'column'+columnNumber);
+	divColumn.attr('id', "column" + column.id);
 	divColumn.attr('class', 'column');
 	divColumnUp.attr('class', 'columnUp');
-	divColumnUp.attr('id', 'columnUp'+columnNumber);
+	divColumnUp.attr('id', 'columnUp'+column.id);
 	formUl.attr('class', 'formTags');
-	formUl.attr('id', 'formTags'+columnNumber);
-	formSubmitBtn.attr('id', 'colInput'+columnNumber);
+	formUl.attr('id', 'formTags'+column.id);
+	formSubmitBtn.attr('id', 'colInput'+column.id);
 	formSubmitBtn.attr('class', 'formSubmitBtn btn btn-default');
 	formSubmitBtn.attr('type', 'submit');
 	formSubmitBtn.attr('value', 'valider');
 	divColumnUpForm.attr('action', '');
 	divColumnUpForm.attr('class', 'columnUpForm');
-	divColumnUpForm.attr('id', 'columnUpForm'+columnNumber);
+	divColumnUpForm.attr('id', 'columnUpForm'+column.id);
 	divColumnUpForm.css('display', 'none');
 	spanColumnTitleWrapper.attr('class', 'spanColumnTitleWrapper');
-	spanColumnTitleWrapper.attr('id', 'spanColumnTitleWrapper'+columnNumber);
+	spanColumnTitleWrapper.attr('id', 'spanColumnTitleWrapper'+column.id);
 	spanColumnTitle.attr('class', 'spanColumnTitle');
-	spanColumnTitle.attr('id', 'spanColumnTitle'+columnNumber);
+	spanColumnTitle.attr('id', 'spanColumnTitle'+column.id);
 	divColumnUpTitleInput.attr("class", "columnUpTitleInput");
-	divColumnUpTitleInput.attr("id", "columnUpTitleInput"+columnNumber);
+	divColumnUpTitleInput.attr("id", "columnUpTitleInput"+column.id);
 	divColumnUpTitleInput.css("display", 'none');
 	divColumnUpTitleInput.attr("placeholder", 'enter title...');
-	divColumnUpTitleSubmitBtn.attr('id', 'titleSubmitBtn'+columnNumber);
+	divColumnUpTitleSubmitBtn.attr('id', 'titleSubmitBtn'+column.id);
 	divColumnUpTitleSubmitBtn.attr('class', 'titleSubmitBtn btn');
 	divColumnUpTitleSubmitBtn.css("display", 'none');
 	divColumnUpTitleSubmitBtnIcon.attr('class', 'glyphicon glyphicon-ok');
 	divColumnUpRightIconWrapper.attr('class', 'columnUpRightIconWrapper');
-	divColumnUpRightIconWrapper.attr('id', 'columnUpRightIconWrapper'+columnNumber);
+	divColumnUpRightIconWrapper.attr('id', 'columnUpRightIconWrapper'+column.id);
 	divColumnUpRightIconWrapper.attr('title', 'Add item');
 	divColumnUpRightIcon2Wrapper.attr('class', 'columnUpRightIcon2Wrapper');
-	divColumnUpRightIcon2Wrapper.attr('id', 'columnUpRightIcon2Wrapper'+columnNumber);
+	divColumnUpRightIcon2Wrapper.attr('id', 'columnUpRightIcon2Wrapper'+column.id);
 	divColumnUpRightIcon2Wrapper.attr('title', 'Edit column ');
 	divColumnUpRightIcon.attr('class', 'columnUpRightIcon glyphicon glyphicon-plus');
 	divColumnUpRightIcon2.attr('class', 'columnUpRightIcon glyphicon glyphicon-pencil');
 	divColumnUpTitle.attr('class', 'columnUpTitle');
-	divColumnUpTitle.attr('id', 'columnUpTitle'+columnNumber);
+	divColumnUpTitle.attr('id', 'columnUpTitle'+column.id);
 	divColumnTitleDisplay.attr('class', 'divColumnTitleDisplay');
-	divColumnTitleDisplay.attr('id', 'divColumnTitleDisplay'+columnNumber);
+	divColumnTitleDisplay.attr('id', 'divColumnTitleDisplay'+column.id);
 	divColumnUp.attr('ondrop', "drop(event)");
 	divColumnUp.attr('ondragover', "allowDrop(event)");
 	divColumnMiddle.attr('class', 'columnMiddle');
-	divColumnMiddle.attr('id', 'columnMiddle'+columnNumber);
+	divColumnMiddle.attr('id', 'columnMiddle'+column.id);
 	divColumnMiddleUl.attr('class', 'columnMiddleUl');
-	divColumnMiddleUl.attr('id', 'columnMiddleUl'+columnNumber);
+	divColumnMiddleUl.attr('id', 'columnMiddleUl'+column.id);
 	divColumnDown.attr('class', 'columnDown');
 	shadowDiv.attr('class', 'shadowDiv');
-	shadowDiv.attr('id', 'shadowDiv'+columnNumber);
+	shadowDiv.attr('id', 'shadowDiv'+column.id);
 
 	/* Appending*/
 	divColumnUpForm.append(formUl);
@@ -330,27 +343,31 @@ function generateColumn(columnNumber, columnTitle){
 	divColumn.append(divColumnDown);
 
 	/*------------------------------ Actions/Events ----------------------------*/
-	if(!columnTitle){
-		spanColumnTitle = $('<span>SearchFilter '+columnNumber+'</span>');
+	if(!column.name){
+		spanColumnTitle = $('<span>SearchFilter '+column.id+'</span>');
 	}
 	formUl.tagit({
 		beforeTagAdded: function(event, ui){
-			var target = $(ui.tag);
+			let target = $(ui.tag);
 			if(negToken){
 				target.addClass('negTopic');
 				negToken = 0;
 			}
 		},
 		afterTagRemoved:function(event, ui){
-			var target = $(ui.tag);
+			let target = $(ui.tag);
+			const source = target.hasClass('negTopic') ? "negtopics" : "topics";
+			const i = column[source].concept.indexOf(ui.tagLabel);
+			column[source].concept.splice(i, 1);
+			column[source].idx.splice(i, 1);
 			if (target.hasClass('negTopic')) {
-				let indexToRemoveAt = columnsNameArray[columnNumber].columnSearchNegtopics.concept.indexOf(ui.tagLabel);
-				columnsNameArray[columnNumber].columnSearchNegtopics.concept.splice(indexToRemoveAt, 1);
-				columnsNameArray[columnNumber].columnSearchNegtopics.idx.splice(indexToRemoveAt, 1);
+				let indexToRemoveAt = column.negtopics.concept.indexOf(ui.tagLabel);
+				column.negtopics.concept.splice(indexToRemoveAt, 1);
+				column.negtopics.idx.splice(indexToRemoveAt, 1);
 			} else {
-				let indexToRemoveAt = columnsNameArray[columnNumber].columnSearchTopics.concept.indexOf(ui.tagLabel);
-				columnsNameArray[columnNumber].columnSearchTopics.concept.splice(indexToRemoveAt, 1);
-				columnsNameArray[columnNumber].columnSearchTopics.idx.splice(indexToRemoveAt, 1);
+				let indexToRemoveAt = column.topics.concept.indexOf(ui.tagLabel);
+				column.topics.concept.splice(indexToRemoveAt, 1);
+				column.topics.idx.splice(indexToRemoveAt, 1);
 			}
 		}
 	});
@@ -361,32 +378,32 @@ function generateColumn(columnNumber, columnTitle){
 	});
 	formSubmitBtn.on('click', function(e){
 		divColumnUp.prepend(divColumnUpTitle);
-		onSubmitSearch(e, columnNumber);
+		onSubmitSearch(e, column.id);
 	});
 	//Edit title
 	spanColumnTitleWrapper.click(function(){
-		$("#titleSubmitBtn"+columnNumber).css('display', 'inline');
-		titleEditRoutine(this, columnNumber, 0);
+		$("#titleSubmitBtn"+column.id).css('display', 'inline');
+		titleEditRoutine(this, column.id, 0);
 	});
 	//Edit column
 	divColumnUpRightIcon2Wrapper.click(function(e){
-		$("#columnUpForm"+columnNumber).css('display', 'block');
-		$("#titleSubmitBtn"+columnNumber).css('display', 'none');
-		var that = $('#spanColumnTitleWrapper'+columnNumber);
-		titleEditRoutine(that, columnNumber, 2);
+		$("#columnUpForm"+column.id).css('display', 'block');
+		$("#titleSubmitBtn"+column.id).css('display', 'none');
+		var that = $('#spanColumnTitleWrapper'+column.id);
+		titleEditRoutine(that, column.id, 2);
 	});
 	//Add item
 	divColumnUpRightIconWrapper.click(function(e){
-		columnUpRightIconEvent(columnNumber);
+		columnUpRightIconEvent(column.id);
 	});
 
 	// generate grid before generating column
-	generateGrid(columnNumber);
-	$("#divGrid"+columnNumber).append(divColumn);
-	generateAddColumnItem(columnNumber);
+	generateGrid(column.id);
+	$("#divGrid"+column.id).append(divColumn);
+	generateAddColumnItem(column);
 
 	/*Apply sortable*/
-	$('#columnMiddleUl'+columnNumber ).sortable({
+	$('#columnMiddleUl'+column.id ).sortable({
 		connectWith: ".columnMiddleUl",
 		handle: ".itemLiWrapper, .itemWrapper",
 		placeholder: "sortablePlaceholder",
@@ -421,21 +438,9 @@ function generateColumn(columnNumber, columnTitle){
 	});
 
 	/* Record column in columnsNameArray*/
-	columnsNameArray.push({
-		"name": columnTitle,
-		"columnNumber": columnNumber,
-		"nbItems": 0,
-		"columnSearchTopics": {
-			"concept": [],
-			"idx": []
-		},
-		columnSearchNegtopics: {
-			"concept": [],
-			"idx": []
-		},
-		listedTopics: []
-	});
+	columnsNameArray.push(column);
 	columnsArrayIndex +=1;
+	return column;
 }
 
 /**
@@ -462,6 +467,7 @@ function addNewColumn(){
  * @param {Integer} column number
  */
 function onSubmitSearch(e, columnNumber){
+	const column = columnsNameArray[columnNumber];
 	e.preventDefault();
 	//Process tags
 	if(newDrop){
@@ -487,7 +493,7 @@ function onSubmitSearch(e, columnNumber){
 		var that = $('#spanColumnTitleWrapper'+columnNumber);
 		titleEditRoutine(that, columnNumber, 1);
 	});
-	titleTooltipRoutine(columnNumber);
+	titleTooltipRoutine(column);
 }
 
 /**
@@ -546,10 +552,10 @@ function titleChange(obj, columnNumber, tmp){
 	var that = obj;
 	var newTitle = $(obj).val();
 
-	if(newTitle==""){
+	if (newTitle === "") {
 		$('#spanColumnTitle'+columnNumber).text(columnsNameArray[columnNumber].name);
 		console.log("column",columnNumber,"\'s title unchanged");
-	}else{
+	} else {
 		$('#spanColumnTitle'+columnNumber).text(""+newTitle);
 		//Update array
 		columnsNameArray[columnNumber].name = newTitle;
@@ -575,18 +581,17 @@ function titleChange(obj, columnNumber, tmp){
  *
  * @param {Integer} column number
  */
-function titleTooltipRoutine(columnNumber){
-	$("#spanColumnTitleWrapper"+columnNumber).attr('data-toggle', "tooltip");
-	$("#spanColumnTitleWrapper"+columnNumber).attr('data-html', "true");
-	$("#spanColumnTitleWrapper"+columnNumber).attr("data-placement", "bottom");
-	var titleText = columnsNameArray[columnNumber].columnSearchTopics.concept;
-	var tmpText = columnsNameArray[columnNumber].columnSearchNegtopics.concept;
-	var titleText2 ='';
-	for(let i = 0; i<titleText.length;i++)
-		titleText2 = titleText2.concat("+"+titleText[i]+"<br>");
-	for(let i = 0; i<tmpText.length;i++)
-		titleText2 = titleText2.concat("--"+tmpText[i]+"<br>");
-	$("#spanColumnTitleWrapper"+columnNumber).attr('title', titleText2);
+function titleTooltipRoutine(column) {
+	$(`#spanColumnTitleWrapper${column.id}`).attr('data-toggle', "tooltip");
+	$(`#spanColumnTitleWrapper${column.id}`).attr('data-html', "true");
+	$(`#spanColumnTitleWrapper${column.id}`).attr("data-placement", "bottom");
+	var titleText = column.topics.concept.reduce((prev, cur) => {
+		return prev.concat(`+${cur}<br>`);
+	}, "");
+	titleText = column.negtopics.concept.reduce((prev, cur) => {
+		return prev.concat(`--${cur}<br>`);
+	}, titleText);
+	$(`#spanColumnTitleWrapper${column.id}`).attr('title', titleText);
 	$('[data-toggle="tooltip"]').tooltip();
 }
 
@@ -636,10 +641,10 @@ function clearColumnElements(columnNumber, tmp){
 	$("#column"+columnNumber).find('.columnMiddle').find('.itemLiWrapper:not("#itemLiWrapper'+columnNumber+'-x ")').remove();
 	//Clear search arrays
 	if(!tmp){
-		columnsNameArray[columnNumber].columnSearchTopics.concept = [];
-		columnsNameArray[columnNumber].columnSearchTopics.idx = [];
-		columnsNameArray[columnNumber].columnSearchNegtopics.concept = [];
-		columnsNameArray[columnNumber].columnSearchNegtopics.idx = [];
+		columnsNameArray[columnNumber].topics.concept = [];
+		columnsNameArray[columnNumber].topics.idx = [];
+		columnsNameArray[columnNumber].negtopics.concept = [];
+		columnsNameArray[columnNumber].negtopics.idx = [];
 	}
 	columnsNameArray[columnNumber].nbItems = 0;
 	columnsNameArray[columnNumber].listedTopics = [];
