@@ -31,6 +31,7 @@ const utils = require('./js/utils.js').utils;
 const async = require("async");
 const path = require("path");
 const fs = require('fs');
+const kxapiPromise = require("./js/kxapiPromise.js")(kxapi);
 
 /*
 ####################-End of Modules-####################
@@ -102,54 +103,6 @@ var predefinedTags = [
 /*
 ####################-End of data structure declarations-####################
 */
-
-/* wrapping keeex api in promise */
-const getMine = () => {
-	return new Promise((resolve, reject) => {
-		kxapi.getMine((error, profile) => {
-			if (error) reject(`getMine error: ${error}`);
-			resolve(profile);
-		});
-	});
-};
-
-const searchTopics = (topics, negTopics, searchContentType) => {
-	return new Promise((resolve, reject) => {
-		kxapi.search("", topics, negTopics, null, maxToUpload, searchContentType.theObject, function(error, topicsReturned){
-			if (error) reject(`search error: ${error}`);
-			resolve(topicsReturned);
-		});
-	});
-};
-
-const getAuthorFromTopic = (topic) => {
-	return new Promise((resolve, reject) => {
-		kxapi.getAuthor(topic.idx, (error, author) => {
-			if (error) reject(`getAuthorFromTopicIdx error: ${error}`);
-			resolve(author);
-		});
-	});
-};
-
-const getSharedFromTopic = (topic) => {
-	return new Promise((resolve, reject) => {
-		kxapi.getShared(topic.idx, (error, sharedList) => {
-			if (error) reject(`getSharedFromTopicIdx error: ${error}`);
-			resolve(sharedList);
-		});
-	});
-};
-
-const getUsersFromList = (sharedList) => {
-	return new Promise((resolve, reject) => {
-		if (!sharedList || !sharedList.shared || sharedList.shared.length < 1) resolve(null);
-		kxapi.getUsers(sharedList.shared, (error, users) => {
-			if (error) reject(`getUsersFromList error: ${error}`);
-			resolve(users);
-		});
-	});
-};
-/* / wrapping keeex api in promise */
 
 /****************************
 		Init function
@@ -334,7 +287,7 @@ const cloneColumnsArray = () => {
 };
 
 function displayCurrentProfileAvatar(){
-	getMine()
+	kxapiPromise.getMine()
 		.then((profile) => {
 			currentProfileAvatar = profile.avatar;
 			$('#mainBarAvatarImg').attr('src', profile.avatar);
@@ -382,7 +335,7 @@ function resetDisplay(empty) {
  * Loads all tags and displays them
  */
 const searchTags = (reload) => {
-	searchTopics([conceptTypeIdx], [], searchContentType("concept"))
+	kxapiPromise.searchTopics([conceptTypeIdx], [], maxToUpload, searchContentType("concept"))
 		.then((conceptsReturned) => {
 			conceptsIdxArray = conceptsReturned.map((e) => {
 				return {
@@ -400,7 +353,7 @@ const searchTags = (reload) => {
 				logDisplay("Concepts reloaded");
 		})
 		.catch((error) => {
-			logDisplay("Get concepts error");
+			logDisplay(`${error} Get concepts error`);
 		});
 };
 /*--End of searchTags--*/
@@ -413,12 +366,12 @@ const addColumnContent = (column, topicsReturned) => {
 	topicsReturned.forEach((topic) => {
 		const topicObject = { "data": topic, 'avatar': '', 'shared': [] };
 
-		getAuthorFromTopic(topicObject.data)
+		kxapiPromise.getAuthorFromTopic(topicObject.data)
 			.then((author) => {
 				topicObject.avatar = author;
-				return getSharedFromTopic(topicObject.data);
+				return kxapiPromise.getSharedFromTopic(topicObject.data);
 			})
-			.then(getUsersFromList)
+			.then(kxapiPromise.getUsersFromList)
 			.then((users) => {
 				topicObject.shared = users;
 				generateColumnItem(column, column.nbItems, topicObject, 0);
@@ -441,7 +394,7 @@ function  customSearchTopics(columnId) {
 
 	const column = columnsNameArray[columnId];
 
-	searchTopics(column.topics.idx, column.negtopics.idx, searchContentType())
+	kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 		.then((topicsReturned) => {
 			if(!topicsReturned.length){
 				return logDisplay(":/ No topics returned");
@@ -476,7 +429,7 @@ const displayBoardFromSearchParam = (searchParams) => {
 		addTagToColumnUp(column.id, column.negtopics.concept, 1);
 		titleTooltipRoutine(column);
 
-		searchTopics(column.topics.idx, column.negtopics.idx, searchContentType())
+		kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 			.then((topicsReturned) => {
 				if (!topicsReturned.length) {
 					logDisplay(`${eachOption.name}: No topicsReturned!`);
