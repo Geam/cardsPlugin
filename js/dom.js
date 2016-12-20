@@ -74,13 +74,11 @@ module.exports = (window) => {
 	const returnSharedList = (tile) => {
 		var list = tile.shared.map((user, i) => returnSharedAvatar(tile.domId, user, i));
 		// TODO add sharing option
-		list.push(newEl("li", { "id": `addShare${tile.domId}` },
-			newEl("a", {
-				"data-toggle": "tooltip", "data-placement": "bottom", "data-html": "true",
-				"title": "Share", "href": "#"
-			},
-				newEl("span", { "class": "glyphicon glyphicon-plus" })
-			)
+		list.push(newEl("li", { "class": "sharedListLi" },
+			newEl("button", {
+				"id": `addShare${tile.domId}`, "class": "shareWithBtn btn-primary", "data-toggle": "popover",
+				"data-placement": "right", "data-trigger": "focus",
+			}, "Share")
 		));
 		return list;
 	};

@@ -39,6 +39,10 @@ function generateColumnItem(column, tile, first) {
 		itemInfo(tile.data);
 	});
 	$(domTile).find('[data-toggle="tooltip"]').tooltip({ "container": "body" });
+	$(domTile).find("#addShare" + tile.domId).popover({
+		content: $('#contactsArea').html(),
+		html: true
+	});
 }
 
 /**
@@ -55,7 +59,7 @@ function generateAddColumnItem(column) {
 	$(".addItemCancelWrapper").click(function(e){
 		$(this).parent().parent().css('display', 'none');
 	});
-	$(".addItemBtn").click(function(e){
+	$(".addItemBtn").click(function(e) {
 		var topicName = $('#itemInput'+column.id).val();
 		var topicDescription = $('#itemTextarea'+column.id).val();
 		var liIds=[];
