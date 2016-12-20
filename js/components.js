@@ -38,7 +38,7 @@ function generateColumnItem(column, tile, first) {
 		e.preventDefault();
 		itemInfo(tile.data);
 	});
-	$(domTile).find('[data-toggle="tooltip"]').tooltip();
+	$(domTile).find('[data-toggle="tooltip"]').tooltip({ "container": "body" });
 }
 
 /**
