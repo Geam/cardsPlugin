@@ -398,8 +398,7 @@ const displayBoardFromSearchParam = (searchParams) => {
 			column.negtopics = { "idx": [], "concept": [] };
 		}
 
-		addTagToColumnUp(column.id, column.topics.concept, 0);
-		addTagToColumnUp(column.id, column.negtopics.concept, 1);
+		addTagToColumnUp(column);
 		titleTooltipRoutine(column);
 
 		doSeach(column);
@@ -743,54 +742,20 @@ function itemDrag(ev) {
 
 function drop(ev) {
 	ev.preventDefault();
-	var column;
-	var data = ev.dataTransfer.getData("text");
-	var targetId;
-
-	if (ev.target.className =="columnUpTitle") {
-		targetId = ev.srcElement.parentNode.id;
-	} else if (ev.target.className =="spanColumnTitleWrapper") {
-		targetId = ev.srcElement.parentNode.parentNode.id;
-	} else if (ev.target.className =="spanColumnTitle") {
-		targetId = ev.srcElement.parentNode.parentNode.parentNode.id;
-	} else if (ev.target.className[0] =="columnUpRightIcon") {
-		targetId = ev.srcElement.parentNode.parentNode.parentNode.id;
-	} else {
-		targetId = ev.target.id;
-	}
-
-	var upColumn = $('#'+targetId);
-	var upForm = upColumn.find('.columnUpForm');
-	var concept = $('#'+data);
-	var conceptVal = concept.find('span').text();
-	var cnceptIdxIndex = Number(data.replace("cncpt", ''));
+	const domColumn = dom.searchParentByClass(ev.srcElement, "column");
+	const column = columnsNameArray.find((e) => e.name === domColumn.id);
+	const formTags = $(domColumn).find(".formTags");
+	const domConcept = $(`#${ev.dataTransfer.getData("text")}`);
+	const concept = conceptsIdxArray.find(e => e.name === domConcept.find("span").text());
 
 	newDrop = true;
-	if (concept.hasClass('negTopic')) {
-		negToken = 1;
+	let source = domConcept.hasClass('negTopic') ? "negtopics" : "topics";
+
+	if (column[source].concept.indexOf(concept.name) === -1) {
+		column[source].concept.push(concept.name);
+		column[source].idx.push(concept.idx);
 	}
-	if (upForm.css('display') != 'none') {
-		$('#'+ev.toElement.id).tagit('createTag', conceptVal);
-		let columnName = upColumn.parent().parent().parent().attr('id');
-		column = columnsNameArray[Number(columnName.substr(6))];
-	} else {
-		upColumn.find('.columnUpTitle').remove();
-		upForm.css('display', 'block');
-		upColumn.css('background-color', '#F0F0F0');
-		upForm.find('ul').tagit('createTag', conceptVal);
-		let columnName = upColumn.parent().attr('id');
-		column = columnsNameArray[Number(columnName.substr(6))];
-	}
-	// push tag value in search array
-	if (column.nbItems) {
-		//Emptiing the arrays
-		clearColumnElements(column.id, 1);
-	}
-	let source = concept.hasClass('negTopoc') ? "negtopics" : "topics";
-	if (column[source].concept.indexOf(conceptVal) == -1) {
-		column[source].concept.push(conceptVal);
-		column[source].idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
-	}
+	formTags.tagit("createTag", concept.name);
 }
 
 /*

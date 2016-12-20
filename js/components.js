@@ -109,13 +109,35 @@ function generateColumn(columnNumber, columnTitle) {
 		spanColumnTitle = $('<span>SearchFilter '+column.id+'</span>');
 	}
 	*/
-	$(domColumn).find(".formTags").tagit({
+	const domTag = $(domColumn).find(".formTags");
+	domTag.tagit({
+		availableTags: conceptsIdxArray.map((e) => e.name),
 		beforeTagAdded: function(event, ui) {
+			const concept = conceptsIdxArray.find((e) => e.name === ui.tagLabel);
 			const target = $(ui.tag);
-			if (negToken) {
-				target.addClass('negTopic');
-				negToken = 0;
+			if (!concept) {
+				// if tag doesn't exist, hightlight text and quit
+				domTag.data("ui-tagit").tagInput.css("color", "red");
+				setTimeout(() => {
+					domTag.data("ui-tagit").tagInput.css("color", "#333333");
+				}, 1000);
+				return false;
 			}
+
+			// if case of restoring board, do not add concept to column
+			const filter = e => e === concept.name;
+			if (column.topics.concept.find(filter)) {
+				return ;
+			} else if (column.negtopics.concept.find(filter)) {
+				target.addClass('negTopic');
+				return ;
+			}
+
+			// if typing the tag, add it to column
+			column.topics.idx.push(concept.idx);
+			column.topics.concept.push(concept.name);
+			newDrop = true;
+			clearColumnElements(column.id, 1);
 		},
 		afterTagRemoved: function(event, ui) {
 			const target = $(ui.tag);
@@ -125,7 +147,9 @@ function generateColumn(columnNumber, columnTitle) {
 			column[source].idx.splice(i, 1);
 			newDrop = true;
 			clearColumnElements(column.id, 1);
-		}
+		},
+		readOnly: false,
+		placeholderText: "Add concept"
 	});
 
 	/* Form submission */
@@ -297,18 +321,14 @@ function titleTooltipRoutine(column) {
  * @param {String}  tag value
  * @param {Integer} flag
  */
-function addTagToColumnUp(columnNumber, conceptVal, tmp){
-	if(Array.isArray(conceptVal)){
-		for (var i = 0; i < conceptVal.length; i++) {
-			if(tmp)
-				negToken = 1;
-			$('#columnUpForm'+columnNumber).find('ul').tagit('createTag', conceptVal[i]);
-		}
-	}else{
-		if(tmp)
-			negToken = 1;
-		$('#columnUpForm'+columnNumber).find('ul').tagit('createTag', conceptVal);
-	}
+function addTagToColumnUp(column) {
+	const domTag = $(`#columnUpForm${column.id}`).find("ul");
+	column.topics.concept.forEach((e) => {
+		domTag.tagit("createTag", e);
+	});
+	column.negtopics.concept.forEach((e) => {
+		domTag.tagit("createTag", e);
+	});
 }
 
 /* Clear out elements in the DOM
@@ -334,6 +354,7 @@ function clearComponents(){
  */
 function clearColumnElements(columnNumber, tmp){
 	$("#column"+columnNumber).find('.columnMiddle').find('.itemLiWrapper:not("#itemLiWrapper'+columnNumber+'-x ")').remove();
+	return ;
 	//Clear search arrays
 	if(!tmp){
 		columnsNameArray[columnNumber].topics.concept = [];

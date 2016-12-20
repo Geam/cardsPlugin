@@ -47,13 +47,13 @@ module.exports = (window) => {
 		}
 	};
 
-	const searchParentById = (el, id) => {
+	const searchParentByClass = (el, className) => {
 		if (typeof el === "string")
 			el = qs(el);
 		if (!(el instanceof Element)) return;
 		let cur = el;
 		while (cur.tagName != "BODY") {
-			if (cur.id === id) return cur;
+			if (cur.classList.contains(className)) return cur;
 			cur = cur.parentNode;
 		}
 	};
@@ -196,7 +196,7 @@ module.exports = (window) => {
 
 	return {
 		"qs": qs,
-		"searchParentById": searchParentById,
+		"searchParentByClass": searchParentByClass,
 
 		"generateContactList": (contactList) => {
 			addContent("#contactList", contactList.map((e, i) => {
