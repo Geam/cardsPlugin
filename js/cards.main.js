@@ -57,7 +57,7 @@ var columnsNameArray = [];
 var conceptsIdxArray = [];
 var contactList = [];
 var columnsArrayIndex = 0;
-var currentProfileAvatar = '';
+var currentUser = {};
 var maxToUpload; //Set the maximum content to upload in one call of search api
 
 var thisKEEEXED_PATH;
@@ -108,9 +108,6 @@ function _init() {
 			if (error && error.code != 'EEXIST')
 				console.error(`Creating folder error`, error);
 		});
-
-		// just to separate env stuff from concept
-		return Promise.resolve();
 	})
 	.then(() => {
 		rootPath = path.dirname(utils.getDirName());
@@ -139,8 +136,6 @@ function _init() {
 				};
 			});
 		contactList.forEach((user) => displayContactList);
-		// just to separate users stuff from end of initialisation
-		return Promise.resolve();
 	})
 	.then(() => {
 		displayCurrentProfileAvatar();
@@ -260,7 +255,7 @@ const cloneColumnsArray = () => {
 function displayCurrentProfileAvatar(){
 	kxapiPromise.getMine()
 		.then((profile) => {
-			currentProfileAvatar = profile.avatar;
+			currentUser = profile;
 			$('#mainBarAvatarImg').attr('src', "file://" + profile.avatar);
 			$('#mainBarProfileName').text(''+profile.name.split(' ')[0]);
 			logDisplay(`Current user: ${profile.name}`);
