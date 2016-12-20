@@ -1,27 +1,27 @@
 /*
-*	KeeeX Cards
-*	
-*	Copyright (c) 2016 KeeeX SAS 
-*
-*	This is an open source project available under the MIT license.
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-	The above copyright notice and this permission notice shall be included in
-	all copies or substantial portions of the Software.
-*
-*
-*	Author: Cheikh Ahmadou K. Savadogo   - savacheikh@gmail.com
-*	
-*	Date: June-August 2016
-*/
+ * KeeeX Cards
+ *
+ * Copyright (c) 2016 KeeeX SAS
+ *
+ * This is an open source project available under the MIT license.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ *
+ * Author: Cheikh Ahmadou K. Savadogo   - savacheikh@gmail.com
+ *
+ * Date: June-August 2016
+ */
 
 /****************************
-   Grid containing columns
-   ***********************
+		Grid containing columns
+ ***********************
  ****************************/
 
 /**
@@ -38,8 +38,8 @@ function generateGrid(girdNumber){
 
 
 /****************************
-   	  Column functions
-   ***********************
+			Column functions
+ ***********************
  ****************************/
 
 /**
@@ -50,7 +50,7 @@ function generateGrid(girdNumber){
  * @param {Integer} flag to rule inserting order
  */
 function addSharedAvatars(COLUMN_ITEM_ID, data, i){
- 	var sharedListLi = $('<li></li>');
+	var sharedListLi = $('<li></li>');
 	var sharedListImg = $('<img>');
 	var sharedListSpan = $('<span></span>');
 	var sharedListImgLink = $('<a></a>');
@@ -75,8 +75,8 @@ function addSharedAvatars(COLUMN_ITEM_ID, data, i){
 	$('[data-toggle="tooltip"]').tooltip();
 	sharedListLi.append(sharedListImgLink);
 
-	return sharedListLi;	
- }
+	return sharedListLi;
+}
 
 /**
  * Function genarating column element
@@ -95,7 +95,7 @@ function generateColumnItem(columnNumber, columnItemNumber, columnItemData, orde
 	var itemFooter =  $('<div></div>');
 	var itemLiWrapper = $('<li></li>');
 	var sharedList = $('<ul></ul>');
-		 
+
 	itemLiWrapper.attr('id', 'itemLiWrapper'+COLUMN_ITEM_ID);
 	itemLiWrapper.attr('class', 'itemLiWrapper');
 	itemWrapper.attr('id', 'item'+COLUMN_ITEM_ID);
@@ -120,7 +120,7 @@ function generateColumnItem(columnNumber, columnItemNumber, columnItemData, orde
 	itemWrapper.append(itemAvatar);
 	if (columnItemData.shared && columnItemData.shared.length >0){
 		for (var i = 0; i < columnItemData.shared.length; i++) {
-			sharedList.append(addSharedAvatars(COLUMN_ITEM_ID, columnItemData.shared[i], i));			
+			sharedList.append(addSharedAvatars(COLUMN_ITEM_ID, columnItemData.shared[i], i));
 		}
 		itemFooter.append(sharedList);
 		itemContent.append(itemFooter);
@@ -135,7 +135,7 @@ function generateColumnItem(columnNumber, columnItemNumber, columnItemData, orde
 		columnMiddleSelector.append(itemLiWrapper);
 	}
 	else{
-		$('#columnMiddleUl'+columnNumber).find('.top-ele').after(itemLiWrapper);		
+		$('#columnMiddleUl'+columnNumber).find('.top-ele').after(itemLiWrapper);
 	}
 	$("#itemLiWrapper"+COLUMN_ITEM_ID).click(function(e){
 		e.preventDefault();
@@ -149,14 +149,14 @@ function generateColumnItem(columnNumber, columnItemNumber, columnItemData, orde
  * @param {Integer} column number
  */
 function generateAddColumnItem(columnNumber){
-	var COLUMN_ITEM_ID = columnNumber+'-x';	
+	var COLUMN_ITEM_ID = columnNumber+'-x';
 	var itemWrapper = $('<div></div>');
 	var itemContent = $('<div></div>');
 	var itemFooter =  $('<div></div>');
 	var itemLiWrapper = $('<li></li>');
 	var itemInput = $('<input>');
 	var itemTextarea = $('<textarea></textarea>');
-	var shareWithBtn = $('<button>share</button>');	
+	var shareWithBtn = $('<button>share</button>');
 	var addItemSubmit = $('<button>Add</button>');
 	var addItemShareList = $('<ul></ul>');
 	var addItemCancelWrapper = $('<a></a>');
@@ -181,13 +181,13 @@ function generateAddColumnItem(columnNumber){
 	addItemShareList.attr('id', 'addItemShareList'+columnNumber);
 	itemTextarea.attr('id', 'itemTextarea'+columnNumber);
 	itemTextarea.attr("class", 'itemTextarea');
-	itemTextarea.attr("name", 'itemTextarea');	
+	itemTextarea.attr("name", 'itemTextarea');
 	itemTextarea.attr('placeholder', 'description...');
 	itemFooter.attr('class', 'itemFooter2');
 	addItemSubmit.attr('class', 'addItemBtn');
 	addItemCancel.attr('class', 'addItemCancel glyphicon glyphicon-remove');
 	addItemCancelWrapper.attr('class', 'addItemCancelWrapper');
-	
+
 	/*Setting content*/
 	/*Appending children*/
 	itemFooter.append(addItemSubmit);
@@ -205,7 +205,7 @@ function generateAddColumnItem(columnNumber){
 	columnMiddleSelector.prepend(itemLiWrapper);
 
 	/* Actions */
-	$('#itemInput'+columnNumber+'-x').focus();	
+	$('#itemInput'+columnNumber+'-x').focus();
 	$('#shareWithBtn'+columnNumber).click(function(e){
 		$(this).popover('show');
 	});
@@ -221,7 +221,7 @@ function generateAddColumnItem(columnNumber){
 			if(contactList[liId] && (liIds.indexOf(contactList[liId])<= -1)){
 				liIds.push(contactList[liId]);
 				$(this).remove();
-			}	
+			}
 		});
 		createTopic(columnNumber, topicName, topicDescription, liIds);
 	});
@@ -229,7 +229,7 @@ function generateAddColumnItem(columnNumber){
 
 
 /**
- * Function genarating column 
+ * Function genarating column
  *
  * @param {Integer} column number
  * @param {String} column title
@@ -247,7 +247,7 @@ function generateColumn(columnNumber, columnTitle){
 	var divColumnUpTitle = $('<div></div>');
 	var divColumnUpTitleInput = $('<input/>');
 	var divColumnUpTitleSubmitBtn = $('<button></button>');
-	var divColumnUpTitleSubmitBtnIcon = $('<span></span>');	
+	var divColumnUpTitleSubmitBtnIcon = $('<span></span>');
 	var divColumnTitleDisplay = $('<div></div>');
 	var divColumnMiddle = $('<div></div>');
 	var divColumnMiddleUl = $('<ul></ul>');
@@ -269,7 +269,7 @@ function generateColumn(columnNumber, columnTitle){
 	formSubmitBtn.attr('id', 'colInput'+columnNumber);
 	formSubmitBtn.attr('class', 'formSubmitBtn btn btn-default');
 	formSubmitBtn.attr('type', 'submit');
-	formSubmitBtn.attr('value', 'valider');		
+	formSubmitBtn.attr('value', 'valider');
 	divColumnUpForm.attr('action', '');
 	divColumnUpForm.attr('class', 'columnUpForm');
 	divColumnUpForm.attr('id', 'columnUpForm'+columnNumber);
@@ -283,7 +283,7 @@ function generateColumn(columnNumber, columnTitle){
 	divColumnUpTitleInput.css("display", 'none');
 	divColumnUpTitleInput.attr("placeholder", 'enter title...');
 	divColumnUpTitleSubmitBtn.attr('id', 'titleSubmitBtn'+columnNumber);
-	divColumnUpTitleSubmitBtn.attr('class', 'titleSubmitBtn btn');	
+	divColumnUpTitleSubmitBtn.attr('class', 'titleSubmitBtn btn');
 	divColumnUpTitleSubmitBtn.css("display", 'none');
 	divColumnUpTitleSubmitBtnIcon.attr('class', 'glyphicon glyphicon-ok');
 	divColumnUpRightIconWrapper.attr('class', 'columnUpRightIconWrapper');
@@ -310,7 +310,7 @@ function generateColumn(columnNumber, columnTitle){
 
 	/* Appending*/
 	divColumnUpForm.append(formUl);
-	divColumnUpForm.append(formSubmitBtn);	
+	divColumnUpForm.append(formSubmitBtn);
 	divColumnUpTitle.append(divColumnUpTitleInput);
 	divColumnUpTitleSubmitBtn.append(divColumnUpTitleSubmitBtnIcon);
 	// divColumnUpTitle.append(divColumnUpTitleSubmitBtn);
@@ -331,34 +331,34 @@ function generateColumn(columnNumber, columnTitle){
 
 	/*------------------------------ Actions/Events ----------------------------*/
 	if(!columnTitle){
-		spanColumnTitle = $('<span>SearchFilter '+columnNumber+'</span>');       	
+		spanColumnTitle = $('<span>SearchFilter '+columnNumber+'</span>');
 	}
 	formUl.tagit({
-				beforeTagAdded: function(event, ui){
-                    var target = $(ui.tag);
-					if(negToken){
-                        target.addClass('negTopic');
- 						negToken = 0;
-					}                    
-				},
-                afterTagRemoved:function(event, ui){
-                    var target = $(ui.tag);
-                 	if (target.hasClass('negTopic')) {
-				 		var indexToRemoveAt = columnsNameArray[columnNumber].columnSearchNegtopics.concept.indexOf(ui.tagLabel);
-	   					columnsNameArray[columnNumber].columnSearchNegtopics.concept.splice(indexToRemoveAt, 1);
-	   					columnsNameArray[columnNumber].columnSearchNegtopics.idx.splice(indexToRemoveAt, 1);
-	   				} else {
-				 		var indexToRemoveAt = columnsNameArray[columnNumber].columnSearchTopics.concept.indexOf(ui.tagLabel);
-	   					columnsNameArray[columnNumber].columnSearchTopics.concept.splice(indexToRemoveAt, 1);
-	   					columnsNameArray[columnNumber].columnSearchTopics.idx.splice(indexToRemoveAt, 1);
-				 	}
-                 }     
-             });
+		beforeTagAdded: function(event, ui){
+			var target = $(ui.tag);
+			if(negToken){
+				target.addClass('negTopic');
+				negToken = 0;
+			}
+		},
+		afterTagRemoved:function(event, ui){
+			var target = $(ui.tag);
+			if (target.hasClass('negTopic')) {
+				var indexToRemoveAt = columnsNameArray[columnNumber].columnSearchNegtopics.concept.indexOf(ui.tagLabel);
+				columnsNameArray[columnNumber].columnSearchNegtopics.concept.splice(indexToRemoveAt, 1);
+				columnsNameArray[columnNumber].columnSearchNegtopics.idx.splice(indexToRemoveAt, 1);
+			} else {
+				var indexToRemoveAt = columnsNameArray[columnNumber].columnSearchTopics.concept.indexOf(ui.tagLabel);
+				columnsNameArray[columnNumber].columnSearchTopics.concept.splice(indexToRemoveAt, 1);
+				columnsNameArray[columnNumber].columnSearchTopics.idx.splice(indexToRemoveAt, 1);
+			}
+		}
+	});
 
 	/* Form submission */
 	$('.columnUpForm').submit(function(e){
 		e.preventDefault();
-	});	
+	});
 	formSubmitBtn.on('click', function(e){
 		divColumnUp.prepend(divColumnUpTitle);
 		onSubmitSearch(e, columnNumber);
@@ -368,7 +368,7 @@ function generateColumn(columnNumber, columnTitle){
 		$("#titleSubmitBtn"+columnNumber).css('display', 'inline');
 		titleEditRoutine(this, columnNumber, 0);
 	});
-	//Edit column 
+	//Edit column
 	divColumnUpRightIcon2Wrapper.click(function(e){
 		$("#columnUpForm"+columnNumber).css('display', 'block');
 		$("#titleSubmitBtn"+columnNumber).css('display', 'none');
@@ -377,85 +377,85 @@ function generateColumn(columnNumber, columnTitle){
 	});
 	//Add item
 	divColumnUpRightIconWrapper.click(function(e){
-		columnUpRightIconEvent(columnNumber);				
+		columnUpRightIconEvent(columnNumber);
 	});
 
-	// generate grid before generating column 
+	// generate grid before generating column
 	generateGrid(columnNumber);
 	$("#divGrid"+columnNumber).append(divColumn);
 	generateAddColumnItem(columnNumber);
 
-    /*Apply sortable*/
-    $('#columnMiddleUl'+columnNumber ).sortable({
-	  connectWith: ".columnMiddleUl",
-	  handle: ".itemLiWrapper, .itemWrapper",
-	  placeholder: "sortablePlaceholder",
-      stop: function(event, ui) {
-      	var itemId = ui.item.attr('id');
-        var oldColumnId = Number(((itemId).split("-")[0]).replace('itemLiWrapper', ''));
-        var newColumnId = Number(($(ui.item).parent().attr('id')).replace('columnMiddleUl', ''));
-        var oldItemNumb = Number(itemId.split("-")[1]);
-        var guenuineItem = columnsNameArray[oldColumnId].listedTopics[oldItemNumb];	
+	/*Apply sortable*/
+	$('#columnMiddleUl'+columnNumber ).sortable({
+		connectWith: ".columnMiddleUl",
+		handle: ".itemLiWrapper, .itemWrapper",
+		placeholder: "sortablePlaceholder",
+		stop: function(event, ui) {
+			var itemId = ui.item.attr('id');
+			var oldColumnId = Number(((itemId).split("-")[0]).replace('itemLiWrapper', ''));
+			var newColumnId = Number(($(ui.item).parent().attr('id')).replace('columnMiddleUl', ''));
+			var oldItemNumb = Number(itemId.split("-")[1]);
+			var guenuineItem = columnsNameArray[oldColumnId].listedTopics[oldItemNumb];
 
-        if(oldColumnId != newColumnId){	      
-			//Change itemId
-			var ItemNewNumb = columnsNameArray[newColumnId].nbItems;
-			$('#'+itemId).attr('id', 'itemLiWrapper'+newColumnId+'-'+ItemNewNumb);
-			$('#item'+oldColumnId+'-'+oldItemNumb).attr('id', 'item'+newColumnId+'-'+ItemNewNumb);
-			//push
-			columnsNameArray[newColumnId].listedTopics.push(guenuineItem);
-			columnsNameArray[newColumnId].nbItems +=1;
-			//pop 
-			columnsNameArray[oldColumnId].listedTopics.splice(oldItemNumb, 1);
-			columnsNameArray[oldColumnId].nbItems -=1;
-			for (var i = oldItemNumb; i < columnsNameArray[oldColumnId].listedTopics.length; i++) {
-				var x = i+1;
-				$('#itemLiWrapper'+oldColumnId+'-'+x).attr('id', 'itemLiWrapper'+oldColumnId+'-'+i);
-				$('#item'+oldColumnId+'-'+x).attr('id', 'item'+oldColumnId+'-'+i);
+			if(oldColumnId != newColumnId){
+				//Change itemId
+				var ItemNewNumb = columnsNameArray[newColumnId].nbItems;
+				$('#'+itemId).attr('id', 'itemLiWrapper'+newColumnId+'-'+ItemNewNumb);
+				$('#item'+oldColumnId+'-'+oldItemNumb).attr('id', 'item'+newColumnId+'-'+ItemNewNumb);
+				//push
+				columnsNameArray[newColumnId].listedTopics.push(guenuineItem);
+				columnsNameArray[newColumnId].nbItems +=1;
+				//pop
+				columnsNameArray[oldColumnId].listedTopics.splice(oldItemNumb, 1);
+				columnsNameArray[oldColumnId].nbItems -=1;
+				for (var i = oldItemNumb; i < columnsNameArray[oldColumnId].listedTopics.length; i++) {
+					var x = i+1;
+					$('#itemLiWrapper'+oldColumnId+'-'+x).attr('id', 'itemLiWrapper'+oldColumnId+'-'+i);
+					$('#item'+oldColumnId+'-'+x).attr('id', 'item'+oldColumnId+'-'+i);
+				}
+				$("#itemLiWrapper"+newColumnId+'-x').prependTo('#columnMiddleUl'+newColumnId);
+				//Add reference
+				addRefToTopic(guenuineItem.data.idx, "reference", newColumnId);
 			}
-			$("#itemLiWrapper"+newColumnId+'-x').prependTo('#columnMiddleUl'+newColumnId);
-			//Add reference			
-			addRefToTopic(guenuineItem.data.idx, "reference", newColumnId);									
-        }
-	  } 
-    });
+		}
+	});
 
 	/* Record column in columnsNameArray*/
 	columnsNameArray.push({	name:columnTitle,
-							columnNumber: columnNumber,
-							nbItems:0,
-							columnSearchTopics:{'concept':[],
-												'idx':[] 
-											   },
-							columnSearchNegtopics:{'concept':[],
-												   'idx':[] 
-											   },
-							listedTopics:[]
-						});
+		columnNumber: columnNumber,
+		nbItems:0,
+		columnSearchTopics:{'concept':[],
+			'idx':[]
+		},
+		columnSearchNegtopics:{'concept':[],
+			'idx':[]
+		},
+		listedTopics:[]
+	});
 	columnsArrayIndex +=1;
-}		
+}
 
 /**
  * Function for adding new column to the board
  *
  */
-function addNewColumn(){ 
-		generateColumn(columnsArrayIndex, "column"+columnsArrayIndex);
-		$(".columnUpRightIconWrapper").css('display', 'inline');
-		$(".columnUpRightIcon2Wrapper").css('display', 'inline');
+function addNewColumn(){
+	generateColumn(columnsArrayIndex, "column"+columnsArrayIndex);
+	$(".columnUpRightIconWrapper").css('display', 'inline');
+	$(".columnUpRightIcon2Wrapper").css('display', 'inline');
 }
 
 /****************************************************************************/
 
 
 /* column Up Form submit handling
-***************************************************************************
-*/
+ ***************************************************************************
+ */
 
 /**
  * Function executed when submit search criteria
  *
- * @param {event} [click] event 
+ * @param {event} [click] event
  * @param {Integer} column number
  */
 function onSubmitSearch(e, columnNumber){
@@ -464,11 +464,11 @@ function onSubmitSearch(e, columnNumber){
 	if(newDrop){
 		customSearchTopics(columnNumber);
 		newDrop = 0;
-	}	
+	}
 	//Hide form
 	$('#columnUpForm'+columnNumber).css('display', 'none');
 	$('#columnUp'+columnNumber).css('background-color', '#C0C0C0');
-	
+
 	if($('#columnUpTitleInput'+columnNumber).css('display') != 'none'){
 		var that = $("#columnUpTitleInput"+columnNumber);
 		titleChange(that, columnNumber, 1);
@@ -482,9 +482,9 @@ function onSubmitSearch(e, columnNumber){
 		$("#titleSubmitBtn"+columnNumber).css('display', 'none');
 		console.log($("#titleSubmitBtn"+columnNumber));
 		var that = $('#spanColumnTitleWrapper'+columnNumber);
-		titleEditRoutine(that, columnNumber, 1);			  	
+		titleEditRoutine(that, columnNumber, 1);
 	});
-	titleTooltipRoutine(columnNumber); 
+	titleTooltipRoutine(columnNumber);
 }
 
 /**
@@ -495,19 +495,19 @@ function onSubmitSearch(e, columnNumber){
 function columnUpRightIconEvent(columnNumber){
 	$('#item'+columnNumber+'-x').css('display', 'block');
 	$('[data-toggle="popover"]').popover({
-	    content: $('#contactsArea').html(),
-	    html: true
-	}); 		
+		content: $('#contactsArea').html(),
+		html: true
+	});
 }
 
 /* Editing
-***************************************************************************
-*/
+ ***************************************************************************
+ */
 
 /**
  * Functions for handling  column title edition
  *
- * @param {Jquery Object} 
+ * @param {Jquery Object}
  * @param {Integer} column number
  * @param {Integer} flag
  */
@@ -516,15 +516,15 @@ function titleEditRoutine(that, columnNumber, tmp){
 	$(that).parent().css('float', 'left');
 	if(tmp == 2)
 		$("#titleSubmitBtn"+columnNumber).css("display", 'none');
-	else	
+	else
 		$("#titleSubmitBtn"+columnNumber).css("display", 'inline');
 	$(that).parent().find(".columnUpRightIconWrapper").css('display', 'none');
 	$(that).parent().find(".columnUpRightIcon2Wrapper").css('display', 'none');
-	
+
 	$("#columnUpTitle"+columnNumber).css("background-color", "#E0E0E0");
 	$("#columnUpTitleInput"+columnNumber).css("display", "inline-block");
 	$("#columnUpTitleInput"+columnNumber).focus();
-	
+
 	var that = $("#columnUpTitleInput"+columnNumber);
 	$("#columnUpTitleInput"+columnNumber).keyup(function(e){
 		if(e.which == 13){
@@ -537,15 +537,15 @@ function titleEditRoutine(that, columnNumber, tmp){
 }
 
 /*
-* Function used by titleEditRoutine
-*/
+ * Function used by titleEditRoutine
+ */
 function titleChange(obj, columnNumber, tmp){
 	var that = obj;
 	var newTitle = $(obj).val();
 
 	if(newTitle==""){
 		$('#spanColumnTitle'+columnNumber).text(columnsNameArray[columnNumber].name);
-			console.log("column",columnNumber,"\'s title unchanged");
+		console.log("column",columnNumber,"\'s title unchanged");
 	}else{
 		$('#spanColumnTitle'+columnNumber).text(""+newTitle);
 		//Update array
@@ -568,7 +568,7 @@ function titleChange(obj, columnNumber, tmp){
 }
 
 /**
- * Function to handle column search tags 
+ * Function to handle column search tags
  *
  * @param {Integer} column number
  */
@@ -594,7 +594,7 @@ function titleTooltipRoutine(columnNumber){
  * @param {String}  tag value
  * @param {Integer} flag
  */
-function addTagToColumnUp(columnNumber, conceptVal, tmp){	
+function addTagToColumnUp(columnNumber, conceptVal, tmp){
 	if(Array.isArray(conceptVal)){
 		for (var i = 0; i < conceptVal.length; i++) {
 			if(tmp)
@@ -609,11 +609,11 @@ function addTagToColumnUp(columnNumber, conceptVal, tmp){
 }
 
 /* Clear out elements in the DOM
-***************************************************************************
-*/
+ ***************************************************************************
+ */
 
 /**
- * Function used to reset the board 
+ * Function used to reset the board
  *
  */
 function clearComponents(){
@@ -646,8 +646,8 @@ function clearColumnElements(columnNumber, tmp){
 /****************************************************************************/
 
 /* Concepts
-***************************************************************************
-*/
+ ***************************************************************************
+ */
 
 /**
  * Function used to clear properly column elements
@@ -660,7 +660,7 @@ function displayConcepts(content, conceptNumb){
 	var conceptText = $('<span></span>');
 	var glyphiconWrapper = $('<span></span>');
 	var zindex = 10;
-	
+
 	glyphiconWrapper.attr("class", "conceptGlyphicon glyphicon glyphicon-remove");
 	conceptWrapper.attr("id", "cncpt"+conceptNumb);
 	conceptText.text(content);
@@ -670,7 +670,7 @@ function displayConcepts(content, conceptNumb){
 
 	conceptWrapper.append(conceptText);
 	conceptWrapper.append(glyphiconWrapper);
-	
+
 	/* Negation process */
 	conceptWrapper.on("click", function(){
 		if($(this).hasClass("negTopic")){
@@ -680,13 +680,13 @@ function displayConcepts(content, conceptNumb){
 		}
 	});
 	glyphiconWrapper.on("click", function(){
-    	$(this).parent().remove();
+		$(this).parent().remove();
 	});
 	//Empty container
 	if(!conceptNumb){
-		$("#concepts").empty();	
+		$("#concepts").empty();
 	}
-	$("#concepts").append(conceptWrapper);	
+	$("#concepts").append(conceptWrapper);
 }
 
 
@@ -694,8 +694,8 @@ function displayConcepts(content, conceptNumb){
 
 
 /* Side Container
-***************************************************************************
-*/
+ ***************************************************************************
+ */
 
 /**
  * Function used to display information of displayed column
@@ -706,7 +706,7 @@ function sideContainerColumnsList(columnNumber){
 	var sideContainerColumnsLi = $('<li></li>');
 	var numbSpan = $('<span></span>');
 	var nameSpan = $('<span></span>');
-	
+
 	sideContainerColumnsLi.attr('class', 'list-group-item');
 	sideContainerColumnsLi.attr('id', 'list-group-li-'+columnNumber);
 	nameSpan.attr('id', 'sideNameSpan'+columnNumber);
@@ -724,7 +724,7 @@ function sideContainerColumnsList(columnNumber){
 		sideContainerColumnsLi.append(nameSpan);
 		sideContainerColumnsLi.append(numbSpan);
 		$('#sideContainerColumnsUl').append(sideContainerColumnsLi);
-	}	
+	}
 }
 
 /**
@@ -741,17 +741,17 @@ function itemInfo(msgObject){
 	var lastModifyDate = new Date(msgObject.lastModify);
 	var creationDateDate = new Date(msgObject.creationDate);
 
-   var lastModifyTimeAndDate = lastModifyDate.getHours()+"h"
-					 +lastModifyDate.getMinutes()+"mn"
-					 +lastModifyDate.getSeconds()+"s, "
-					 +lastModifyDate.getDate()+"/"
-					 +lastModifyDate.getMonth();
+	var lastModifyTimeAndDate = lastModifyDate.getHours()+"h"
+		+lastModifyDate.getMinutes()+"mn"
+		+lastModifyDate.getSeconds()+"s, "
+		+lastModifyDate.getDate()+"/"
+		+lastModifyDate.getMonth();
 
 	var creationTimeAndDate = creationDateDate.getHours()+"h"
-					 +creationDateDate.getMinutes()+"mn"
-					 +creationDateDate.getSeconds()+"s, "
-					 +creationDateDate.getDate()+"/"
-					 +creationDateDate.getMonth();
+		+creationDateDate.getMinutes()+"mn"
+		+creationDateDate.getSeconds()+"s, "
+		+creationDateDate.getDate()+"/"
+		+creationDateDate.getMonth();
 
 	line1.append("<strong class=\'text-primary\'>Idx: </strong><span>"+(msgObject.idx).split('-')[0]+'</span>');
 	line2.append("<strong class=\'text-primary\'>Name: </strong><span>"+msgObject.name+'</span>');
@@ -768,7 +768,7 @@ function itemInfo(msgObject){
 }
 
 /**
- * Function used to trigger sideContainer hidding 
+ * Function used to trigger sideContainer hidding
  *
  */
 function sideContainerHide(){
@@ -778,19 +778,19 @@ function sideContainerHide(){
 		$('.sideDivHead').css('height', '35px');
 		$('#sideDivHeadText').css('display', 'none');
 		$('#sideMainContainer').css('display', 'none');
-		that.removeClass('glyphicon-arrow-right').addClass('glyphicon-arrow-left');		
+		that.removeClass('glyphicon-arrow-right').addClass('glyphicon-arrow-left');
 		$('#mainContainer').animate({'width': '97%'});
 
-	}	
+	}
 	else if(that.hasClass('glyphicon-arrow-left')){
 		$('#mainContainer').animate({'width': '85%'});
 		$('#sideContainer').animate({'width':'250px'});
 		$('.sideDivHead').css('height', 'auto');
 		$('#sideMainContainer').css('display', 'block');
-		$('#sideDivHeadText').css('display', 'inline');		
+		$('#sideDivHeadText').css('display', 'inline');
 		$('.sideDivHead').find('.glyphicon').removeClass('glyphicon-arrow-left');
-    	$('.sideDivHead').find('.glyphicon').addClass('glyphicon-arrow-right');
-	}	
+		$('.sideDivHead').find('.glyphicon').addClass('glyphicon-arrow-right');
+	}
 }
 
 /**
@@ -800,38 +800,38 @@ function sideContainerHide(){
  */
 function logDisplay(msg){
 	var sideContainerLogsLi = $('<li></li>');
-	
+
 	sideContainerLogsLi.attr('class', 'list-group-item');
 	sideContainerLogsLi.append(msg);
 	$('#sideContainerLogsUl').append(sideContainerLogsLi);
-	$('#sideContainerLogs').animate({scrollTop: $('#sideContainerLogsUl').css('height')}, 500);		
-	console.log(msg);	
+	$('#sideContainerLogs').animate({scrollTop: $('#sideContainerLogsUl').css('height')}, 500);
+	console.log(msg);
 };
 
 /* Creating/Saving/Listing Board
-**************************************************************************
-*/
+ **************************************************************************
+ */
 
 /**
  * Function used to genarate saving board pop up
  *
  */
-function saveBoardPopover(){    
-    $("#save-form").submit(function (e) {
-    	e.preventDefault();
-    	$("#save-modal").modal('hide');
-    	var topicname=$('#save_topicname').val();
-        var topicdesc=$('#save_topicdesc').val();
-        if (topicname != "" && topicname.length >1) {        
-	        $('#save_topicname').val("");
-	        $('#save_topicdesc').val("");
+function saveBoardPopover(){
+	$("#save-form").submit(function (e) {
+		e.preventDefault();
+		$("#save-modal").modal('hide');
+		var topicname=$('#save_topicname').val();
+		var topicdesc=$('#save_topicdesc').val();
+		if (topicname != "" && topicname.length >1) {
+			$('#save_topicname').val("");
+			$('#save_topicdesc').val("");
 			var confName = {
 				topicName: topicname,
 				topicDescription: topicdesc
 			};
 			saveBoard(confName);
 		}
-    });   
+	});
 }
 
 
@@ -853,18 +853,18 @@ function listingSavedBoards(boardObj, i){
 	appendingLine.append(tdNumb);
 	appendingLine.append(tdBoard);
 	appendingLine.append(tdSavedOn);
-	
+
 	tdLink.click(function(event){
-		boardToLoadFlag = Number($(this).parent().attr("id").replace('brd', ''));		
+		boardToLoadFlag = Number($(this).parent().attr("id").replace('brd', ''));
 		readLoadedBoard(boardToLoadFlag);
 	});
 	$("#tableBody").append(appendingLine);
 }
-	
+
 
 /* User Contacts
-****************************************************************************
-*/
+ ****************************************************************************
+ */
 
 function displayContactList(data, i){
 	var item = $("<li></li>");
@@ -879,7 +879,7 @@ function displayContactList(data, i){
 	item.attr('id', 'contact'+i);
 	item.append(avatarImg);
 	item.append(nameSpan);
-	
+
 	$("#contactList").append(item);
 }
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 KeeeX SAS 
+Copyright (c) 2016 KeeeX SAS
 
 This is an open source project available under the MIT license.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,7 @@ function handleResponse(error, response, body, callback) {
 	if (error || response.statusCode !== 200)
 		callback(error || new Error(response.statusCode + " " + body));
 	else
-  		callback(null, body);
+		callback(null, body);
 }
 
 /**
@@ -54,7 +54,7 @@ function setToken(_token) {
 	token = _token;
 }
 
-/** 
+/**
  * Function you'll have to implement when using getToken
  *
  * @callback hello_callback
@@ -69,12 +69,12 @@ function setToken(_token) {
  */
 function hello(callback) {
 	request(uri.hello, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
 
-/** 
+/**
  * Function you'll have to implement when using getToken
  *
  * @callback getToken_callback
@@ -94,18 +94,18 @@ function hello(callback) {
 function getToken(appName, callback) {
 	var self = this;
 	request({
-	  method: 'GET',
-	  uri: uri.token,
-	  json: {
-	  	appName: appName
-	  }
-	},
-	function (error, response, body) {
-		if (!error && body && body.token) {
-			token = body.token;
+		method: 'GET',
+		uri: uri.token,
+		json: {
+			appName: appName
 		}
-		handleResponse(error, response, body, callback);
-	});
+	},
+		function (error, response, body) {
+			if (!error && body && body.token) {
+				token = body.token;
+			}
+			handleResponse(error, response, body, callback);
+		});
 }
 
 
@@ -136,23 +136,23 @@ function getToken(appName, callback) {
 function keeex(path, refs, prevs, description, option, callback) {
 	var opt = option || {};
 	request({
-	  method: 'POST',
-	  uri: uri.topic + "/keeex",
-	  json: {
-	  	path: path,
-	  	refs: refs,
-	  	prevs: prevs,
+		method: 'POST',
+		uri: uri.topic + "/keeex",
+		json: {
+			path: path,
+			refs: refs,
+			prevs: prevs,
 			name: opt.name,
-	  	description: description,
-	  	option: opt
-	  },
-	  headers: {
+			description: description,
+			option: opt
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -173,19 +173,19 @@ function keeex(path, refs, prevs, description, option, callback) {
  */
 function verify(path, opt, callback) {
 	request({
-	  method: 'POST',
-	  uri: uri.topic + "/verify",
-	  json: {
-	  	path: path,
+		method: 'POST',
+		uri: uri.topic + "/verify",
+		json: {
+			path: path,
 			option: opt
-	  },
-	  headers: {
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 
@@ -205,18 +205,18 @@ function verify(path, opt, callback) {
  */
 function getTopics(idxs, callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.topic,
-	  json: {
-	  	idxs: idxs
-	  },
-	  headers: {
+		method: 'GET',
+		uri: uri.topic,
+		json: {
+			idxs: idxs
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 
@@ -233,23 +233,23 @@ function getTopics(idxs, callback) {
 /**
  * Get all file locations keeex knows about the given idxs
  *
- * @param {string[]} idx - Array of idx to fetch the location 
+ * @param {string[]} idx - Array of idx to fetch the location
  * @param {getLocations_callback} callback - The callback that handles the response.
  */
 function getLocations(idxs, callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.topic + "/locations",
-	  json: {
-	  	idxs: idxs
-	  },
-	  headers: {
+		method: 'GET',
+		uri: uri.topic + "/locations",
+		json: {
+			idxs: idxs
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 
@@ -269,14 +269,14 @@ function getLocations(idxs, callback) {
  */
 function getAuthor(idx, callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.topic + "/" + idx + "/author",
-	  json: true,
-	  headers: {
+		method: 'GET',
+		uri: uri.topic + "/" + idx + "/author",
+		json: true,
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -300,11 +300,11 @@ function getComments(idx, callback) {
 		method: 'GET',
 		uri: uri.topic + "/" + idx + "/comments",
 		json: true,
-	  headers: {
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -331,11 +331,11 @@ function comment(idx, message, callback) {
 		json: {
 			message: message
 		},
-	  headers: {
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -359,11 +359,11 @@ function getPrevs(idx, callback) {
 		method: 'GET',
 		uri: uri.topic + "/" + idx + "/prevs",
 		json: true,
-	  headers: {
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -386,11 +386,11 @@ function getNexts(idx, callback) {
 		method: 'GET',
 		uri: uri.topic + "/" + idx + "/nexts",
 		json: true,
-	  headers: {
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -414,11 +414,11 @@ function getRefs(idx, callback) {
 		method: 'GET',
 		uri: uri.topic + "/" + idx + "/refs",
 		json: true,
-	  headers: {
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -444,11 +444,11 @@ function getShared(idx, callback) {
 		method: 'GET',
 		uri: uri.topic + "/" + idx + "/shared",
 		json: true,
-	  headers: {
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -472,11 +472,11 @@ function getAgreements(idx, callback) {
 		method: 'GET',
 		uri: uri.topic + "/" + idx + "/agreements",
 		json: true,
-	  headers: {
+		headers: {
 			'Authorization': token
-	  }
+		}
 	}, function (error, response, body) {
-	  handleResponse(error, response, body, callback);
+		handleResponse(error, response, body, callback);
 	});
 }
 
@@ -488,14 +488,14 @@ function getAgreements(idx, callback) {
  * @param {Array} error - Any error that could have happened, null if none
  * @param {Object} response - The API response if everything is okay
  * @param {String} response.idx - Topic idx
- * @param {Object} response.shared 
+ * @param {Object} response.shared
  * @param {String[]} response.shared.shared - People who are shared
  * @param {String[]} response.shared.received - People who received
- * @param {String} response.link - Url to download the ciphred file 
+ * @param {String} response.link - Url to download the ciphred file
  */
 
 /**
- * Share a topic 
+ * Share a topic
  *
  * @param {string} idx - The topic idx
  * @param {string} path - Path of the file of the topic
@@ -506,20 +506,20 @@ function getAgreements(idx, callback) {
  */
 function share(idx, path, recipients, option, callback) {
 	request({
-	  method: 'POST',
-	  uri: uri.topic + "/" + idx + "/share",
-	  json: {
-	  	path: path,
-	  	recipients: recipients,
-	  	option: option
-	  },
-	  headers: {
+		method: 'POST',
+		uri: uri.topic + "/" + idx + "/share",
+		json: {
+			path: path,
+			recipients: recipients,
+			option: option
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 
@@ -532,7 +532,7 @@ function share(idx, path, recipients, option, callback) {
  */
 
 /**
- * Make a reference 
+ * Make a reference
  *
  * @param {string} type - The reference type ("reference", "version" or "agreement")
  * @param {string} from - The topic idx when type is "reference" or "version", null when "agreement"
@@ -541,20 +541,20 @@ function share(idx, path, recipients, option, callback) {
  */
 function makeRef(type, from, to, callback) {
 	request({
-	  method: 'POST',
-	  uri: uri.topic + "/makeRef",
-	  json: {
-	  	type: type,
-	  	from: from,
-	  	to: to
-	  },
-	  headers: {
+		method: 'POST',
+		uri: uri.topic + "/makeRef",
+		json: {
+			type: type,
+			from: from,
+			to: to
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -572,16 +572,16 @@ function makeRef(type, from, to, callback) {
  */
 function remove(idx, callback) {
 	request({
-	  method: 'POST',
-	  uri: uri.topic + "/" + idx + "/remove",
-	  json: true,
-	  headers: {
+		method: 'POST',
+		uri: uri.topic + "/" + idx + "/remove",
+		json: true,
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -599,16 +599,16 @@ function remove(idx, callback) {
  */
 function getMine(callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.user + "/me",
-	  json: true,
-	  headers: {
+		method: 'GET',
+		uri: uri.user + "/me",
+		json: true,
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -627,18 +627,18 @@ function getMine(callback) {
  */
 function getUsers(idxs, callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.user,
-	  json: {
-	  	idxs: idxs
-	  },
-	  headers: {
+		method: 'GET',
+		uri: uri.user,
+		json: {
+			idxs: idxs
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -657,16 +657,16 @@ function getUsers(idxs, callback) {
  */
 function getUserByEmail(email, callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.user + "/email/" + email,
-	  json: true,
-	  headers: {
+		method: 'GET',
+		uri: uri.user + "/email/" + email,
+		json: true,
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -674,7 +674,7 @@ function getUserByEmail(email, callback) {
  *
  * @callback generateFile_callback
  * @param {Array} error - Any error that could have happened, null if none
- * @param {Object} response 
+ * @param {Object} response
  * @param {String} response.file - Path of the created file
  */
 
@@ -688,20 +688,20 @@ function getUserByEmail(email, callback) {
  */
 function generateFile(name, description, target, callback) {
 	request({
-	  method: 'POST',
-	  uri: uri.util + "/generateFile",
-	  json: {
-	  	name: name,
+		method: 'POST',
+		uri: uri.util + "/generateFile",
+		json: {
+			name: name,
 			description: description,
 			target: target
-	  },
-	  headers: {
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-	  handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -720,7 +720,7 @@ function generateFile(name, description, target, callback) {
  * @param {Integer} skip - Number of topics to be skiped from search results
  * @param {Integer} limit - Maximum number of topics returned by search
  * @param {Object} option - Search options
- * @param {boolean} option.document - Search for a document or not 
+ * @param {boolean} option.document - Search for a document or not
  * @param {boolean} option.discussion - Search for a discussion or not
  * @param {boolean} option.comment - Search for a comment or not
  * @param {boolean} option.agreed - Search for a keeex agreement or not
@@ -731,23 +731,23 @@ function generateFile(name, description, target, callback) {
  */
 function search(filter, topics, negTopics, skip, limit, option, callback) {
 	request({
-	  method: 'POST',
-	  uri: uri.util + "/search",
-	  json: {
-	  	filter: filter,
-	    topics: topics,
-	    negTopics: negTopics,
-	    skip: skip,
-	    limit: limit,
-	    option: option
-	  },
-	  headers: {
+		method: 'POST',
+		uri: uri.util + "/search",
+		json: {
+			filter: filter,
+			topics: topics,
+			negTopics: negTopics,
+			skip: skip,
+			limit: limit,
+			option: option
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-	  handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -765,16 +765,16 @@ function search(filter, topics, negTopics, skip, limit, option, callback) {
  */
 function currentView(callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.util + "/currentView",
-	  json: true,
-	  headers: {
+		method: 'GET',
+		uri: uri.util + "/currentView",
+		json: true,
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -793,16 +793,16 @@ function currentView(callback) {
  */
 function env(name, callback) {
 	request({
-	  method: 'GET',
-	  uri: uri.util + "/env" + "/" + name,
-	  json: true,
-	  headers: {
+		method: 'GET',
+		uri: uri.util + "/env" + "/" + name,
+		json: true,
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 /**
@@ -821,18 +821,18 @@ function env(name, callback) {
  */
 function setEnv(name, value, callback) {
 	request({
-	  method: 'POST',
-	  uri: uri.util + "/env" + "/" + name,
-	  json: {
-	  	value: value
-	  },
-	  headers: {
+		method: 'POST',
+		uri: uri.util + "/env" + "/" + name,
+		json: {
+			value: value
+		},
+		headers: {
 			'Authorization': token
-	  }
+		}
 	},
-	function (error, response, body) {
-		handleResponse(error, response, body, callback);
-	});	
+		function (error, response, body) {
+			handleResponse(error, response, body, callback);
+		});
 }
 
 module.exports = {
@@ -867,7 +867,7 @@ module.exports = {
 
 
 /**
- * 
+ *
  * @typedef keeex_topic
  * @property {String} idx - Topic identifier
  * @property {String} name - Topic name - the same file name
@@ -889,7 +889,7 @@ module.exports = {
  */
 
 /**
- * 
+ *
  * @typedef keeex_user
  * @property {String} profileIdx - User identifier
  * @property {String} name - User name
