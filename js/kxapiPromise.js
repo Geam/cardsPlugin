@@ -64,6 +64,33 @@ module.exports = (kxapi) => {
 			});
 		},
 
+		"keeex": (filePath, refs, prevs, description, option) => {
+			return new Promise((resolve, reject) => {
+				kxapi.keeex(filePath, refs, prevs, description, option, (error, keeexedfile) => {
+					if (error) reject(`keeexing file error: ${error}`);
+					resolve(keeexedfile);
+				});
+			});
+		},
+
+		"generateFile": (name, description, target) => {
+			return new Promise((resolve, reject) => {
+				kxapi.generateFile(name, description, target, (error, filePath) => {
+					if (error) reject(`generateFile error: ${error}`);
+					resolve(filePath);
+				});
+			});
+		},
+
+		"share": (idx, path, recipients, option) => {
+			return new Promise((resolve, reject) => {
+				kxapi.share(idx, path, recipients, option, (error, sharedFile) => {
+					if (error) reject(`share error: ${error}`);
+					resolve(sharedFile);
+				});
+			});
+		},
+
 		"getAuthorFromTopic": (topic) => {
 			return new Promise((resolve, reject) => {
 				kxapi.getAuthor(topic.idx, (error, author) => {

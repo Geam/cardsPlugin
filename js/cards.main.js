@@ -65,7 +65,7 @@ var rootPath;
 var boardsPath;
 
 /***Flag***/
-var newDrop;
+var newDrop = false;
 var boardToLoadFlag = null;
 var	negToken = 0;	//To make tag appear negated in columnUpSearchForm
 
@@ -265,7 +265,7 @@ function displayCurrentProfileAvatar(){
 
 function resetDisplay(empty) {
 	//Reset flags
-	newDrop = -1;
+	newDrop = false;
 	boardToLoadFlag = null;
 	negToken = 0;
 	// Reset arrays
@@ -526,6 +526,23 @@ function addRefToTopic(theTopicIdx, theType, columnId){
 }
 /*--End of addRefToTopic--*/
 
+const createAndKeeex = (data) => {
+	return kxapiPromise.generateFile(data.name, data.description, data.target)
+		.then((filePath) => {
+			if (!filePath) throw "No file generated";
+			const opt = {
+				targetFolder: thisKEEEXED_PATH,
+				timestamp: false,
+				name: data.name,
+				except: {
+					"name": true,
+					"desc": true
+				}
+			};
+			return kxapiPromise.keeex(filePath.file, data.ref, [], data.description, opt);
+		});
+};
+
 /*
  * Function to create new concept
  */
@@ -536,37 +553,13 @@ function createConcept(){
 		var data = $(this).serializeFormJSON();
 		$("#crTagName").val("");
 		$("#crTagDesc").val("");
-		if (data.name !== "" && data.name.length > 1) {
-			kxapi.generateFile(data.name, data.description, null, function(error, filePath){
-				if (error) {
-					logDisplay("Generate file error: "+error);
-					return;
-				}
-				if(!filePath){
-					logDisplay("No file generated");
-					return;
-				}
-				// Keeex file now
-				var  opt = {
-					targetFolder:thisKEEEXED_PATH,
-					timestamp:false,
-					name:data.name,
-					except:
-					{
-						"name": true,
-						"desc": true
-					}
-				};
-				kxapi.keeex(filePath.file, [conceptTypeIdx], [], data.description,  opt, function(error, keeexedFile){
-					if(error){
-						logDisplay("Keeexing file error: "+error);
-						return;
-					}
-					logDisplay("Concept created ! ");
-					searchTags();
-				});
-			});
-		}
+		if (data.name === "" || data.name.length <= 1) return ;
+		createAndKeeex(Object.assign({}, data, { "ref": [conceptTypeIdx] }))
+			.then(() => {
+				logDisplay("Concept created ! ");
+				searchTags();
+			})
+			.catch(logDisplay);
 	});
 }
 /*--End of createConcept --*/
@@ -579,79 +572,33 @@ function createTopic(columnNumber, topicName, topicDescription, toShareIds){
 	var columnTopics = column.topics.idx.slice(0);
 	columnTopics.push(keeexMsgTypeIdx);
 
-	if (topicName !== "" && topicName.length > 1) {
-		kxapi.generateFile(topicName, topicDescription, null, function(error, filePath){
-			if(error){
-				logDisplay("Generate file error: "+error);
-				return;
+	if (!topicName || topicName === "" || topicName <= 1) return ;
+
+	createAndKeeex({ "name": topicName, "description": topicDescription, "ref": columnTopics })
+		.then((keeexedFile) => {
+			if (toShareIds && toShareIds.length > 0) {
+				const shareIdxList = toShareIds.map((e) => e.profileIdx);
+				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path, toShareIds);
 			}
-			if(!filePath){
-				logDisplay("No file generated");
-				return;
-			}
-			// Keeex file now
-			var  opt = {
-				targetFolder:thisKEEEXED_PATH,
-				timestamp:false,
-				name:topicName,
-				except:
-				{
-					"name": true,
-					"desc": true
-				}
+			const tile = {
+				"data": keeexedFile.topic,
+				"domId": `${column.id}-${column.nbItems}`,
+				"author": currentUser,
+				"shared": toShareIds || []
 			};
-			var keeexedFile = null;
-			async.series([
-				function crTpcKeeex(callback) {
-					kxapi.keeex(filePath.file, columnTopics, [], topicDescription,  opt, function(error, data) {
-						if (!error) keeexedFile = data;
-						callback(error);
-					});
-				},
-				function crTpShare(callback) {
-					shareTopic(keeexedFile.topic.idx, keeexedFile.path,  toShareIds, callback);
-				},
-				function crTpDisplay(callback) {
-					var tile = {
-						'data': keeexedFile.topic,
-						'domId': column.id + "-" + column.nbItems,
-						'avatar': currentProfileAvatar,
-						'shared': toShareIds
-					};
-					generateColumnItem(column, tile, true);
-					column.nbItems +=1;
-					logDisplay("Topic created ! ");
-					//Clean file lds
-					$('#itemTextarea'+column.id).val("");
-					$('#itemInput'+column.id).val("");
-					$('.addShare').remove();
-					//hide block
-					$('#item'+column.id+'-x').css('display', 'none');
-					callback(null);
-				}
-			], function(error) {
-				console.error(error);
-			});
-		});
-	}
+			generateColumnItem(column, tile, true);
+			column.nbItems++;
+			logDisplay("Topic created !");
+			// TODO display stuff => dom.js
+			$('#itemTextarea'+column.id).val("");
+			$('#itemInput'+column.id).val("");
+			$('.addShare').remove();
+			//hide block
+			$('#item'+column.id+'-x').css('display', 'none');
+		})
+		.catch(logDisplay);
 }
 /*--End of createTopic --*/
-
-/*
- * Function used to share topic function
- */
-function shareTopic(topicIdx, topicPath,  shareObj, callback){
-	if(shareObj && shareObj.length > 0){
-		var shareIds = [];
-		for (var i = 0; i < shareObj.length; i++)
-			shareIds.push(shareObj[i].profileIdx);
-		// console.log(topicIdx, topicPath, shareIds);
-		kxapi.share(topicIdx, topicPath, shareIds, {}, callback);
-	}else{
-		callback(null);
-	}
-}
-/*--End of shareTopic --*/
 
 /*
 ####################-End of creation/share functions-####################
@@ -796,27 +743,19 @@ function itemDrag(ev) {
 
 function drop(ev) {
 	ev.preventDefault();
-	var columnIndex;
+	var column;
 	var data = ev.dataTransfer.getData("text");
 	var targetId;
 
-	if(ev.target.className =="columnUpTitle")
-	{
+	if (ev.target.className =="columnUpTitle") {
 		targetId = ev.srcElement.parentNode.id;
-	}
-	else if(ev.target.className =="spanColumnTitleWrapper")
-	{
+	} else if (ev.target.className =="spanColumnTitleWrapper") {
 		targetId = ev.srcElement.parentNode.parentNode.id;
-	}
-	else if(ev.target.className =="spanColumnTitle")
-	{
+	} else if (ev.target.className =="spanColumnTitle") {
 		targetId = ev.srcElement.parentNode.parentNode.parentNode.id;
-	}
-	else if(ev.target.className[0] =="columnUpRightIcon")
-	{
+	} else if (ev.target.className[0] =="columnUpRightIcon") {
 		targetId = ev.srcElement.parentNode.parentNode.parentNode.id;
-	}
-	else{
+	} else {
 		targetId = ev.target.id;
 	}
 
@@ -826,38 +765,31 @@ function drop(ev) {
 	var conceptVal = concept.find('span').text();
 	var cnceptIdxIndex = Number(data.replace("cncpt", ''));
 
-	newDrop = 1;
-	if(concept.hasClass('negTopic')){
+	newDrop = true;
+	if (concept.hasClass('negTopic')) {
 		negToken = 1;
 	}
-	if(upForm.css('display') != 'none'){
+	if (upForm.css('display') != 'none') {
 		$('#'+ev.toElement.id).tagit('createTag', conceptVal);
 		let columnName = upColumn.parent().parent().parent().attr('id');
-		columnIndex =  Number((ev.toElement.id).replace("formTags", ''));
-	}
-	else{
+		column = columnsNameArray[Number(columnName.substr(6))];
+	} else {
 		upColumn.find('.columnUpTitle').remove();
 		upForm.css('display', 'block');
 		upColumn.css('background-color', '#F0F0F0');
 		upForm.find('ul').tagit('createTag', conceptVal);
 		let columnName = upColumn.parent().attr('id');
-		columnIndex =  Number(targetId.replace("columnUp", ''));
+		column = columnsNameArray[Number(columnName.substr(6))];
 	}
 	// push tag value in search array
-	if(columnsNameArray[columnIndex].nbItems){
+	if (column.nbItems) {
 		//Emptiing the arrays
-		clearColumnElements(columnIndex, 1);
+		clearColumnElements(column.id, 1);
 	}
-	if(concept.hasClass('negTopic')){
-		if(columnsNameArray[columnIndex].negtopics.concept.indexOf(conceptVal) == -1){
-			columnsNameArray[columnIndex].negtopics.concept.push(conceptVal);
-			columnsNameArray[columnIndex].negtopics.idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
-		}
-	}else{
-		if(columnsNameArray[columnIndex].topics.concept.indexOf(conceptVal) == -1){
-			columnsNameArray[columnIndex].topics.concept.push(conceptVal);
-			columnsNameArray[columnIndex].topics.idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
-		}
+	let source = concept.hasClass('negTopoc') ? "negtopics" : "topics";
+	if (column[source].concept.indexOf(conceptVal) == -1) {
+		column[source].concept.push(conceptVal);
+		column[source].idx.push(conceptsIdxArray[cnceptIdxIndex].idx);
 	}
 }
 

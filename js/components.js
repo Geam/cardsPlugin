@@ -47,61 +47,6 @@ function generateColumnItem(column, tile, first) {
  * @param {Integer} column number
  */
 function generateAddColumnItem(column) {
-	var COLUMN_ITEM_ID = `${column.id}-x`;
-	var itemWrapper = $('<div></div>');
-	var itemContent = $('<div></div>');
-	var itemFooter =  $('<div></div>');
-	var itemLiWrapper = $('<li></li>');
-	var itemInput = $('<input>');
-	var itemTextarea = $('<textarea></textarea>');
-	var shareWithBtn = $('<button>share</button>');
-	var addItemSubmit = $('<button>Add</button>');
-	var addItemShareList = $('<ul></ul>');
-	var addItemCancelWrapper = $('<a></a>');
-	var addItemCancel = $('<span></span>');
-
-	itemLiWrapper.attr('id', 'itemLiWrapper'+COLUMN_ITEM_ID);
-	itemLiWrapper.attr('class', 'itemLiWrapper top-ele');
-	itemWrapper.attr('id', 'item'+COLUMN_ITEM_ID);
-	itemWrapper.attr('class', 'addItemWrapper');
-	itemContent.attr('class', 'itemContent');
-	itemInput.attr('class', 'itemInput');
-	itemInput.attr('id', 'itemInput' + column.id);
-	itemInput.attr('type', 'text');
-	itemInput.attr('name', 'itemInput');
-	itemInput.attr('placeholder', 'name...');
-	shareWithBtn.attr('class', 'shareWithBtn btn-primary');
-	shareWithBtn.attr('id', 'shareWithBtn' + column.id);
-	shareWithBtn.attr("data-toggle", "popover");
-	shareWithBtn.attr("data-placement", "right");
-	shareWithBtn.attr("data-trigger", "focus");
-	addItemShareList.attr('class', 'addItemShareList');
-	addItemShareList.attr('id', 'addItemShareList' + column.id);
-	itemTextarea.attr('id', 'itemTextarea' + column.id);
-	itemTextarea.attr("class", 'itemTextarea');
-	itemTextarea.attr("name", 'itemTextarea');
-	itemTextarea.attr('placeholder', 'description...');
-	itemFooter.attr('class', 'itemFooter2');
-	addItemSubmit.attr('class', 'addItemBtn');
-	addItemCancel.attr('class', 'addItemCancel glyphicon glyphicon-remove');
-	addItemCancelWrapper.attr('class', 'addItemCancelWrapper');
-
-	/*Setting content*/
-	/*Appending children*/
-	itemFooter.append(addItemSubmit);
-	addItemCancelWrapper.append(addItemCancel);
-	itemFooter.append(addItemCancelWrapper);
-	itemWrapper.append(itemInput);
-	itemWrapper.append(itemTextarea);
-	itemWrapper.append(addItemShareList);
-	itemWrapper.append(shareWithBtn);
-	itemWrapper.append(itemFooter);
-
-	/*Append in corresponding column*/
-	var columnMiddleSelector = $("#column"+column.id).find(".columnMiddleUl");
-	itemLiWrapper.append(itemWrapper);
-	columnMiddleSelector.prepend(itemLiWrapper);
-
 	/* Actions */
 	$('#itemInput'+column.id+'-x').focus();
 	$('#shareWithBtn'+column.id).click(function(e){
@@ -131,7 +76,7 @@ function generateAddColumnItem(column) {
  * @param {Integer} column number
  * @param {String} column title
  */
-function generateColumn(columnNumber, columnTitle){
+function generateColumn(columnNumber, columnTitle) {
 	let column = {
 		"id": columnNumber,
 		"name": columnTitle,
@@ -147,194 +92,106 @@ function generateColumn(columnNumber, columnTitle){
 		listedTopics: []
 	};
 
-	/* Declarations */
-	var spanColumnTitleWrapper = $('<a></a>');
-	var spanColumnTitle = $('<span>' + column.name + '</span>');
-	var divColumn = $('<div></div>');
-	var divColumnUp = $('<div></div>');
-	var divColumnUpRightIconWrapper = $('<a></a>');
-	var divColumnUpRightIcon2Wrapper = $('<a></a>');
-	var divColumnUpRightIcon = $('<span></span>');
-	var divColumnUpRightIcon2 = $('<span></span>');
-	var divColumnUpTitle = $('<div></div>');
-	var divColumnUpTitleInput = $('<input/>');
-	var divColumnUpTitleSubmitBtn = $('<button></button>');
-	var divColumnUpTitleSubmitBtnIcon = $('<span></span>');
-	var divColumnTitleDisplay = $('<div></div>');
-	var divColumnMiddle = $('<div></div>');
-	var divColumnMiddleUl = $('<ul></ul>');
-	var defaultMiddleWrapper = $('<div></div>');
-	var defaultMiddleText = $('<span>No topic !</span>');
-	var shadowDiv = $('<div></div>');
-	var divColumnDown = $('<div></div>');
-	var divColumnUpForm = $('<form></form>');
-	var formUl = $('<ul></ul>');
-	var formSubmitBtn = $('<input/>');
-
-	/* Attributes setting*/
-	divColumn.attr('id', "column" + column.id);
-	divColumn.attr('class', 'column');
-	divColumnUp.attr('class', 'columnUp');
-	divColumnUp.attr('id', 'columnUp'+column.id);
-	formUl.attr('class', 'formTags');
-	formUl.attr('id', 'formTags'+column.id);
-	formSubmitBtn.attr('id', 'colInput'+column.id);
-	formSubmitBtn.attr('class', 'formSubmitBtn btn btn-default');
-	formSubmitBtn.attr('type', 'submit');
-	formSubmitBtn.attr('value', 'valider');
-	divColumnUpForm.attr('action', '');
-	divColumnUpForm.attr('class', 'columnUpForm');
-	divColumnUpForm.attr('id', 'columnUpForm'+column.id);
-	divColumnUpForm.css('display', 'none');
-	spanColumnTitleWrapper.attr('class', 'spanColumnTitleWrapper');
-	spanColumnTitleWrapper.attr('id', 'spanColumnTitleWrapper'+column.id);
-	spanColumnTitle.attr('class', 'spanColumnTitle');
-	spanColumnTitle.attr('id', 'spanColumnTitle'+column.id);
-	divColumnUpTitleInput.attr("class", "columnUpTitleInput");
-	divColumnUpTitleInput.attr("id", "columnUpTitleInput"+column.id);
-	divColumnUpTitleInput.css("display", 'none');
-	divColumnUpTitleInput.attr("placeholder", 'enter title...');
-	divColumnUpTitleSubmitBtn.attr('id', 'titleSubmitBtn'+column.id);
-	divColumnUpTitleSubmitBtn.attr('class', 'titleSubmitBtn btn');
-	divColumnUpTitleSubmitBtn.css("display", 'none');
-	divColumnUpTitleSubmitBtnIcon.attr('class', 'glyphicon glyphicon-ok');
-	divColumnUpRightIconWrapper.attr('class', 'columnUpRightIconWrapper');
-	divColumnUpRightIconWrapper.attr('id', 'columnUpRightIconWrapper'+column.id);
-	divColumnUpRightIconWrapper.attr('title', 'Add item');
-	divColumnUpRightIcon2Wrapper.attr('class', 'columnUpRightIcon2Wrapper');
-	divColumnUpRightIcon2Wrapper.attr('id', 'columnUpRightIcon2Wrapper'+column.id);
-	divColumnUpRightIcon2Wrapper.attr('title', 'Edit column ');
-	divColumnUpRightIcon.attr('class', 'columnUpRightIcon glyphicon glyphicon-plus');
-	divColumnUpRightIcon2.attr('class', 'columnUpRightIcon glyphicon glyphicon-pencil');
-	divColumnUpTitle.attr('class', 'columnUpTitle');
-	divColumnUpTitle.attr('id', 'columnUpTitle'+column.id);
-	divColumnTitleDisplay.attr('class', 'divColumnTitleDisplay');
-	divColumnTitleDisplay.attr('id', 'divColumnTitleDisplay'+column.id);
-	divColumnUp.attr('ondrop', "drop(event)");
-	divColumnUp.attr('ondragover', "allowDrop(event)");
-	divColumnMiddle.attr('class', 'columnMiddle');
-	divColumnMiddle.attr('id', 'columnMiddle'+column.id);
-	divColumnMiddleUl.attr('class', 'columnMiddleUl');
-	divColumnMiddleUl.attr('id', 'columnMiddleUl'+column.id);
-	divColumnDown.attr('class', 'columnDown');
-	shadowDiv.attr('class', 'shadowDiv');
-	shadowDiv.attr('id', 'shadowDiv'+column.id);
-
-	/* Appending*/
-	divColumnUpForm.append(formUl);
-	divColumnUpForm.append(formSubmitBtn);
-	divColumnUpTitle.append(divColumnUpTitleInput);
-	divColumnUpTitleSubmitBtn.append(divColumnUpTitleSubmitBtnIcon);
-	// divColumnUpTitle.append(divColumnUpTitleSubmitBtn);
-	spanColumnTitleWrapper.append(spanColumnTitle);
-	divColumnUpTitle.append(spanColumnTitleWrapper);
-	divColumnUpRightIconWrapper.append(divColumnUpRightIcon);
-	divColumnUpRightIcon2Wrapper.append(divColumnUpRightIcon2);
-	divColumnUpTitle.append(divColumnUpRightIconWrapper);
-	divColumnUpTitle.append(divColumnUpRightIcon2Wrapper);
-	divColumnUp.append(divColumnUpTitle);
-	divColumnUp.append(divColumnUpForm);
-	divColumnUp.append(divColumnTitleDisplay);
-	divColumnMiddle.append(shadowDiv);
-	divColumnMiddle.append(divColumnMiddleUl);
-	divColumn.append(divColumnUp);
-	divColumn.append(divColumnMiddle);
-	divColumn.append(divColumnDown);
+	// generate grid before generating column
+	dom.generateGrid(column.id);
+	//$("#divGrid"+column.id).append(divColumn);
+	const domColumn = dom.generateColumn(column);
+	$("#divGrid"+column.id).append(domColumn);
+	// TODO remove the grid it's useless, imply css modification
 
 	/*------------------------------ Actions/Events ----------------------------*/
+	/*
 	if(!column.name){
 		spanColumnTitle = $('<span>SearchFilter '+column.id+'</span>');
 	}
-	formUl.tagit({
-		beforeTagAdded: function(event, ui){
-			let target = $(ui.tag);
-			if(negToken){
+	*/
+	$(domColumn).find(".formTags").tagit({
+		beforeTagAdded: function(event, ui) {
+			const target = $(ui.tag);
+			if (negToken) {
 				target.addClass('negTopic');
 				negToken = 0;
 			}
 		},
-		afterTagRemoved:function(event, ui){
-			let target = $(ui.tag);
+		afterTagRemoved: function(event, ui) {
+			const target = $(ui.tag);
 			const source = target.hasClass('negTopic') ? "negtopics" : "topics";
 			const i = column[source].concept.indexOf(ui.tagLabel);
 			column[source].concept.splice(i, 1);
 			column[source].idx.splice(i, 1);
-			if (target.hasClass('negTopic')) {
-				let indexToRemoveAt = column.negtopics.concept.indexOf(ui.tagLabel);
-				column.negtopics.concept.splice(indexToRemoveAt, 1);
-				column.negtopics.idx.splice(indexToRemoveAt, 1);
-			} else {
-				let indexToRemoveAt = column.topics.concept.indexOf(ui.tagLabel);
-				column.topics.concept.splice(indexToRemoveAt, 1);
-				column.topics.idx.splice(indexToRemoveAt, 1);
-			}
+			newDrop = true;
+			clearColumnElements(column.id, 1);
 		}
 	});
 
 	/* Form submission */
-	$('.columnUpForm').submit(function(e){
+	$(domColumn).find('.columnUpForm').submit(function(e){
 		e.preventDefault();
 	});
-	formSubmitBtn.on('click', function(e){
-		divColumnUp.prepend(divColumnUpTitle);
-		onSubmitSearch(e, column.id);
+
+	$("#colInput" + column.id).click((e) => {
+		e.preventDefault();
+		$("#columnUp" + column.id).prepend($("#columnUpTitle" + column.id));
+		onSubmitSearch(column);
 	});
-	//Edit title
-	spanColumnTitleWrapper.click(function(){
-		$("#titleSubmitBtn"+column.id).css('display', 'inline');
-		titleEditRoutine(this, column.id, 0);
-	});
+
 	//Edit column
-	divColumnUpRightIcon2Wrapper.click(function(e){
-		$("#columnUpForm"+column.id).css('display', 'block');
-		$("#titleSubmitBtn"+column.id).css('display', 'none');
-		var that = $('#spanColumnTitleWrapper'+column.id);
-		titleEditRoutine(that, column.id, 2);
+	$("#columnUpRightIcon2Wrapper" + column.id).click((e) => {
+		dom.showColumnEdit(column);
 	});
+
+	$("#columnUpTitleInput"+columnNumber).keyup(function(e){
+		if (e.which == 13) {
+			titleChange(column);
+		}
+	});
+
 	//Add item
-	divColumnUpRightIconWrapper.click(function(e){
+	$("#columnUpRightIconWrapper" + column.id).click((e) => {
 		columnUpRightIconEvent(column.id);
 	});
 
-	// generate grid before generating column
-	dom.generateGrid(column.id);
-	$("#divGrid"+column.id).append(divColumn);
-	generateAddColumnItem(column);
-
 	/*Apply sortable*/
-	$('#columnMiddleUl'+column.id ).sortable({
+	$('#columnMiddleUl' + column.id).sortable({
 		connectWith: ".columnMiddleUl",
 		handle: ".itemLiWrapper, .itemWrapper",
 		placeholder: "sortablePlaceholder",
 		stop: function(event, ui) {
-			var itemId = ui.item.attr('id');
-			var oldColumnId = Number(((itemId).split("-")[0]).replace('itemLiWrapper', ''));
-			var newColumnId = Number(($(ui.item).parent().attr('id')).replace('columnMiddleUl', ''));
-			var oldItemNumb = Number(itemId.split("-")[1]);
-			var guenuineItem = columnsNameArray[oldColumnId].listedTopics[oldItemNumb];
+			const itemId = ui.item.attr('id');
+			const oldColumnId = Number(((itemId).split("-")[0]).replace('itemLiWrapper', ''));
+			const newColumnId = Number(($(ui.item).parent().attr('id')).replace('columnMiddleUl', ''));
 
-			if(oldColumnId != newColumnId){
-				//Change itemId
-				var ItemNewNumb = columnsNameArray[newColumnId].nbItems;
-				$('#'+itemId).attr('id', 'itemLiWrapper'+newColumnId+'-'+ItemNewNumb);
-				$('#item'+oldColumnId+'-'+oldItemNumb).attr('id', 'item'+newColumnId+'-'+ItemNewNumb);
-				//push
-				columnsNameArray[newColumnId].listedTopics.push(guenuineItem);
-				columnsNameArray[newColumnId].nbItems +=1;
-				//pop
-				columnsNameArray[oldColumnId].listedTopics.splice(oldItemNumb, 1);
-				columnsNameArray[oldColumnId].nbItems -=1;
-				for (var i = oldItemNumb; i < columnsNameArray[oldColumnId].listedTopics.length; i++) {
-					var x = i+1;
-					$('#itemLiWrapper'+oldColumnId+'-'+x).attr('id', 'itemLiWrapper'+oldColumnId+'-'+i);
-					$('#item'+oldColumnId+'-'+x).attr('id', 'item'+oldColumnId+'-'+i);
-				}
-				$("#itemLiWrapper"+newColumnId+'-x').prependTo('#columnMiddleUl'+newColumnId);
-				//Add reference
-				addRefToTopic(guenuineItem.data.idx, "reference", newColumnId);
+			if (oldColumnId == newColumnId) return ;
+
+			const oldColumn = columnsNameArray[oldColumnId];
+			const newColumn = columnsNameArray[newColumnId];
+
+			const oldItemNumb = Number(itemId.split("-")[1]);
+			const newItemNumb = newColumn.nbItems;
+			const guenuineItem = oldColumn.listedTopics[oldItemNumb];
+
+			//Change itemId
+			$('#' + itemId).attr('id', 'itemLiWrapper' + newColumnId + '-' + newItemNumb);
+			$('#item' + oldColumnId + '-' + oldItemNumb)
+				.attr('id', 'item' + newColumnId + '-' + newItemNumb);
+			//push
+			newColumn.listedTopics.push(guenuineItem);
+			newColumn.nbItems += 1;
+			//pop
+			oldColumn.listedTopics.splice(oldItemNumb, 1);
+			oldColumn.nbItems -= 1;
+			for (var i = oldItemNumb; i < oldColumn.listedTopics.length; i++) {
+				var x = i+1;
+				$('#itemLiWrapper'+oldColumnId+'-'+x).attr('id', 'itemLiWrapper'+oldColumnId+'-'+i);
+				$('#item'+oldColumnId+'-'+x).attr('id', 'item'+oldColumnId+'-'+i);
 			}
+			$("#itemLiWrapper"+newColumnId+'-x').prependTo('#columnMiddleUl'+newColumnId);
+			//Add reference
+			addRefToTopic(guenuineItem.data.idx, "reference", newColumnId);
 		}
 	});
+
+	generateAddColumnItem(column);
 
 	/* Record column in columnsNameArray*/
 	columnsNameArray.push(column);
@@ -346,7 +203,7 @@ function generateColumn(columnNumber, columnTitle){
  * Function for adding new column to the board
  *
  */
-function addNewColumn(){
+function addNewColumn() {
 	generateColumn(columnsArrayIndex, "column"+columnsArrayIndex);
 	$(".columnUpRightIconWrapper").css('display', 'inline');
 	$(".columnUpRightIcon2Wrapper").css('display', 'inline');
@@ -365,34 +222,14 @@ function addNewColumn(){
  * @param {event} [click] event
  * @param {Integer} column number
  */
-function onSubmitSearch(e, columnNumber){
-	const column = columnsNameArray[columnNumber];
-	e.preventDefault();
+function onSubmitSearch(column) {
 	//Process tags
-	if(newDrop){
-		customSearchTopics(columnNumber);
-		newDrop = 0;
+	if (newDrop) {
+		customSearchTopics(column.id);
+		newDrop = false;
 	}
-	//Hide form
-	$('#columnUpForm'+columnNumber).css('display', 'none');
-	$('#columnUp'+columnNumber).css('background-color', '#C0C0C0');
 
-	if($('#columnUpTitleInput'+columnNumber).css('display') != 'none'){
-		var that = $("#columnUpTitleInput"+columnNumber);
-		titleChange(that, columnNumber, 1);
-	}
-	//Put events back
-	$("#columnUpRightIconWrapper"+columnNumber).click(function(e){
-		columnUpRightIconEvent(columnNumber);
-	});
-	$("#columnUpRightIcon2Wrapper"+columnNumber).click(function(e){
-		$('#columnUpForm'+columnNumber).css('display', 'block');
-		$("#titleSubmitBtn"+columnNumber).css('display', 'none');
-		console.log($("#titleSubmitBtn"+columnNumber));
-		var that = $('#spanColumnTitleWrapper'+columnNumber);
-		titleEditRoutine(that, columnNumber, 1);
-	});
-	titleTooltipRoutine(column);
+	titleChange(column);
 }
 
 /**
@@ -412,67 +249,22 @@ function columnUpRightIconEvent(columnNumber){
  ***************************************************************************
  */
 
-/**
- * Functions for handling  column title edition
- *
- * @param {Jquery Object}
- * @param {Integer} column number
- * @param {Integer} flag
- */
-function titleEditRoutine(that, columnNumber, tmp){
-	$(that).find(".spanColumnTitle").empty();
-	$(that).parent().css('float', 'left');
-	if(tmp == 2)
-		$("#titleSubmitBtn"+columnNumber).css("display", 'none');
-	else
-		$("#titleSubmitBtn"+columnNumber).css("display", 'inline');
-	$(that).parent().find(".columnUpRightIconWrapper").css('display', 'none');
-	$(that).parent().find(".columnUpRightIcon2Wrapper").css('display', 'none');
-
-	$("#columnUpTitle"+columnNumber).css("background-color", "#E0E0E0");
-	$("#columnUpTitleInput"+columnNumber).css("display", "inline-block");
-	$("#columnUpTitleInput"+columnNumber).focus();
-
-	var that = $("#columnUpTitleInput"+columnNumber);
-	$("#columnUpTitleInput"+columnNumber).keyup(function(e){
-		if(e.which == 13){
-			titleChange(that, columnNumber, tmp);
-		}
-	});
-	$("#titleSubmitBtn"+columnNumber).click(function(e){
-		titleChange(that, columnNumber, tmp);
-	});
-}
-
 /*
  * Function used by titleEditRoutine
  */
-function titleChange(obj, columnNumber, tmp){
-	var that = obj;
-	var newTitle = $(obj).val();
+function titleChange(column) {
+	const newTitle = $("#columnUpTitleInput" + column.id).val();
+	//var that = obj;
+	console.log(column);
+	console.log(newTitle);
 
-	if (newTitle === "") {
-		$('#spanColumnTitle'+columnNumber).text(columnsNameArray[columnNumber].name);
-		console.log("column",columnNumber,"\'s title unchanged");
-	} else {
-		$('#spanColumnTitle'+columnNumber).text(""+newTitle);
+	if (newTitle !== "" && newTitle != column.name) {
 		//Update array
-		columnsNameArray[columnNumber].name = newTitle;
-		sideContainerColumnsList(columnNumber);
-		console.log("column",columnNumber,"\'s title changed to: ", newTitle);
+		column.name = newTitle;
+		sideContainerColumnsList(column.id);
 	}
 
-	that.css("display", "none");
-	if(tmp){
-		$('#columnUpForm'+columnNumber).css('display', 'none');
-	}
-	$("#columnUpTitle"+columnNumber).css("background-color", "#C0C0C0");
-	//Update(-back) css
-	$(that).parent().css('width', '100%');
-	$(that).parent().css('float', 'right');
-	$(that).parent().find(".columnUpRightIconWrapper").css('display', 'inline');
-	$(that).parent().find(".columnUpRightIcon2Wrapper").css('display', 'inline');
-	$("#titleSubmitBtn"+columnNumber).css("display", 'none');
+	dom.hideColumnEdit(column);
 }
 
 /**
@@ -705,7 +497,7 @@ function sideContainerHide(){
  *
  * @param {Object} object containing information that will be displayed
  */
-function logDisplay(msg){
+function logDisplay(msg) {
 	var sideContainerLogsLi = $('<li></li>');
 
 	sideContainerLogsLi.attr('class', 'list-group-item');
