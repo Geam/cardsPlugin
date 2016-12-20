@@ -200,6 +200,15 @@ module.exports = (window) => {
 		"qs": qs,
 		"searchParentById": searchParentById,
 
+		"generateContactList": (contactList) => {
+			addContent("#contactList", contactList.map((e, i) => {
+				return newEl("li", { "id": `contact${i}`, "class": "contactLi" }, [
+					newEl("img", { "class": "contactAvatar", "src": `file:///${e.avatar}`}),
+					newEl("span", { "class": "contactName"}, e.name)
+				]);
+			}));
+		},
+
 		"generateGrid": (gridNumber) => {
 			addContent("#mainContainer",
 				newEl("div", { "id": `divGrid${gridNumber}`, "class": "divGrid" })

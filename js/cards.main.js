@@ -135,7 +135,7 @@ function _init() {
 					"profileIdx": user.profileIdx
 				};
 			});
-		contactList.forEach((user) => displayContactList);
+		dom.generateContactList(contactList);
 	})
 	.then(() => {
 		displayCurrentProfileAvatar();

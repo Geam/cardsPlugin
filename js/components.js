@@ -569,29 +569,6 @@ function listingSavedBoards(boardObj, i){
 	$("#tableBody").append(appendingLine);
 }
 
-
-/* User Contacts
- ****************************************************************************
- */
-
-function displayContactList(data, i){
-	var item = $("<li></li>");
-	var avatarImg = $('<img>');
-	var nameSpan = $('<span></span>');
-
-	avatarImg.attr("class", 'contactAvatar');
-	avatarImg.attr("src", "file://" + data.avatar);
-	nameSpan.attr("class", 'contactName');
-	nameSpan.text(data.name);
-	item.attr('class', 'contactLi');
-	item.attr('id', 'contact'+i);
-	item.append(avatarImg);
-	item.append(nameSpan);
-
-	$("#contactList").append(item);
-}
-
-
 /*
 keeex self xovem-ketel-lotoh-camoh-gocus-butom-dolyt-vokug-bisyd-tulyg-buhob-zuguh-surom-cezal-kulys-dozik-dyxax , {main} xeeek
 keeex self 1UagFyxciBqwtcr3HouYpbpiiDkhPnBuCJ6KwFi , {alg:sha224,enc:b58,recursive:1} xeeek
