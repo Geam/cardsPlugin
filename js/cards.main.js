@@ -669,30 +669,23 @@ function shareTopic(topicIdx, topicPath,  shareObj, callback){
  * @param {Integer} tag number
  */
 function saveBoard(confName) {
-	var filePath = path.join(boardsPath, confName.topicName + "_bd.json");
-	fs.open(filePath, "w", function(error, fd){
-		if(error)
-			console.log("Opening file error: ", error);
+	const filePath = path.join(boardsPath, confName.topicName + "_bd.json");
+	//Write in file
+	fs.writeFile(filePath, JSON.stringify(cloneColumnsArray()), function(error) {
+		if (error)
+			return console.log("Writing configuration error: "+error);
 		console.log('File created');
-		//Write in file
-		fs.writeFile(filePath, JSON.stringify(cloneColumnsArray()), function(error){
-			if(error)
-				console.log("Writing configuration error: "+error);
-			fs.close(fd);
-		});
-		// Keeex file now
-		let prev = currentBoard && !confName.topicNewVersion ? [currentBoard.idx] : [];
-		console.log(prev);
-		let  opt = {
-			targetFolder:boardsPath,
-			timestamp:false,
-			name:confName.topicName
-		};
-		kxapi.keeex(filePath, [boardTypeIdx], prev, confName.topicDescription, opt, function(error, keeexedFile){
-			if(error){
-				logDisplay("Keeexing file error: "+error);
-				return;
-			}
+	});
+	// Keeex file now
+	const prev = currentBoard && !confName.topicNewVersion ? [currentBoard.idx] : [];
+	console.log(prev);
+	const opt = {
+		targetFolder:boardsPath,
+		timestamp:false,
+		name:confName.topicName
+	};
+	kxapiPromise.keeex(filePath, [boardTypeIdx], prev, confName.topicDescription, opt)
+		.then((keeexedFile) => {
 			currentBoard = {
 				"idx": keeexedFile.topic.idx,
 				"name": opt.name,
@@ -702,11 +695,11 @@ function saveBoard(confName) {
 			logDisplay("Board saved ! ");
 			// Delete original file
 			fs.unlink(filePath, function(error){
-				if(error)
+				if (error)
 					console.log("Deleting file "+ path.parse(filePath).base +" error");
 			});
-		});
-	});
+		})
+		.catch(logDisplay);
 }
 
 
