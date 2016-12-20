@@ -32,6 +32,7 @@ const async = require("async");
 const path = require("path");
 const fs = require('fs');
 const kxapiPromise = require("./js/kxapiPromise.js")(kxapi);
+const dom = require("./js/dom.js")(window, jQuery);
 
 /*
 ####################-End of Modules-####################
@@ -343,7 +344,8 @@ const addColumnContent = (column, topicsReturned) => {
 			.then(kxapiPromise.getUsersFromList)
 			.then((users) => {
 				topicObject.shared = users;
-				generateColumnItem(column, column.nbItems, topicObject, 0);
+				topicObject.domId = `${column.id}-${column.nbItems}`;
+				generateColumnItem(column, topicObject, false);
 				column.nbItems += 1;
 			})
 			.catch((error) => {
@@ -620,9 +622,13 @@ function createTopic(columnNumber, topicName, topicDescription, toShareIds){
 					shareTopic(keeexedFile.topic.idx, keeexedFile.path,  toShareIds, callback);
 				},
 				function crTpDisplay(callback) {
-					var columnItemNumber = column.nbItems;
-					var columnItemData = {'data':keeexedFile.topic, 'avatar':currentProfileAvatar, 'shared':toShareIds};
-					generateColumnItem(column, columnItemNumber, columnItemData, 1);
+					var tile = {
+						'data': keeexedFile.topic,
+						'domId': column.id + "-" + column.nbItems,
+						'avatar': currentProfileAvatar,
+						'shared': toShareIds
+					};
+					generateColumnItem(column, tile, true);
 					column.nbItems +=1;
 					logDisplay("Topic created ! ");
 					//Clean file lds

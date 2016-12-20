@@ -20,126 +20,25 @@
  */
 
 /****************************
-		Grid containing columns
- ***********************
- ****************************/
-
-/**
- * Function genarating grid where column will be inserted
- *
- * @param {Integer} grid number
- */
-function generateGrid(gridNumber){
-	var divGrid = $("<div></div>");
-	divGrid.attr('class', 'divGrid');
-	divGrid.attr('id', 'divGrid'+gridNumber);
-	$("#mainContainer").append(divGrid);
-}
-
-
-/****************************
 			Column functions
  ***********************
  ****************************/
 
 /**
- * Function genarating shared list icons
- *
- * @param {Integer} formed of column number and column element number
- * @param {Object} data (name, avatar, idx) to be inserted in column element
- * @param {Integer} flag to rule inserting order
- */
-function addSharedAvatars(COLUMN_ITEM_ID, data, i){
-	var sharedListLi = $('<li></li>');
-	var sharedListImg = $('<img>');
-	var sharedListSpan = $('<span></span>');
-	var sharedListImgLink = $('<a></a>');
-
-	sharedListLi.attr('class', 'sharedListLi');
-	sharedListLi.attr('id', 'sharedListLi'+i);
-	sharedListSpan.attr('class', "sharedListSpan glyphicon glyphicon-option-horizontal");
-	sharedListImg.attr('src', "file://" + data.avatar);
-	sharedListImgLink.attr('class', 'sharedListImgLink');
-	sharedListImgLink.attr('data-toggle', 'tooltip');
-	sharedListImgLink.attr('data-placement', 'right');
-	sharedListImgLink.attr('data-html', "true");
-	sharedListImgLink.attr('href', '#');
-	sharedListImgLink.attr('id', 'sharedListImgLink'+COLUMN_ITEM_ID+'-'+i);
-	sharedListImgLink.attr('title', data.name);
-	sharedListImgLink.append(sharedListImg);
-
-	$('.addShare').click(function(e){
-		$(this).remove();
-	});
-	$('[data-toggle="tooltip"]').tooltip();
-	sharedListLi.append(sharedListImgLink);
-
-	return sharedListLi;
-}
-
-/**
  * Function genarating column element
  *
- * @param {Integer} column number
- * @param {Integer} column element number
- * @param {Integer} data to be inserted in column element
- * @param {Integer} flag to rule inserting order
+ * @param {Object} column
+ * @param {Object} data to be inserted in column element
+ * @param {boolean} insert as firt or last
  */
-function generateColumnItem(column, columnItemNumber, columnItemData, order) {
-	var COLUMN_ITEM_ID = `${column.id}-${columnItemNumber}`;
-	var itemWrapper = $('<div></div>');
-	var itemContent = $('<div></div>');
-	var itemAvatar =  $('<div></div>');
-	var itemImg = $('<img>');
-	var itemFooter =  $('<div></div>');
-	var itemLiWrapper = $('<li></li>');
-	var sharedList = $('<ul></ul>');
-
-	itemLiWrapper.attr('id', 'itemLiWrapper'+COLUMN_ITEM_ID);
-	itemLiWrapper.attr('class', 'itemLiWrapper');
-	itemWrapper.attr('id', 'item'+COLUMN_ITEM_ID);
-	itemWrapper.attr('class', 'itemWrapper');
-	itemContent.attr('class', 'itemContent');
-	itemAvatar.attr('class', 'itemAvatar');
-	itemImg.attr('class', 'itemImg');
-	itemImg.attr('id', 'itemImg'+COLUMN_ITEM_ID);
-	itemImg.attr('src', "file://" + columnItemData.author.avatar);
-	itemFooter.attr('id', 'itemFooter'+COLUMN_ITEM_ID);
-	itemFooter.attr('class', 'itemFooter');
-	sharedList.attr('id', 'sharedList'+COLUMN_ITEM_ID);
-	sharedList.attr('class', 'sharedList');
-	/*Setting content*/
-	var desc = (columnItemData.data.name).substring(0, 50);
-	if(columnItemData.data.name.length >50) desc += "...";
-	$(itemContent).append('<p>'+desc+'</p>');
-	column.listedTopics.push(columnItemData);
-
-	/*Appending children*/
-	itemAvatar.append(itemImg);
-	itemWrapper.append(itemAvatar);
-	if (columnItemData.shared && columnItemData.shared.length >0){
-		for (var i = 0; i < columnItemData.shared.length; i++) {
-			sharedList.append(addSharedAvatars(COLUMN_ITEM_ID, columnItemData.shared[i], i));
-		}
-		itemFooter.append(sharedList);
-		itemContent.append(itemFooter);
-	}else{
-		$('#itemFooter'+COLUMN_ITEM_ID).css('display', 'none');
-	}
-	itemWrapper.append(itemContent);
-	/*Append in corresponding column*/
-	itemLiWrapper.append(itemWrapper);
-	var columnMiddleSelector = $("#column"+column.id).find(".columnMiddleUl");
-	if(!order) {
-		columnMiddleSelector.append(itemLiWrapper);
-	}
-	else{
-		$('#columnMiddleUl'+column.id).find('.top-ele').after(itemLiWrapper);
-	}
-	$("#itemLiWrapper"+COLUMN_ITEM_ID).click(function(e){
+function generateColumnItem(column, tile, first) {
+	column.listedTopics.push(tile);
+	const domTile = dom.generateTile(column, tile, first);
+	$(domTile).click((e) => {
 		e.preventDefault();
-		itemInfo(columnItemData.data);
+		itemInfo(tile.data);
 	});
+	$(domTile).find('[data-toggle="tooltip"]').tooltip();
 }
 
 /**
@@ -398,7 +297,7 @@ function generateColumn(columnNumber, columnTitle){
 	});
 
 	// generate grid before generating column
-	generateGrid(column.id);
+	dom.generateGrid(column.id);
 	$("#divGrid"+column.id).append(divColumn);
 	generateAddColumnItem(column);
 
