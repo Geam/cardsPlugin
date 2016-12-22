@@ -579,6 +579,8 @@ function createTopic(column, topicName, topicDescription) {
 	var columnTopics = column.topics.idx.slice(0);
 	columnTopics.push(keeexMsgTypeIdx);
 
+	const select = addSharing.select;
+
 	if (!topicName || topicName === "" || topicName <= 1) return ;
 
 	createAndKeeex({ "name": topicName, "description": topicDescription, "ref": columnTopics })
@@ -592,8 +594,8 @@ function createTopic(column, topicName, topicDescription) {
 			tile.data.location = [keeexedFile.path];
 
 			// share with other users if needed
-			if (addSharing.select.val().length > 0) {
-				const userListIdx = addSharing.select.val();
+			if (select.val().length > 0) {
+				const userListIdx = select.val();
 				const userList = userListIdx.map((idx) => contactList.find((c) => c.profileIdx === idx));
 				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path, userListIdx)
 					.then((sharedFile) => {

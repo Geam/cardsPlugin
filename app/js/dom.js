@@ -28,18 +28,18 @@ module.exports = (window) => {
 		}
 	};
 
-	const addContentBeforeLastChild = (el, content) => {
+	const addContentBefore = (el, before, content) => {
 		if (typeof el === "string")
 			el = qs(el);
 		if (!(el instanceof Element)) { return; }
 		if (typeof content === "string") {
-			el.insertBefore(document.createTextNode(content), el.lastChild);
+			el.insertBefore(document.createTextNode(content), before);
 		} else if (Array.isArray(content)) {
 			content.forEach((subContent) => {
-				addContentBeforeLastChild(el, subContent);
+				addContentBefore(el, before, subContent);
 			});
 		} else if (content instanceof Element) {
-			el.insertBefore(content, el.lastChild);
+			el.insertBefore(content, before);
 		}
 	};
 
@@ -251,7 +251,12 @@ module.exports = (window) => {
 			);
 
 			if (first) {
-				addContent(qs(`#columnMiddleUl${column.id}`).querySelector(".top-ele"), domTile);
+				const div = qs(`#columnMiddleUl${column.id}`);
+				if (div.firstChild.nextElementSibling) {
+					addContentBefore(div, div.firstChild.nextElementSibling, domTile);
+				} else {
+					addContent(div, domTile);
+				}
 			} else {
 				addContent(qs(`#column${column.id}`).querySelector(".columnMiddleUl"), domTile);
 			}
@@ -328,7 +333,7 @@ module.exports = (window) => {
 				returnSharedAvatar(contact, nbChild);
 
 			if (beforeLast) {
-				addContentBeforeLastChild(target, newContact);
+				addContentBefore(target, target.lastChild, newContact);
 			} else {
 				addContent(target, newContact);
 			}

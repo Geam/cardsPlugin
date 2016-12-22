@@ -103,7 +103,8 @@ function generateColumnItem(column, tile, first) {
  *
  * @param {Object} column
  */
-function generateAddColumnItem(column) {
+function generateAddColumnItem(column, domColumn) {
+	const jqueryDomColumn = $(domColumn);
 	/* Actions */
 	$(`#itemInput${column.id}-x`).focus();
 
@@ -120,17 +121,18 @@ function generateAddColumnItem(column) {
 	});
 
 	// click on new topic "cancel"
-	$(".addItemCancelWrapper").click(function(e){
+	jqueryDomColumn.find(".addItemCancelWrapper").click(function(e){
 		dom.hideColumnNewTopic(column);
 		addSharing = {};
 	});
 
 	// click on new topic "add"
-	$(".addItemBtn").click(function(e) {
+	jqueryDomColumn.find(".addItemBtn").click(function(e) {
 		const topicName = $(`#itemInput${column.id}`).val();
 		const topicDescription = $('#itemTextarea'+column.id).val();
 		createTopic(column, topicName, topicDescription);
 		dom.hideColumnNewTopic(column);
+		addSharing = {};
 	});
 
 	// Clicking on column + to add topic
@@ -281,7 +283,7 @@ function generateColumn(columnNumber, columnTitle) {
 		}
 	});
 
-	generateAddColumnItem(column);
+	generateAddColumnItem(column, domColumn);
 
 	/* Record column in columnsNameArray*/
 	columnsNameArray.push(column);
