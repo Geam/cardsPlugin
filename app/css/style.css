@@ -258,62 +258,14 @@ html, body {
 ***************************************************************************
 */
 
-.popover{
-  	position: fixed;
-  	border-radius:0px;
+.tileContactSelect {
+	width: 100%;
 }
 
-.popover-content{
-	width: 200px;
-	padding:2px;
-	height: 300px;
-	overflow-y:scroll;
+.contactSelectImg {
+	width: 20px;
+	height: 20px;
 }
-
-#contactsArea{
-	position: absolute;
-	display:none;
-	width: 200px;
-	height: 300px;
-	border: 1px solid;
-	border-radius:5px;
-	background-color: white;
-	max-height:160px;
-}
-
-.contactAreaHead{
-	color:white;
-	text-align: center;
-	background-color:#2980b9;
-}
-
-#contactList{
-	list-style: none;
-	padding:0;
-}
-
-.contactLi{
-	white-space: nowrap;
-	border-bottom: 1px solid #CECECE;
- 	padding-bottom: 2px;
-}
-
-.contactLi:hover{
-	background-color: rgba(45,182,207,.1);
-	cursor: pointer;
-}
-
-.contactAvatar{
-	width: 30px;
-	height: 30px;
-}
-
-.contactName{
-	margin-left: 5px;
-	width: 100px;
-}
-
-
 
 /* Grid
 ***************************************************************************

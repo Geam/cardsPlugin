@@ -29,7 +29,7 @@ module.exports = (window) => {
 	};
 
 	const addContentBeforeLastChild = (el, content) => {
-	if (typeof el === "string")
+		if (typeof el === "string")
 			el = qs(el);
 		if (!(el instanceof Element)) { return; }
 		if (typeof content === "string") {
@@ -104,6 +104,10 @@ module.exports = (window) => {
 			"id": `tileCtrlDiv${tile.domId}`, "style": "display: none"
 		}, [
 			newEl("hr", { "style": "margin: 5px 0" }),
+			newEl("select", {
+				"id": `tileContactSelect${tile.domId}`, "style": "width: 100%",
+				"multiple": "multiple"
+			}),
 			newEl("div", {}, [
 				newEl("button", { "id": `tileAddContactValidate${tile.domId}` }, "Add"),
 				newEl("button", { "id": `tileAddContactCancel${tile.domId}` }, "Cancel")
@@ -207,11 +211,10 @@ module.exports = (window) => {
 					"id": `itemTextarea${column.id}`, "class": "itemTextarea",
 					"name": "itemTextarea", "placeholder": "description..."
 				}),
-				newEl("ul", { "id": `addItemShareList${column.id}`, "class": "addItemShareList" }),
-				newEl("button", {
-					"id": `shareWithBtn${column.id}`, "class": "shareWithBtn btn-primary",
-					"data-toggle": "popover", "data-placement": "right", "data-trigger": "focus"
-				}, "Share"),
+				newEl("select", {
+					"id": `addItemShareList${column.id}`, "style": "width: 100%;",
+					"multiple": "multiple"
+				}),
 				newEl("div", { "class": "itemFooter2" }, [
 					newEl("button", { "class": "addItemBtn" }, "Add"),
 					newEl("a", { "class": "addItemCancelWrapper" },
@@ -226,16 +229,6 @@ module.exports = (window) => {
 	return {
 		"qs": qs,
 		"searchParentByClass": searchParentByClass,
-
-		"generateContactList": (contactList) => {
-			delElContent("#contactList");
-			addContent("#contactList", contactList.map((e) => {
-				return newEl("li", { "id": `contact${e.profileIdx}`, "class": "contactLi" }, [
-					newEl("img", { "class": "contactAvatar", "src": `file:///${e.avatar}`}),
-					newEl("span", { "class": "contactName"}, e.name)
-				]);
-			}));
-		},
 
 		"generateGrid": (gridNumber) => {
 			addContent("#mainContainer",
@@ -299,11 +292,21 @@ module.exports = (window) => {
 			qs(`#columnUpTitleInput${column.id}`).style.display = "none";
 		},
 
-		"tileShowAddShare": (tile) => {
+		"showColumnNewTopic": (column) => {
+			qs(`#item${column.id}-x`).style.display = "block";
+		},
+
+		"hideColumnNewTopic": (column) => {
+			qs(`#item${column.id}-x`).style.display = "none";
+			qs(`#itemTextarea${column.id}`).value = "";
+			qs(`#itemInput${column.id}`).value = "";
+		},
+
+		"showTileAddShare": (tile) => {
 			qs(`#tileCtrlDiv${tile.domId}`).style.display = "";
 		},
 
-		"tileHideAddShare": (tile) => {
+		"hideTileAddShare": (tile) => {
 			qs(`#tileCtrlDiv${tile.domId}`).style.display = "none";
 			const ulLst = qs(`#sharedList${tile.domId}`);
 			const liBtn = qs(`#addShare${tile.domId}`).parentNode;
@@ -330,5 +333,18 @@ module.exports = (window) => {
 				addContent(target, newContact);
 			}
 		},
+
+		"contactSelectListTemplate": (user) => {
+			return newEl("span", {}, [
+				newEl("img", { "class": "contactSelectImg", "src": `file:///${user.avatar}` }),
+				user.name
+			]);
+		},
+
+		"contactSelectTokenTemplate": (user) => {
+			return newEl("span", {},
+				newEl("img", { "class": "contactSelectImg", "src": `file:///${user.avatar}` })
+			);
+		}
 	};
 };

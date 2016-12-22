@@ -20,9 +20,21 @@
  */
 
 /****************************
-			Column functions
+			Tile functions
  ***********************
  ****************************/
+
+const contactSelectTemplate = (u) => {
+	if (!u.id) { return u.text; }
+	const user = contactList.find((e) => e.profileIdx === u.id);
+	return dom.contactSelectListTemplate(user);
+};
+
+const contactSelectTokenTemplate = (u) => {
+	if (!u.id) { return u.text; }
+	const user = contactList.find((e) => e.profileIdx === u.id);
+	return dom.contactSelectTokenTemplate(user);
+};
 
 /**
  * Function genarating column element
@@ -43,47 +55,45 @@ function generateColumnItem(column, tile, first) {
 	const addShare = $(domTile).find(`#addShare${tile.domId}`);
 
 	// init contact list
-	addShare.popover({
-		content: $('#contactsArea').html(),
-		html: true
+	const contactSelect = $(domTile).find(`#tileContactSelect${tile.domId}`).select2({
+		"data": contactList.map((e) => {
+			return {
+				"id": e.profileIdx,
+				"text": e.name
+			};
+		}),
+		"templateResult": contactSelectTemplate,
+		"templateSelection": contactSelectTokenTemplate
 	});
 
 	// display tile ctrl div
 	addShare.click((e) => {
-		if (tile === addSharing.tile) {
-			return ;
-		} else if (addSharing.tile) {
-			dom.tileHideAddShare(addSharing.tile);
-		}
-		dom.tileShowAddShare(tile);
-		addSharing = {
-			column,
-			tile,
-			users: [],
-			target: dom.qs(`#sharedList${tile.domId}`),
-		};
+		if (handleSharingClick(column, tile, contactSelect,
+				dom.qs(`#sharedList${tile.domId}`)))
+			dom.showTileAddShare(tile);
 	});
 
 	// validate sharing
 	$(`#tileAddContactValidate${tile.domId}`).click((e) => {
-		dom.tileHideAddShare(tile);
-		const userList = addSharing.users;
+		dom.hideTileAddShare(tile);
+		const userList = contactSelect.val();
 		const target = addSharing.target;
 		addSharing = {};
-		kxapiPromise.share(tile.data.idx, tile.data.location[0],
-				userList.map((e) => e.profileIdx), {})
+		kxapiPromise.share(tile.data.idx, tile.data.location[0], userList)
 			.then((sharedAnswer) => {
-				userList.forEach((user) => {
+				userList.forEach((idx) => {
+					const user = contactList.find((e) => e.profileIdx === idx);
 					tile.shared.push(user);
 					dom.addShare(target, user, true);
 				});
 			})
 			.catch(console.error);
+		contactSelect.val(null).trigger("change");
 	});
 
 	// cancel sharing
 	$(`#tileAddContactCancel${tile.domId}`).click((e) => {
-		dom.tileHideAddShare(tile);
+		dom.hideTileAddShare(tile);
 		addSharing = {};
 	});
 }
@@ -96,16 +106,38 @@ function generateColumnItem(column, tile, first) {
 function generateAddColumnItem(column) {
 	/* Actions */
 	$(`#itemInput${column.id}-x`).focus();
-	$('#shareWithBtn'+column.id).click(function(e){
-		//$(this).popover('show');
+
+	// init contact list
+	const contactSelect = $(`#addItemShareList${column.id}`).select2({
+		"data": contactList.map((e) => {
+			return {
+				"id": e.profileIdx,
+				"text": e.name
+			};
+		}),
+		"templateResult": contactSelectTemplate,
+		"templateSelection": contactSelectTokenTemplate
 	});
+
+	// click on new topic "cancel"
 	$(".addItemCancelWrapper").click(function(e){
-		$(this).parent().parent().css('display', 'none');
+		dom.hideColumnNewTopic(column);
+		addSharing = {};
 	});
+
+	// click on new topic "add"
 	$(".addItemBtn").click(function(e) {
 		const topicName = $(`#itemInput${column.id}`).val();
 		const topicDescription = $('#itemTextarea'+column.id).val();
 		createTopic(column, topicName, topicDescription);
+		dom.hideColumnNewTopic(column);
+	});
+
+	// Clicking on column + to add topic
+	$(`#columnUpRightIconWrapper${column.id}`).click((e) => {
+		if (handleSharingClick(column, null, contactSelect,
+				dom.qs(`#addItemShareList${column.id}`)))
+			dom.showColumnNewTopic(column);
 	});
 }
 
@@ -207,23 +239,6 @@ function generateColumn(columnNumber, columnTitle) {
 		if (e.which == 13) {
 			titleChange(column);
 		}
-	});
-
-	// init popover contact list
-	$(`#shareWithBtn${column.id}`).popover({
-		content: $('#contactsArea').html(),
-		html: true
-	});
-
-	// Clicking on column + to add topic
-	$(`#columnUpRightIconWrapper${column.id}`).click((e) => {
-		$(`#item${column.id}-x`).css('display', 'block');
-		if (addSharing.tile) dom.tileHideAddShare(addSharing.tile);
-		addSharing = {
-			column,
-			users: [],
-			target: dom.qs(`#addItemShareList${column.id}`)
-		};
 	});
 
 	/*Apply sortable*/
@@ -361,6 +376,23 @@ function addTagToColumnUp(column) {
 		domTag.tagit("createTag", e);
 	});
 }
+
+/*
+ ***************************************************************************
+ */
+const handleSharingClick = (column, tile, select, target) => {
+	if ((tile && tile === addSharing.tile) || (!tile && column == addSharing.column)) {
+		return false;
+	} else if (addSharing.tile) {
+		dom.hideTileAddShare(addSharing.tile);
+	} else if (addSharing.column) {
+		dom.hideColumnNewTopic(addSharing.column);
+	}
+	if (addSharing.select)
+		addSharing.select.val(null).trigger("change");
+	addSharing = { column, tile, target, select };
+	return true;
+};
 
 /* Clear out elements in the DOM
  ***************************************************************************

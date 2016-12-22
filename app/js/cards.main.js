@@ -136,7 +136,6 @@ function _init() {
 					"profileIdx": user.profileIdx
 				};
 			});
-		dom.generateContactList(contactList);
 	})
 	.then(() => {
 		displayCurrentProfileAvatar();
@@ -590,12 +589,13 @@ function createTopic(column, topicName, topicDescription) {
 				"author": currentUser,
 				"shared": []
 			};
+			tile.data.location = [keeexedFile.path];
 
 			// share with other users if needed
-			if (addSharing.users.length > 0) {
-				const userList = addSharing.users;
-				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path,
-						addSharing.users.map(e => e.profileIdx))
+			if (addSharing.select.val().length > 0) {
+				const userListIdx = addSharing.select.val();
+				const userList = userListIdx.map((idx) => contactList.find((c) => c.profileIdx === idx));
+				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path, userListIdx)
 					.then((sharedFile) => {
 						tile.shared = userList;
 						dom.addShare(`#sharedList${tile.domId}`, userList, true);
@@ -608,11 +608,7 @@ function createTopic(column, topicName, topicDescription) {
 			column.nbItems++;
 			logDisplay("Topic created !");
 			// TODO display stuff => dom.js
-			$('#itemTextarea'+column.id).val("");
-			$('#itemInput'+column.id).val("");
-			$('.addShare').remove();
-			//hide block
-			$('#item'+column.id+'-x').css('display', 'none');
+			dom.hideColumnNewTopic(column);
 		})
 		.catch(logDisplay);
 }
