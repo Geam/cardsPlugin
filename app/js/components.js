@@ -520,25 +520,21 @@ function sideContainerColumnsList(columnNumber, nbItems) {
  * @param {Object} object containing information that will be displayed
  */
 function itemInfo(msgObject){
+	const formatDate = (date) => {
+		return `${date.getHours()}h${date.getMinutes()}mn${date.getSeconds()}s, ` +
+			`${date.getDate()}/${date.getMonth()}`;
+	};
+
 	var line1 = $('<p></p>');
 	var line2 = $('<p></p>');
 	var line3 = $('<p></p>');
 	var line4 = $('<p></p>');
 	var line5 = $('<p></p>');
-	var lastModifyDate = new Date(msgObject.lastModify);
-	var creationDateDate = new Date(msgObject.creationDate);
+	const lastModifyDate = new Date(msgObject.lastModify);
+	const creationDateDate = new Date(msgObject.creationDate);
 
-	var lastModifyTimeAndDate = lastModifyDate.getHours()+"h"
-		+lastModifyDate.getMinutes()+"mn"
-		+lastModifyDate.getSeconds()+"s, "
-		+lastModifyDate.getDate()+"/"
-		+lastModifyDate.getMonth();
-
-	var creationTimeAndDate = creationDateDate.getHours()+"h"
-		+creationDateDate.getMinutes()+"mn"
-		+creationDateDate.getSeconds()+"s, "
-		+creationDateDate.getDate()+"/"
-		+creationDateDate.getMonth();
+	const lastModifyTimeAndDate = formatDate(lastModifyDate);
+	const creationTimeAndDate = formatDate(creationDateDate);
 
 	line1.append("<strong class=\'text-primary\'>Idx: </strong><span>"+(msgObject.idx).split('-')[0]+'</span>');
 	line2.append("<strong class=\'text-primary\'>Name: </strong><span>"+msgObject.name+'</span>');
