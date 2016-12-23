@@ -28,7 +28,6 @@
 const kxapi = require("keeex-api");
 const components = require("./js/components.js");
 const utils = require('./js/utils.js').utils;
-const async = require("async");
 const path = require("path");
 const fs = require('fs');
 const kxapiPromise = require("./js/kxapiPromise.js")(kxapi);
@@ -489,7 +488,7 @@ function restoreBoard(columnsArray) {
 /*
  * Function used to add new reference to a topic
  */
-function addRefToTopic(theTopicIdx, theType, columnId){
+function addRefToTopic(theTopicIdx, theType, columnId) {
 	var From = "";
 
 	//Get topic idx
@@ -503,34 +502,30 @@ function addRefToTopic(theTopicIdx, theType, columnId){
 	//Get column topics
 	var topicsIdxs = columnsNameArray[columnId].topics.idx;
 
-	//Make sure theTopicIdx is not already referenced by one/all of topicsIdxs
-	kxapi.getRefs(theTopicIdx, function(error, theReferences) {
-		if(error){
-			logDisplay("Error on getting references");
-			return callback(error);
-		}
-		for (var i = 0; i < topicsIdxs.length; i++) {
-			for (var j = 0; j < theReferences.length; j++) {
-				if(theReferences[j].idx == topicsIdxs[i])
-					return logDisplay("Already referenced by: "+theReferences[j].name);
-			}
-		}
-		//and makeRef of each one of them
-		async.eachSeries(topicsIdxs, function(eachTopicIdx, callback){
-			kxapi.makeRef(theType, From, eachTopicIdx, function(error){
-				if(error){
-					logDisplay("Error on making reference");
-					return callback(error);
-				}
-				var idx2 = traverseJSONArray(conceptsIdxArray, 'idx', eachTopicIdx, 'name');
-				logDisplay("Reference "+idx2+" added to topic !");
-				callback(null);
+	const addRef = (i) => {
+		const curTopicIdx = topicsIdxs[i];
+		const curTopicName = traverseJSONArray(conceptsIdxArray, "idx", curTopicIdx, "name");
+		kxapiPromise.makeRef(theType, From, curTopicIdx)
+			.then((toto) => {
+				console.log("makeRef", toto);
+				logDisplay(`Reference ${curTopicName} added to topic !`);
+				if (i < topicsIdxs.length - 1)
+					return addRef(i + 1);
+			})
+			.catch((error) => {
+				return Promise.reject(`Error on making reference: ${error}`);
 			});
-		}, function(error){
-			if (error)
-				logDisplay("addTopicRef error: "+ error);
-		});
-	});
+	};
+
+	kxapiPromise.getRefs(theTopicIdx)
+		.then((refs) => {
+			refs.forEach((ref) => {
+				if (topicsIdxs.find((e) => e === ref.idx))
+					return Promise.reject(`Already referenced by: ${ref.name}`);
+				addRef(0);
+			});
+		})
+		.catch(logDisplay);
 }
 /*--End of addRefToTopic--*/
 

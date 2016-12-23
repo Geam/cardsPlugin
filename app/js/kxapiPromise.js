@@ -91,6 +91,24 @@ module.exports = (kxapi) => {
 			});
 		},
 
+		"getRefs": (idx) => {
+			return new Promise((resolve, reject) => {
+				kxapi.getRefs(idx, (error, refs) => {
+					if (error) reject(`getRefs error: ${error}`);
+					resolve(refs);
+				});
+			});
+		},
+
+		"makeRef": (type, from, to) => {
+			return new Promise((resolve, reject) => {
+				kxapi.makeRef(type, from, to, (error) => {
+					if (error) reject(`makeRef error: ${error}`);
+					resolve();
+				});
+			});
+		},
+
 		"getAuthorFromTopic": (topic) => {
 			return new Promise((resolve, reject) => {
 				kxapi.getAuthor(topic.idx, (error, author) => {
