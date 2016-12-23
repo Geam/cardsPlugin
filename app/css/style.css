@@ -94,33 +94,6 @@ html, body {
 	width: 40%;
 }
 
-#conceptBar{
-	margin-top: 5px;
-	width:100%;
-	height: 70px;
-	overflow: hidden;
-}
-
-.conceptBtn{
-	position: relative;
-	height: 100%;
-	display:inline-block;
-	vertical-align: top;
-	border-radius:0;
-	background-color:#2980b9;
-	color: white;
-}
-
-#concepts{
-	position: relative;
-	width: calc(100% - 60px);
-	height: 70px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	background-color: rgba(224, 224, 224, 0.6);
-	display:inline-block;
-}
-
 .conceptsLabel{
 	border-radius:5px;
 	margin-top: 5px;
@@ -145,7 +118,7 @@ html, body {
 
 #principalContainer{
 	margin-top: 20px;
-	height: calc(100% - 135px);
+	height: calc(100% - 60px);
 }
 
 #mainContainer

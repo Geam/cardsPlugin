@@ -441,53 +441,6 @@ function clearColumnElements(column){
 
 /****************************************************************************/
 
-/* Concepts
- ***************************************************************************
- */
-
-/**
- * Function used to clear properly column elements
- *
- * @param {String} tag name
- * @param {Integer} tag number
- */
-function displayConcepts(content, conceptNumb){
-	var conceptWrapper = $('<div></div>');
-	var conceptText = $('<span></span>');
-	var glyphiconWrapper = $('<span></span>');
-	var zindex = 10;
-
-	glyphiconWrapper.attr("class", "conceptGlyphicon glyphicon glyphicon-remove");
-	conceptWrapper.attr("id", "cncpt"+conceptNumb);
-	conceptText.text(content);
-	conceptWrapper.attr("class", "conceptsLabel label");
-	conceptWrapper.attr("draggable", "true");
-	conceptWrapper.attr("ondragstart", "dragstart(event)");
-
-	conceptWrapper.append(conceptText);
-	conceptWrapper.append(glyphiconWrapper);
-
-	/* Negation process */
-	conceptWrapper.on("click", function(){
-		if($(this).hasClass("negTopic")){
-			$(this).removeClass("negTopic");
-		}else{
-			$(this).addClass("negTopic");
-		}
-	});
-	glyphiconWrapper.on("click", function(){
-		$(this).parent().remove();
-	});
-	//Empty container
-	if(!conceptNumb){
-		$("#concepts").empty();
-	}
-	$("#concepts").append(conceptWrapper);
-}
-
-
-/****************************************************************************/
-
 
 /* Side Container
  ***************************************************************************

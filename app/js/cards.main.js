@@ -306,11 +306,6 @@ const searchTags = (reload) => {
 				};
 			});
 			conceptsIdxArray = sortByKey(conceptsIdxArray, 'name');
-			conceptsIdxArray.forEach((e, i) => {
-				displayConcepts(e.name, i);
-				if (e.name === "")
-					$("#cncpt"+i).css('display', 'none');
-			});
 			if(reload)
 				logDisplay("Concepts reloaded");
 		})
