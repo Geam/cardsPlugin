@@ -271,28 +271,15 @@ function generateColumn(columnNumber, columnTitle) {
 			const newColumn = columnsNameArray[newColumnId];
 
 			const oldItemNum = Number(itemId.split("-")[1]);
-			const newItemNum = newColumn.nbItems;
 			const tile = oldColumn.listedTopics[oldItemNum];
-			const oldTile = Object.assign({}, tile);
-			tile.domId = `${newColumnId}-${newItemNum}`;
 
-			//Change itemId
-			$('#' + itemId).attr('id', `itemLiWrapper${tile.domId}`);
-			$(`#item${oldTile.domId}`).attr('id', `item${tile.domId}`);
-			//push
-			newColumn.listedTopics.push(tile);
-			newColumn.nbItems += 1;
-			for (var i = oldItemNum; i < oldColumn.listedTopics.length; i++) {
-				var x = i+1;
-				$('#itemLiWrapper'+oldColumnId+'-'+x).attr('id', 'itemLiWrapper'+oldColumnId+'-'+i);
-				$('#item'+oldColumnId+'-'+x).attr('id', 'item'+oldColumnId+'-'+i);
-			}
-			$("#itemLiWrapper"+newColumnId+'-x').prependTo('#columnMiddleUl'+newColumnId);
-			//Add reference
+			// update reference
 			updateTopicRef(tile, "reference", newColumn)
 			.then(() => {
-				clearColumnElements(oldColumn);
-				doSearch(oldColumn);
+				columnsNameArray.forEach((c) => {
+					clearColumnElements(c);
+					doSearch(c);
+				});
 			});
 		}
 	});
