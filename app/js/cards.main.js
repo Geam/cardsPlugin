@@ -700,16 +700,15 @@ function loadBoards() {
 				return;
 			}
 			savedBoardsArray = [];
-			getTopicsLocation(topicsReturned, 0)
-			.then(() => {
-				logDisplay("Boards loaded");
-			})
-			.catch((error) => {
-				logDisplay(error);
-				console.error(error);
-			});
+			getTopicsLocation(topicsReturned, 0);
 		})
-		.catch(logDisplay);
+		.then(() => {
+			logDisplay("Boards loaded");
+		})
+		.catch((error) => {
+			logDisplay(error);
+			console.error(error);
+		});
 }
 
 //Sanitize inputs
