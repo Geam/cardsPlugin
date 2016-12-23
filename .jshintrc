@@ -1,0 +1,5 @@
+{
+    "jquery": true, // using jquery library
+    "devel": true, // 'alert', 'console' ...
+    "esversion":6
+}
