@@ -200,23 +200,6 @@ function generateColumn(columnNumber, columnTitle) {
 				return ;
 			}
 
-			// toggle neg tag when clicked
-			target.on("click", function() {
-				const [source, destination] = target.hasClass('negTopic') ? [ "negtopics", "topics" ] : [ "topics", "negtopics" ];
-				const i = column[source].concept.indexOf(ui.tagLabel);
-				column[destination].concept.push(column[source].concept[i]);
-				column[destination].idx.push(column[source].idx[i]);
-				column[source].concept.splice(i, 1);
-				column[source].idx.splice(i, 1);
-
-				// toggle visual
-				if($(this).hasClass("negTopic")) {
-					$(this).removeClass("negTopic");
-				} else {
-					$(this).addClass("negTopic");
-				}
-			});
-
 			// if typing the tag, add it to column
 			column.topics.idx.push(concept.idx);
 			column.topics.concept.push(concept.name);
@@ -231,6 +214,17 @@ function generateColumn(columnNumber, columnTitle) {
 			column[source].idx.splice(i, 1);
 			newDrop = true;
 			clearColumnElements(column.id, 1);
+		},
+		onTagClicked: (event, ui ) => {
+			// toggle neg tag when clicked
+			const target = $(ui.tag);
+			const [source, destination] = target.hasClass('negTopic') ? [ "negtopics", "topics" ] : [ "topics", "negtopics" ];
+			const i = column[source].concept.indexOf(ui.tagLabel);
+			column[destination].concept.push(column[source].concept[i]);
+			column[destination].idx.push(column[source].idx[i]);
+			column[source].concept.splice(i, 1);
+			column[source].idx.splice(i, 1);
+			target.toggleClass("negTopic");
 		},
 		readOnly: false,
 		placeholderText: "Add concept"
