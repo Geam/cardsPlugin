@@ -219,12 +219,8 @@ const sortByKey = (array, key) => {
 	return array.sort((a, b) => a[key].toLowerCase().localeCompare(b[key].toLowerCase()));
 };
 
-const columnNegTags = (array, cur, key1, key2) => {
-	return array.filter((e) => {
-		if (e === cur)
-			return false;
-		return true;
-	}).reduce((prev, cur) => {
+const columnNegTags = (array, key1, key2) => {
+	return array.reduce((prev, cur) => {
 		prev.idx.push(cur[key1]);
 		prev.concept.push(cur[key2]);
 		return prev;
@@ -232,10 +228,10 @@ const columnNegTags = (array, cur, key1, key2) => {
 };
 
 const searchParamsArray = (array) => {
-	return array.map((e) => {
+	return array.map((e, i) => {
 		return {
 			'topics': { "idx": [e.idx], "concept": [e.concept] },
-			'negtopics': columnNegTags(array, e, "idx", "concept")
+			'negtopics': columnNegTags(array.slice(i + 1), "idx", "concept")
 		};
 	});
 };
@@ -427,7 +423,7 @@ function scrum() {
 		{ "concept": "Todo"                , "idx": predefinedTags["Todo.scrum"] || "" },
 		{ "concept": "Feature"             , "idx": predefinedTags["Feature.scrum"] || "" },
 		{ "concept": "Bug Report"          , "idx": predefinedTags["Bug Report.scrum"] || "" },
-		{ "concept": "In Progress"         , "idx": predefinedTags["In Progress.scrum"] || "" },
+		{ "concept": "In progress"         , "idx": predefinedTags["In progress.crm"] || "" },
 		{ "concept": "Wait for Validation" , "idx": predefinedTags["Wait for Validation.scrum"] || "" },
 		{ "concept": "Done"                , "idx": predefinedTags["Done.scrum"] || "" }
 	];
