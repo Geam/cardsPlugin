@@ -356,7 +356,7 @@ const addColumnContent = (column, topicsReturned) => {
 	});
 };
 
-const doSeach = (column) => {
+const doSearch = (column) => {
 	kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 		.then((topicsReturned) => {
 			sideContainerColumnsList(column.id, topicsReturned.length);
@@ -379,7 +379,7 @@ function customSearchTopics(columnId) {
 	}
 
 	const column = columnsNameArray[columnId];
-	doSeach(column);
+	doSearch(column);
 }
 /*--End of customSearchTopics--*/
 
@@ -406,7 +406,7 @@ const displayBoardFromSearchParam = (searchParams) => {
 		addTagToColumnUp(column);
 		titleTooltipRoutine(column);
 
-		doSeach(column);
+		doSearch(column);
 	});
 
 	$('#mainContainer').css('display', 'block');
@@ -484,46 +484,54 @@ function restoreBoard(columnsArray) {
 /*
  * Function used to add new reference to a topic
  */
-function addRefToTopic(theTopicIdx, theType, columnId) {
+function updateTopicRef(tile, theType, column) {
 	var From = "";
 
 	//Get topic idx
 	if ([ "reference", "version" ].indexOf(theType) > -1) {
-		From = theTopicIdx;
+		From = tile.data.idx;
 	}
 	else if (theType !== "agreement") {
 		return logDisplay("Specify topic type");
 	}
 
 	//Get column topics
-	var topicsIdxs = columnsNameArray[columnId].topics.idx;
+	var topicsIdxs = column.topics.idx;
 
-	const addRef = (i) => {
-		const curTopicIdx = topicsIdxs[i];
+	const addRef = (refToAdd, i) => {
+		if (i == refToAdd.length) return ;
+		const curTopicIdx = refToAdd[i];
 		const curTopicName = traverseJSONArray(conceptsIdxArray, "idx", curTopicIdx, "name");
-		kxapiPromise.makeRef(theType, From, curTopicIdx)
+		return kxapiPromise.makeRef(theType, From, curTopicIdx)
 			.then((toto) => {
-				console.log("makeRef", toto);
+				// TODO share new reference with shared users
 				logDisplay(`Reference ${curTopicName} added to topic !`);
-				if (i < topicsIdxs.length - 1)
-					return addRef(i + 1);
+				return addRef(refToAdd, i + 1);
 			})
 			.catch((error) => {
 				return Promise.reject(`Error on making reference: ${error}`);
 			});
 	};
 
-	kxapiPromise.getRefs(theTopicIdx)
+	const removeRef = (regToRemove, i) => {
+		// TODO share with shared user the removal of the reference
+		// TODO remove the ref
+		// can't be done for now, the local api doesn't return the references informations
+	};
+
+	const isInTopicRef = (topic, columnRef) => topic.references.find((topicRef) => topicRef === columnRef);
+
+	return kxapiPromise.getRefs(tile.data.idx)
 		.then((refs) => {
-			refs.forEach((ref) => {
-				if (topicsIdxs.find((e) => e === ref.idx))
-					return Promise.reject(`Already referenced by: ${ref.name}`);
-			});
-			addRef(0);
+			const topic = refs.find((e) => e.idx === tile.data.idx);
+			// keep only new reference
+			const refToAdd = column.topics.idx.filter((columnRef) => ! isInTopicRef(topic, columnRef));
+			const refToRemove = column.negtopics.idx.filter((columnRef) => isInTopicRef(topic, columnRef));
+			return addRef(refToAdd, 0);
 		})
 		.catch(logDisplay);
 }
-/*--End of addRefToTopic--*/
+/*--End of updateRefToTopic--*/
 
 const createAndKeeex = (data) => {
 	return kxapiPromise.generateFile(data.name, data.description, data.target)

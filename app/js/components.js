@@ -204,7 +204,7 @@ function generateColumn(columnNumber, columnTitle) {
 			column.topics.idx.push(concept.idx);
 			column.topics.concept.push(concept.name);
 			newDrop = true;
-			clearColumnElements(column.id, 1);
+			clearColumnElements(column);
 		},
 		afterTagRemoved: function(event, ui) {
 			const target = $(ui.tag);
@@ -213,7 +213,7 @@ function generateColumn(columnNumber, columnTitle) {
 			column[source].concept.splice(i, 1);
 			column[source].idx.splice(i, 1);
 			newDrop = true;
-			clearColumnElements(column.id, 1);
+			clearColumnElements(column);
 		},
 		onTagClicked: (event, ui ) => {
 			// toggle neg tag when clicked
@@ -270,28 +270,30 @@ function generateColumn(columnNumber, columnTitle) {
 			const oldColumn = columnsNameArray[oldColumnId];
 			const newColumn = columnsNameArray[newColumnId];
 
-			const oldItemNumb = Number(itemId.split("-")[1]);
-			const newItemNumb = newColumn.nbItems;
-			const guenuineItem = oldColumn.listedTopics[oldItemNumb];
+			const oldItemNum = Number(itemId.split("-")[1]);
+			const newItemNum = newColumn.nbItems;
+			const tile = oldColumn.listedTopics[oldItemNum];
+			const oldTile = Object.assign({}, tile);
+			tile.domId = `${newColumnId}-${newItemNum}`;
 
 			//Change itemId
-			$('#' + itemId).attr('id', `itemLiWrapper${newColumnId}-${newItemNumb}`);
-			$(`#item${oldColumnId}-${oldItemNumb}`)
-				.attr('id', 'item' + newColumnId + '-' + newItemNumb);
+			$('#' + itemId).attr('id', `itemLiWrapper${tile.domId}`);
+			$(`#item${oldTile.domId}`).attr('id', `item${tile.domId}`);
 			//push
-			newColumn.listedTopics.push(guenuineItem);
+			newColumn.listedTopics.push(tile);
 			newColumn.nbItems += 1;
-			//pop
-			oldColumn.listedTopics.splice(oldItemNumb, 1);
-			oldColumn.nbItems -= 1;
-			for (var i = oldItemNumb; i < oldColumn.listedTopics.length; i++) {
+			for (var i = oldItemNum; i < oldColumn.listedTopics.length; i++) {
 				var x = i+1;
 				$('#itemLiWrapper'+oldColumnId+'-'+x).attr('id', 'itemLiWrapper'+oldColumnId+'-'+i);
 				$('#item'+oldColumnId+'-'+x).attr('id', 'item'+oldColumnId+'-'+i);
 			}
 			$("#itemLiWrapper"+newColumnId+'-x').prependTo('#columnMiddleUl'+newColumnId);
 			//Add reference
-			addRefToTopic(guenuineItem.data.idx, "reference", newColumnId);
+			updateTopicRef(tile, "reference", newColumn)
+			.then(() => {
+				clearColumnElements(oldColumn);
+				doSearch(oldColumn);
+			});
 		}
 	});
 
@@ -429,19 +431,12 @@ function clearComponents(){
  * @param {Integer} column number
  * @param {Integer} flag
  */
-function clearColumnElements(columnNumber, tmp){
-	$("#column"+columnNumber).find('.columnMiddle').find('.itemLiWrapper:not("#itemLiWrapper'+columnNumber+'-x ")').remove();
-	return ;
+function clearColumnElements(column){
+	$(`#column${column.id}`).find('.columnMiddle').find(`.itemLiWrapper:not("#itemLiWrapper${column.id}-x ")`).remove();
 	//Clear search arrays
-	if(!tmp){
-		columnsNameArray[columnNumber].topics.concept = [];
-		columnsNameArray[columnNumber].topics.idx = [];
-		columnsNameArray[columnNumber].negtopics.concept = [];
-		columnsNameArray[columnNumber].negtopics.idx = [];
-	}
-	columnsNameArray[columnNumber].nbItems = 0;
-	columnsNameArray[columnNumber].listedTopics = [];
-	console.log('column'+columnNumber+' cleared');
+	column.nbItems = 0;
+	column.listedTopics = [];
+	console.log(`column ${column.id} cleared`);
 }
 
 /****************************************************************************/
