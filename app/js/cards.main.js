@@ -422,9 +422,9 @@ function scrum() {
 	const workTrackingList = [
 		{ "concept": "Todo"                , "idx": predefinedTags["Todo.scrum"] || "" },
 		{ "concept": "Feature"             , "idx": predefinedTags["Feature.scrum"] || "" },
-		{ "concept": "Bug Report"          , "idx": predefinedTags["Bug Report.scrum"] || "" },
+		{ "concept": "Bug report"          , "idx": predefinedTags["Bug report.scrum"] || "" },
 		{ "concept": "In progress"         , "idx": predefinedTags["In progress.crm"] || "" },
-		{ "concept": "Wait for Validation" , "idx": predefinedTags["Wait for Validation.scrum"] || "" },
+		{ "concept": "Wait for validation" , "idx": predefinedTags["Wait for validation.scrum"] || "" },
 		{ "concept": "Done"                , "idx": predefinedTags["Done.scrum"] || "" }
 	];
 	displayBoardFromSearchParam(searchParamsArray(workTrackingList));
@@ -518,8 +518,8 @@ function addRefToTopic(theTopicIdx, theType, columnId) {
 			refs.forEach((ref) => {
 				if (topicsIdxs.find((e) => e === ref.idx))
 					return Promise.reject(`Already referenced by: ${ref.name}`);
-				addRef(0);
 			});
+			addRef(0);
 		})
 		.catch(logDisplay);
 }
