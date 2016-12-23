@@ -1,30 +1,30 @@
 {
-  "name": "keeex_cards_plugin",
-  "version": "2.0.0",
-  "description": "A task management plugin allowing to track work in scrum-like display working model",
-  "main": "index.html",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KeeeX/cardsPlugin.git"
-  },
-  "keywords": [
-    "keeex",
-    "cards"
-  ],
-  "author": "Cheikh SAVADOGO",
-  "contributor": [
-    "Marc Delage"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/KeeeX/cardsPlugin/issues"
-  },
-  "homepage": "https://github.com/KeeeX/cardsPlugin#readme",
-  "dependencies": {
-    "bootstrap": "^3.3.7",
-    "jquery": "^3.1.1",
-    "jquery-ui-dist": "^1.12.1",
-    "keeex-api": "^0.2.1",
-    "select2": "^4.0.3"
-  }
+    "name": "keeex_cards_plugin",
+    "version": "2.0.0",
+    "description": "A task management plugin allowing to track work in scrum-like display working model",
+    "main": "index.html",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KeeeX/cardsPlugin.git"
+    },
+    "keywords": [
+        "keeex",
+        "cards"
+    ],
+    "author": "Cheikh SAVADOGO",
+    "contributor": [
+        "Marc Delage"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/KeeeX/cardsPlugin/issues"
+    },
+    "homepage": "https://github.com/KeeeX/cardsPlugin#readme",
+    "dependencies": {
+        "bootstrap": "^3.3.7",
+        "jquery": "^3.1.1",
+        "jquery-ui-dist": "^1.12.1",
+        "keeex-api": "^0.2.1",
+        "select2": "^4.0.3"
+    }
 }

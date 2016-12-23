@@ -1,26 +1,30 @@
 {
-  "name": "keeex_cards_plugin",
-  "version": "2.0.0",
-  "description": "A task management plugin allowing to track work in scrum-like display working model",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KeeeX/cardsPlugin.git"
-  },
-  "keywords": [
-    "keeex",
-    "cards"
-  ],
-  "author": "Cheikh SAVADOGO",
-  "contributor": [
-    "Marc Delage"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/KeeeX/cardsPlugin/issues"
-  },
-  "homepage": "https://github.com/KeeeX/cardsPlugin#readme",
-  "dependencies": {
-    "grunt": "^1.0.1"
-  }
+    "name": "keeex_cards_plugin",
+    "version": "2.0.0",
+    "description": "A task management plugin allowing to track work in scrum-like display working model",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KeeeX/cardsPlugin.git"
+    },
+    "keywords": [
+        "keeex",
+        "cards"
+    ],
+    "author": "Cheikh SAVADOGO",
+    "contributor": [
+        "Marc Delage"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/KeeeX/cardsPlugin/issues"
+    },
+    "homepage": "https://github.com/KeeeX/cardsPlugin#readme",
+    "dependencies": {
+        "grunt": "^1.0.1",
+        "grunt-contrib-clean": "^1.0.0",
+        "grunt-contrib-compress": "^1.3.0",
+        "grunt-contrib-jshint": "^1.1.0",
+        "grunt-run": "^0.6.0"
+    }
 }
