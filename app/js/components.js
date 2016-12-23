@@ -227,6 +227,7 @@ function generateColumn(columnNumber, columnTitle) {
 			target.toggleClass("negTopic");
 		},
 		readOnly: false,
+		allowDuplicates: false,
 		placeholderText: "Add concept"
 	});
 
