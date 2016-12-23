@@ -473,7 +473,7 @@
             var tag = $('<li></li>')
                 .addClass('tagit-choice')
                 .addClass(additionalClass)
-                .append(label)
+                .append(label);
 
             if (this.options.readOnly){
                 tag.addClass('tagit-choice-read-only');
