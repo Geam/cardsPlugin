@@ -19,19 +19,18 @@
  * Date: June-August 2016
  */
 
-
 /****************************
 		Modules
  ***********************
  ****************************/
 
+var utils = require('./js/utils.js').utils;
+if (typeof path === "undefined")
+	var path = require("path");
+var fs = require('fs');
 const kxapi = require("keeex-api");
-const components = require("./js/components.js");
-const utils = require('./js/utils.js').utils;
-const path = require("path");
-const fs = require('fs');
 const kxapiPromise = require("./js/kxapiPromise.js")(kxapi);
-const dom = require("./js/dom.js")(window, jQuery);
+const dom = require("./js/dom.js")(window);
 
 /*
 ####################-End of Modules-####################

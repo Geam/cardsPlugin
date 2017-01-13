@@ -34,18 +34,22 @@
 		<link href="./css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
 		<link href="./node_modules/select2/dist/css/select2.min.css" rel="stylesheet" type="text/css">
 		<!-- js-->
-		<script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
-		<script type="text/javascript" src="./node_modules/jquery-ui-dist/jquery-ui.js"></script>
-		<script type="text/javascript" src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-		<!-- tag_it js-->
-		<script type="text/javascript" src="./js/tag-it.js"></script>
-		<!-- select2 -->
-		<script type="text/javascript" src="./node_modules/select2/dist/js/select2.min.js"></script>
-		<!-- plugin scripts -->
-		<script type="text/javascript" src="./js/components.js"></script>
-		<script type="text/javascript" src="./js/cards.main.js"></script>
+		<script type="text/javascript">
+
+var jsFiles = [
+	"./node_modules/jquery/dist/jquery.min.js",
+	"./node_modules/jquery-ui-dist/jquery-ui.js",
+	"./node_modules/bootstrap/dist/js/bootstrap.min.js",
+	"./js/tag-it.js",
+	"./node_modules/select2/dist/js/select2.min.js",
+	"./js/components.js",
+	"./js/cards.main.js"
+];
+
+		</script>
+		<script type="text/javascript" src="./js/scriptLoader.js"></script>
 	</head>
-	<body onload="_init()">
+	<body>
 		<div id="pageContainer" class="container-fluid">
 			<nav id="navBar" class="row">
 				<div class="mainBar">

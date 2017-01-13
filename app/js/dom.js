@@ -350,6 +350,6 @@ module.exports = (window) => {
 			return newEl("span", {},
 				newEl("img", { "class": "contactSelectImg", "src": `file:///${user.avatar}` })
 			);
-		}
+		},
 	};
 };
