@@ -198,13 +198,11 @@ const searchContentType = (type) => {
 	return option;
 };
 
-const traverseJSONArray = (theArray, key, val, retKey) => {
-	return theArray.reduce((prev, cur) => {
-		if (cur[key] === val) {
-			return cur[retKey];
-		}
-		return prev;
-	}, "");
+const promiseSerie = w => w.reduce((q, fn) => q.then(fn), Promise.resolve());
+
+const traverseJSONArray = (arr, key, val, retKey) => {
+	let obj = arr.find(e => e[key] === val);
+	return obj ? obj[retKey] : "";
 };
 
 const setJSONArray = (theArray, name, val) => {
@@ -492,18 +490,15 @@ function updateTopicRef(tile, theType, column) {
 	//Get column topics
 	var topicsIdxs = column.topics.idx;
 
-	const addRef = (refToAdd, i) => {
-		if (i == refToAdd.length) return ;
-		const curTopicIdx = refToAdd[i];
-		const curTopicName = traverseJSONArray(conceptsIdxArray, "idx", curTopicIdx, "name");
+
+	const addRef = curTopicIdx => () => {
 		return kxapiPromise.makeRef(theType, From, curTopicIdx)
-			.then((toto) => {
-				// TODO share new reference with shared users
-				logDisplay(`Reference ${curTopicName} added to topic !`);
-				return addRef(refToAdd, i + 1);
+			.then(() => {
+				const refObj = conceptsIdxArray.find(e => e.idx === curTopicIdx);
+				logDisplay(`Reference ${refObj ? refObj.name : curTopicIdx} added to topic !`);
 			})
-			.catch((error) => {
-				return Promise.reject(`Error on making reference: ${error}`);
+			.catch((baseErr) => {
+				throw Error(`Error on making reference: ${baseErr}`);
 			});
 	};
 
@@ -521,7 +516,10 @@ function updateTopicRef(tile, theType, column) {
 			// keep only new reference
 			const refToAdd = column.topics.idx.filter((columnRef) => ! isInTopicRef(topic, columnRef));
 			const refToRemove = column.negtopics.idx.filter((columnRef) => isInTopicRef(topic, columnRef));
-			return addRef(refToAdd, 0);
+			return promiseSerie(refToAdd.map(addRef))
+				.then(() => {
+					return {refToAdd, refToRemove};
+				});
 		})
 		.catch(logDisplay);
 }
