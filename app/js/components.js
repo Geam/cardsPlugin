@@ -52,10 +52,10 @@ function generateColumnItem(column, tile, first) {
 	});
 	$(domTile).find('[data-toggle="tooltip"]').tooltip({ "container": "body" });
 
-	const addShare = $(domTile).find(`#addShare${tile.domId}`);
+	const addShare = $(domTile).find(`.shareWithBtn`);
 
 	// init contact list
-	const contactSelect = $(domTile).find(`#tileContactSelect${tile.domId}`).select2({
+	const contactSelect = $(domTile).find(`select`).select2({
 		"data": contactList.map((e) => {
 			return {
 				"id": e.profileIdx,
@@ -67,15 +67,16 @@ function generateColumnItem(column, tile, first) {
 	});
 
 	// display tile ctrl div
+	const ctrlDiv = domTile.querySelector("div[action=ctrlDiv]");
 	addShare.click((e) => {
-		if (handleSharingClick(column, tile, contactSelect,
-				dom.qs(`#sharedList${tile.domId}`)))
-			dom.showTileAddShare(tile);
+		if (handleSharingClick(column, ctrlDiv, contactSelect,
+				domTile.querySelector(".sharedList")))
+			dom.showTileAddShare(ctrlDiv);
 	});
 
 	// validate sharing
-	$(`#tileAddContactValidate${tile.domId}`).click((e) => {
-		dom.hideTileAddShare(tile);
+	$(domTile).find("button[action=add]").click((e) => {
+		dom.hideTileAddShare(ctrlDiv);
 		const userList = contactSelect.val();
 		const target = addSharing.target;
 		addSharing = {};
@@ -92,10 +93,12 @@ function generateColumnItem(column, tile, first) {
 	});
 
 	// cancel sharing
-	$(`#tileAddContactCancel${tile.domId}`).click((e) => {
-		dom.hideTileAddShare(tile);
+	$(domTile).find("button[action=cancel]").click((e) => {
+		dom.hideTileAddShare(ctrlDiv);
 		addSharing = {};
 	});
+
+	return domTile;
 }
 
 /**
@@ -381,17 +384,18 @@ function addTagToColumnUp(column) {
 /*
  ***************************************************************************
  */
-const handleSharingClick = (column, tile, select, target) => {
-	if ((tile && tile === addSharing.tile) || (!tile && column == addSharing.column)) {
+const handleSharingClick = (column, tileCtrlDiv, select, target) => {
+	if ((tileCtrlDiv && tileCtrlDiv === addSharing.tileCtrlDiv) ||
+			(!tileCtrlDiv && !addSharing.tileCtrlDiv && column == addSharing.column)) {
 		return false;
-	} else if (addSharing.tile) {
-		dom.hideTileAddShare(addSharing.tile);
+	} else if (addSharing.tileCtrlDiv) {
+		dom.hideTileAddShare(addSharing.tileCtrlDiv);
 	} else if (addSharing.column) {
 		dom.hideColumnNewTopic(addSharing.column);
 	}
 	if (addSharing.select)
 		addSharing.select.val(null).trigger("change");
-	addSharing = { column, tile, target, select };
+	addSharing = { column, tileCtrlDiv, target, select };
 	return true;
 };
 

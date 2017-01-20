@@ -75,7 +75,7 @@ module.exports = (window) => {
 
 	/* start: tile related function */
 	const returnSharedAvatar = (user, i) => {
-		return newEl("li", { "id": `sharedListLi${i}`, "class": "sharedListLi" },
+		return newEl("li", { "class": "sharedListLi" },
 			newEl("a", {
 				"class": "sharedListImgLink",
 				"data-toggle": "tooltip", "data-placement": "bottom", "data-html": "true",
@@ -90,8 +90,8 @@ module.exports = (window) => {
 		var list = tile.shared.map((user, i) => returnSharedAvatar(user, i));
 		list.push(newEl("li", { "class": "sharedListLi" },
 			newEl("button", {
-				"id": `addShare${tile.domId}`, "class": "shareWithBtn addItemContact btn-primary",
-				"data-toggle": "popover", "data-placement": "auto bottom", "data-trigger": "focus",
+				"class": "shareWithBtn btn-primary", "data-toggle": "popover",
+				"data-placement": "auto bottom", "data-trigger": "focus",
 			},
 				newEl("span", { "class": "glyphicon glyphicon-plus" })
 			)
@@ -101,34 +101,28 @@ module.exports = (window) => {
 
 	const returnTileFooter = (tile) => {
 		return newEl("div", {
-			"id": `tileCtrlDiv${tile.domId}`, "style": "display: none"
+			"action": `ctrlDiv`, "style": "display: none"
 		}, [
 			newEl("hr", { "style": "margin: 5px 0" }),
-			newEl("select", {
-				"id": `tileContactSelect${tile.domId}`, "style": "width: 100%",
-				"multiple": "multiple"
-			}),
+			newEl("select", { "style": "width: 100%", "multiple": "multiple" }),
 			newEl("div", {}, [
-				newEl("button", { "id": `tileAddContactValidate${tile.domId}` }, "Add"),
-				newEl("button", { "id": `tileAddContactCancel${tile.domId}` }, "Cancel")
+				newEl("button", { "action": "add" }, "Add"),
+				newEl("button", { "action": "cancel" }, "Cancel")
 			])
 		]);
 	};
 
 	const returnTileAuthor = (tile) => {
 		return newEl("div", { "class": "itemAvatar" },
-			newEl("img", {
-				"id": `itemImg${tile.domId}`, "class": "itemImg",
-				"src": `file:///${tile.author.avatar}`
-			})
+			newEl("img", { "class": "itemImg", "src": `file:///${tile.author.avatar}` })
 		);
 	};
 
 	const returnTileContent = (tile, desc) => {
 		return newEl("div", { "class": "itemContent" }, [
 			newEl("p", {}, desc),
-			newEl("div", { "id": `itemFooter${tile.domId}`, "class": "itemFooter" }, [
-				newEl("ul", { "id": `sharedList${tile.domId}`, "class": "sharedList" },
+			newEl("div", { "class": "itemFooter" }, [
+				newEl("ul", { "class": "sharedList" },
 					returnSharedList(tile)
 				),
 				returnTileFooter(tile)
@@ -242,10 +236,9 @@ module.exports = (window) => {
 				tile.data.name;
 
 			const domTile = newEl("li", {
-				"id": `itemLiWrapper${tile.domId}`, "class": "itemLiWrapper",
-				"idx": `${tile.data.idx}`
+				"class": "itemLiWrapper", "idx": `${tile.data.idx}`
 			},
-				newEl("div", { "id": `item${tile.domId}`, "class": "itemWrapper" }, [
+				newEl("div", { "class": "itemWrapper" }, [
 					returnTileAuthor(tile),
 					returnTileContent(tile, desc)
 				])
@@ -308,17 +301,12 @@ module.exports = (window) => {
 			qs(`#itemInput${column.id}`).value = "";
 		},
 
-		"showTileAddShare": (tile) => {
-			qs(`#tileCtrlDiv${tile.domId}`).style.display = "";
+		"showTileAddShare": el => {
+			el.style.display = "";
 		},
 
-		"hideTileAddShare": (tile) => {
-			qs(`#tileCtrlDiv${tile.domId}`).style.display = "none";
-			const ulLst = qs(`#sharedList${tile.domId}`);
-			const liBtn = qs(`#addShare${tile.domId}`).parentNode;
-			while (ulLst.lastChild !== liBtn) {
-				ulLst.removeChild(ulLst.lastChild);
-			}
+		"hideTileAddShare": el => {
+			el.style.display = "none";
 		},
 
 		"addShare": (target, contact, beforeLast) => {

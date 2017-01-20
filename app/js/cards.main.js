@@ -337,7 +337,6 @@ const addColumnContent = (column, topicsReturned) => {
 			.then(kxapiPromise.getUsersFromList)
 			.then((users) => {
 				topicObject.shared = users || [];
-				topicObject.domId = `${column.id}-${column.nbItems}`;
 				generateColumnItem(column, topicObject, false);
 				column.nbItems += 1;
 			})
@@ -578,11 +577,17 @@ function createTopic(column, topicName, topicDescription) {
 		.then((keeexedFile) => {
 			const tile = {
 				"data": keeexedFile.topic,
-				"domId": `${column.id}-${column.nbItems}`,
 				"author": currentUser,
 				"shared": []
 			};
 			tile.data.location = [keeexedFile.path];
+
+			// display the tile
+			const domTile = generateColumnItem(column, tile, true);
+			column.nbItems++;
+			logDisplay("Topic created !");
+			// TODO display stuff => dom.js
+			dom.hideColumnNewTopic(column);
 
 			// share with other users if needed
 			if (select.val().length > 0) {
@@ -591,17 +596,10 @@ function createTopic(column, topicName, topicDescription) {
 				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path, userListIdx)
 					.then((sharedFile) => {
 						tile.shared = userList;
-						dom.addShare(`#sharedList${tile.domId}`, userList, true);
+						dom.addShare(domTile.querySelector(".sharedList"), userList, true);
 					})
 					.catch(console.error);
 			}
-
-			// display the tile
-			generateColumnItem(column, tile, true);
-			column.nbItems++;
-			logDisplay("Topic created !");
-			// TODO display stuff => dom.js
-			dom.hideColumnNewTopic(column);
 		})
 		.catch(logDisplay);
 }
