@@ -323,7 +323,7 @@ const addColumnContent = (column, topicsReturned) => {
 	kxapiPromise.getLocations(topicsReturned.map((topic) => topic.idx))
 		.then((locations) => {
 			topicsReturned.forEach((topic) => {
-				let topicResp = locations.find((e) => e.idx = topic.idx);
+				let topicResp = locations.find((e) => e.idx === topic.idx);
 				topic.location = topicResp ? topicResp.location : [""];
 			});
 		});
