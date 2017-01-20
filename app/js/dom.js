@@ -242,7 +242,8 @@ module.exports = (window) => {
 				tile.data.name;
 
 			const domTile = newEl("li", {
-				"id": `itemLiWrapper${tile.domId}`, "class": "itemLiWrapper"
+				"id": `itemLiWrapper${tile.domId}`, "class": "itemLiWrapper",
+				"idx": `${tile.data.idx}`
 			},
 				newEl("div", { "id": `item${tile.domId}`, "class": "itemWrapper" }, [
 					returnTileAuthor(tile),

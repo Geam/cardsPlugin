@@ -260,22 +260,20 @@ function generateColumn(columnNumber, columnTitle) {
 		connectWith: ".columnMiddleUl",
 		handle: ".itemLiWrapper, .itemWrapper",
 		placeholder: "sortablePlaceholder",
-		stop: function(event, ui) {
-			const itemId = ui.item.attr('id');
-			const oldColumnId = Number(((itemId).split("-")[0]).replace('itemLiWrapper', ''));
-			const newColumnId = Number(($(ui.item).parent().attr('id')).replace('columnMiddleUl', ''));
+		update: (event, ui) => {
+			if (!ui.sender || ui.sender[0] === event.target) return ;
 
-			if (oldColumnId == newColumnId) return ;
+			const oldColumnId = Number(ui.sender[0].id.replace(/columnMiddleUl/, ''));
+			const newColumnId = Number(event.target.id.replace(/columnMiddleUl/, ''));
 
 			const oldColumn = columnsNameArray[oldColumnId];
 			const newColumn = columnsNameArray[newColumnId];
-
-			const oldItemNum = Number(itemId.split("-")[1]);
-			const tile = oldColumn.listedTopics[oldItemNum];
+			const tile = oldColumn.listedTopics.find(e => e.data.idx === ui.item[0].getAttribute("idx"));
 
 			// update reference
 			updateTopicRef(tile, "reference", newColumn)
-			.then(() => {
+			.then(({refToAdd, refToRemove}) => {
+				tile.data.references = tile.data.references.concat(refToAdd);
 				columnsNameArray.forEach((c) => {
 					clearColumnElements(c);
 					doSearch(c);
