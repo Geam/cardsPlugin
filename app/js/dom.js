@@ -184,8 +184,7 @@ module.exports = (window) => {
 
 	const returnColumnHeader = (column) => {
 		return newEl("div", {
-			"id": `columnUp${column.id}`, "class": "columnUp", "ondrop": "drop(event)",
-			"ondragover": "allowDrop(event)"
+			"id": `columnUp${column.id}`, "class": "columnUp", "ondrop": "drop(event)"
 		}, [
 			returnColumnTitle(column),
 			returnColumnHeaderForm(column),

@@ -762,50 +762,6 @@ function readLoadedBoard(board) {
 ####################-End of board related functions-####################
 */
 
-
-/***************************
-		Drag&Drop functions
- ***********************
- ***************************/
-
-function allowDrop(ev) {
-	ev.preventDefault();
-}
-
-function dragstart(ev) {
-	ev.dataTransfer.setData("text", ev.target.id);
-}
-
-function dragEnd(ev) {
-	$(ev.toElement).css('position', 'relative');
-}
-
-function itemDrag(ev) {
-	ev.dataTransfer.setData("text", ev.target.id);
-}
-
-function drop(ev) {
-	ev.preventDefault();
-	const domColumn = dom.searchParentByClass(ev.srcElement, "column");
-	const column = columnsNameArray.find((e) => e.name === domColumn.id);
-	const formTags = $(domColumn).find(".formTags");
-	const domConcept = $(`#${ev.dataTransfer.getData("text")}`);
-	const concept = conceptsIdxArray.find(e => e.name === domConcept.find("span").text());
-
-	newDrop = true;
-	let source = domConcept.hasClass('negTopic') ? "negtopics" : "topics";
-
-	if (column[source].concept.indexOf(concept.name) === -1) {
-		column[source].concept.push(concept.name);
-		column[source].idx.push(concept.idx);
-	}
-	formTags.tagit("createTag", concept.name);
-}
-
-/*
-####################-End of Drag/drop functions-####################
-*/
-
 /*******************************
 		Document ready function
  ***************************
