@@ -309,7 +309,7 @@ module.exports = (window) => {
 			el.style.display = "none";
 		},
 
-		"addShare": (target, contact, beforeLast) => {
+		"addShare": (target, contact) => {
 			if (typeof target === "string")
 				target = qs(target);
 			if (!(target instanceof Element)) { return; }
@@ -321,11 +321,7 @@ module.exports = (window) => {
 				contact.map((e, i) => returnSharedAvatar(e, i + nbChild)) :
 				returnSharedAvatar(contact, nbChild);
 
-			if (beforeLast) {
-				addContentBefore(target, target.lastChild, newContact);
-			} else {
-				addContent(target, newContact);
-			}
+			addContentBefore(target, target.lastChild, newContact);
 		},
 
 		"contactSelectListTemplate": (user) => {

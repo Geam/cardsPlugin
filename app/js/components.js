@@ -85,7 +85,7 @@ function generateColumnItem(column, tile, first) {
 				userList.forEach((idx) => {
 					const user = contactList.find((e) => e.profileIdx === idx);
 					tile.shared.push(user);
-					dom.addShare(target, user, true);
+					dom.addShare(target, user);
 				});
 			})
 			.catch(console.error);

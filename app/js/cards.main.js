@@ -594,7 +594,7 @@ function createTopic(column, topicName, topicDescription) {
 				kxapiPromise.share(keeexedFile.topic.idx, keeexedFile.path, userListIdx)
 					.then((sharedFile) => {
 						tile.shared = userList;
-						dom.addShare(domTile.querySelector(".sharedList"), userList, true);
+						dom.addShare(domTile.querySelector(".sharedList"), userList);
 					})
 					.catch(console.error);
 			}
@@ -789,24 +789,6 @@ function clicksOrKeyEvent() {
 		$(".results tbody tr:containsi('" + searchSplit + "')").each(function(e){
 			$(this).attr('visible','true');
 		});
-	});
-
-	//Listener on contact list elements when sharing
-	$(document).on("click", ".contactLi", function(e) {
-		const target = dom.searchParentByClass(e.toElement, "contactLi");
-		const contactIdx = (target.id).replace('contact', '');
-		contact = contactList.find(e => e.profileIdx === contactIdx);
-		if (! contact) return console.error("No contact matching selection");
-
-		// if already shared with contact or already in sharing process do nothing
-		if (addSharing.tile &&
-			addSharing.tile.shared.find(e => e.profileIdx === contact.profileIdx) ||
-			addSharing.users.find(e => e.profileIdx === contact.profileIdx)) {
-			return ;
-		}
-
-		dom.addShare(addSharing.target, contact);
-		addSharing.users.push(contact);
 	});
 }
 
