@@ -315,18 +315,20 @@ const searchTags = (reload) => {
 /*
  * Add content to column
  */
-const addColumnContent = (column, topicsReturned) => {
+const addColumnContent = (column, topicsToAdd) => {
+	if (topicsToAdd.length === 0) return;
+	logDisplay(`${column.name}: ${topicsToAdd.length} topics added`);
 	// get location of the topics, doesn't need to have the data when building
 	// the board hence the tile creation not in the "then"
-	kxapiPromise.getLocations(topicsReturned.map((topic) => topic.idx))
+	kxapiPromise.getLocations(topicsToAdd.map((topic) => topic.idx))
 		.then((locations) => {
-			topicsReturned.forEach((topic) => {
+			topicsToAdd.forEach((topic) => {
 				let topicResp = locations.find((e) => e.idx === topic.idx);
 				topic.location = topicResp ? topicResp.location : [""];
 			});
 		});
 
-	topicsReturned.forEach((topic) => {
+	topicsToAdd.forEach((topic) => {
 		const topicObject = { "data": topic, 'author': {}, 'shared': [] };
 
 		kxapiPromise.getAuthorFromTopic(topicObject.data)
@@ -346,14 +348,50 @@ const addColumnContent = (column, topicsReturned) => {
 	});
 };
 
+const updateTileContent = (column, topicsToUpdate) => {
+	if (topicsToUpdate.length === 0) return ;
+	topicsToUpdate.forEach(topic => {
+		const tile = column.listedTopics.find(e => e.data.idx === topic.idx);
+		kxapiPromise.getSharedFromTopic(topic)
+			.then((users) => {
+				if (tile.shared.length === users.shared.length) return;
+				const tileSharedIdx = tile.shared.map(e => e.profileIdx);
+				return kxapiPromise.getUsers(users.shared.filter(e => tileSharedIdx.indexOf(e) === -1));
+			})
+			.then((newUsers) => {
+				tile.shared = tile.shared.concat(newUsers);
+				dom.addShare(dom.qs(`#column${column.id} .itemLiWrapper[idx=${topic.idx}] .sharedList`), newUsers);
+			});
+	});
+	logDisplay(`${column.name}: ${topicsToUpdate.length} topics updated`);
+};
+
+const columnRemoveTile = (column, topicsToRemove) => {
+	if (topicsToRemove.length === 0) return ;
+	topicsToRemove.forEach(e => dom.removeTile(column, e.data.idx));
+	column.listedTopics = column.listedTopics.filter(e => topicsToRemove.indexOf(e.data.idx) === -1);
+	logDisplay(`${column.name}: ${topicsToRemove.length} topics removed`);
+};
+
+const updateColumnContent = (column, topicsReturned) => {
+	const columnContentIdx = column.listedTopics.map(e => e.data.idx);
+	const topicsReturnedIdx = topicsReturned.map(e => e.idx);
+	const {topicsToAdd, topicsToUpdate} = topicsReturned.reduce((prev, cur) => {
+		if (columnContentIdx.indexOf(cur.idx) === -1) prev.topicsToAdd.push(cur);
+		else prev.topicsToUpdate.push(cur);
+		return prev;
+	}, {topicsToAdd: [], topicsToUpdate: []});
+	const topicsToRemove = column.listedTopics.filter(e => topicsReturnedIdx.indexOf(e.data.idx) === -1);
+	columnRemoveTile(column, topicsToRemove);
+	addColumnContent(column, topicsToAdd);
+	updateTileContent(column, topicsToUpdate);
+};
+
 const doSearch = (column) => {
 	kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 		.then((topicsReturned) => {
-			if (!topicsReturned.length) {
-				return logDisplay(`${column.name}: No topics returned!`);
-			}
-			addColumnContent(column, topicsReturned);
 			sideContainerColumnsList(column, topicsReturned.length);
+			updateColumnContent(column, topicsReturned);
 		})
 		.catch((error) => {
 			logDisplay(`${error} on ${column.name}`);

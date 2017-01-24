@@ -257,6 +257,11 @@ module.exports = (window) => {
 			return domTile;
 		},
 
+		"removeTile": (column, tileIdx) => {
+			const el = qs(`#column${column.id}`).querySelector(`.itemLiWrapper[idx=${tileIdx}]`);
+			el.remove();
+		},
+
 		"generateColumn": (column) => {
 			const domColumn = newEl("div", { "id": `column${column.id}`, "class": "column" }, [
 				returnColumnHeader(column),

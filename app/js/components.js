@@ -271,13 +271,15 @@ function generateColumn(columnNumber, columnTitle) {
 			const oldColumn = columnsNameArray[oldColumnId];
 			const newColumn = columnsNameArray[newColumnId];
 			const tile = oldColumn.listedTopics.find(e => e.data.idx === ui.item[0].getAttribute("idx"));
+			oldColumn.listedTopics.splice(oldColumn.listedTopics.indexOf(tile), 1);
+			newColumn.listedTopics.push(tile);
 
 			// update reference
 			updateTopicRef(tile, "reference", newColumn)
 			.then(({refToAdd, refToRemove}) => {
 				tile.data.references = tile.data.references.concat(refToAdd);
 				columnsNameArray.forEach((c) => {
-					clearColumnElements(c);
+					//clearColumnElements(c);
 					doSearch(c);
 				});
 			});
