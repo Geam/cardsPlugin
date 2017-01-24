@@ -141,7 +141,7 @@ function _init() {
 		saveBoardPopover();
 		clicksOrKeyEvent();
 		$('[data-toggle="tooltip"]').tooltip();
-		$('[data-toggle="tooltip"]').tooltip();
+		$('[rel="tooltip"]').tooltip();
 		$('#pageContainer').css('display', 'block');
 		logDisplay('KeeeX Cards ready');
 	})
