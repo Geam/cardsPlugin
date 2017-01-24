@@ -317,7 +317,6 @@ const searchTags = (reload) => {
  */
 const addColumnContent = (column, topicsToAdd) => {
 	if (topicsToAdd.length === 0) return;
-	logDisplay(`${column.name}: ${topicsToAdd.length} topics added`);
 	// get location of the topics, doesn't need to have the data when building
 	// the board hence the tile creation not in the "then"
 	kxapiPromise.getLocations(topicsToAdd.map((topic) => topic.idx))
@@ -328,10 +327,10 @@ const addColumnContent = (column, topicsToAdd) => {
 			});
 		});
 
-	topicsToAdd.forEach((topic) => {
+	Promise.all(topicsToAdd.map((topic) => {
 		const topicObject = { "data": topic, 'author': {}, 'shared': [] };
 
-		kxapiPromise.getAuthorFromTopic(topicObject.data)
+		return kxapiPromise.getAuthorFromTopic(topicObject.data)
 			.then((author) => {
 				topicObject.author = author;
 				return kxapiPromise.getSharedFromTopic(topicObject.data);
@@ -345,7 +344,10 @@ const addColumnContent = (column, topicsToAdd) => {
 				logDisplay(error);
 				sideContainerColumnsList(column);
 			});
-	});
+	}))
+		.then(() => {
+			logDisplay(`${column.name}: ${topicsToAdd.length} topics added`);
+		});
 };
 
 const updateTileContent = (column, topicsToUpdate) => {
