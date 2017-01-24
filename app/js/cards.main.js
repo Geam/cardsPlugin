@@ -350,20 +350,27 @@ const addColumnContent = (column, topicsToAdd) => {
 
 const updateTileContent = (column, topicsToUpdate) => {
 	if (topicsToUpdate.length === 0) return ;
-	topicsToUpdate.forEach(topic => {
+	Promise.all(topicsToUpdate.map(topic => {
 		const tile = column.listedTopics.find(e => e.data.idx === topic.idx);
-		kxapiPromise.getSharedFromTopic(topic)
+		return kxapiPromise.getSharedFromTopic(topic)
 			.then((users) => {
-				if (tile.shared.length === users.shared.length) return;
+				if (!users || tile.shared.length === users.shared.length) {
+					return false;
+				}
 				const tileSharedIdx = tile.shared.map(e => e.profileIdx);
 				return kxapiPromise.getUsers(users.shared.filter(e => tileSharedIdx.indexOf(e) === -1));
 			})
 			.then((newUsers) => {
+				if (!newUsers) return false;
 				tile.shared = tile.shared.concat(newUsers);
 				dom.addShare(dom.qs(`#column${column.id} .itemLiWrapper[idx=${topic.idx}] .sharedList`), newUsers);
+				return true;
 			});
-	});
-	logDisplay(`${column.name}: ${topicsToUpdate.length} topics updated`);
+	}))
+		.then(ret => {
+			if (!ret.length || !ret.filter(e => e).length) return ;
+			logDisplay(`${column.name}: ${ret.filter(e => e).length} topics updated`);
+		});
 };
 
 const columnRemoveTile = (column, topicsToRemove) => {
