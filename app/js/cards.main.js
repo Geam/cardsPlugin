@@ -327,7 +327,7 @@ const addColumnContent = (column, topicsToAdd) => {
 			});
 		});
 
-	Promise.all(topicsToAdd.map((topic) => {
+	return Promise.all(topicsToAdd.map((topic) => {
 		const topicObject = { "data": topic, 'author': {}, 'shared': [] };
 
 		return kxapiPromise.getAuthorFromTopic(topicObject.data)
@@ -335,7 +335,9 @@ const addColumnContent = (column, topicsToAdd) => {
 				topicObject.author = author;
 				return kxapiPromise.getSharedFromTopic(topicObject.data);
 			})
-			.then(kxapiPromise.getUsersFromList)
+			.then((usersIdx) => {
+				return kxapiPromise.getUsersFromList(usersIdx);
+			})
 			.then((users) => {
 				topicObject.shared = users || [];
 				generateColumnItem(column, topicObject, false);
@@ -345,14 +347,14 @@ const addColumnContent = (column, topicsToAdd) => {
 				sideContainerColumnsList(column);
 			});
 	}))
-		.then(() => {
+		.then(ret => {
 			logDisplay(`${column.name}: ${topicsToAdd.length} topics added`);
 		});
 };
 
 const updateTileContent = (column, topicsToUpdate) => {
-	if (topicsToUpdate.length === 0) return ;
-	Promise.all(topicsToUpdate.map(topic => {
+	if (topicsToUpdate.length === 0) return;
+	return Promise.all(topicsToUpdate.map(topic => {
 		const tile = column.listedTopics.find(e => e.data.idx === topic.idx);
 		return kxapiPromise.getSharedFromTopic(topic)
 			.then((users) => {
@@ -370,16 +372,17 @@ const updateTileContent = (column, topicsToUpdate) => {
 			});
 	}))
 		.then(ret => {
-			if (!ret.length || !ret.filter(e => e).length) return ;
+			if (!ret.length || !ret.filter(e => e).length) return;
 			logDisplay(`${column.name}: ${ret.filter(e => e).length} topics updated`);
 		});
 };
 
 const columnRemoveTile = (column, topicsToRemove) => {
-	if (topicsToRemove.length === 0) return ;
+	if (topicsToRemove.length === 0) return Promise.resolve();
 	topicsToRemove.forEach(e => dom.removeTile(column, e.data.idx));
 	column.listedTopics = column.listedTopics.filter(e => topicsToRemove.indexOf(e.data.idx) === -1);
 	logDisplay(`${column.name}: ${topicsToRemove.length} topics removed`);
+	return Promise.resolve();
 };
 
 const updateColumnContent = (column, topicsReturned) => {
@@ -391,16 +394,16 @@ const updateColumnContent = (column, topicsReturned) => {
 		return prev;
 	}, {topicsToAdd: [], topicsToUpdate: []});
 	const topicsToRemove = column.listedTopics.filter(e => topicsReturnedIdx.indexOf(e.data.idx) === -1);
-	columnRemoveTile(column, topicsToRemove);
-	addColumnContent(column, topicsToAdd);
-	updateTileContent(column, topicsToUpdate);
+	return columnRemoveTile(column, topicsToRemove)
+		.then(() => addColumnContent(column, topicsToAdd))
+		.then(() => updateTileContent(column, topicsToUpdate));
 };
 
 const doSearch = (column) => {
-	kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
+	return kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 		.then((topicsReturned) => {
 			sideContainerColumnsList(column, topicsReturned.length);
-			updateColumnContent(column, topicsReturned);
+			return updateColumnContent(column, topicsReturned);
 		})
 		.catch((error) => {
 			logDisplay(`${error} on ${column.name}`);
@@ -420,11 +423,15 @@ function customSearchTopics(columnId) {
 }
 /*--End of customSearchTopics--*/
 
-const displayBoardFromSearchParam = (searchParams) => {
-	/*Ajax loader gif*/
-	$('#mainContainer2').css('display', 'block');
-	$('#mainContainer').css('display', 'none');
+const getColumnsContent = () => {
+	const el = document.querySelector("#refreshBoardBtn span");
+	el.classList.add("spin");
+	return Promise.all(columnsNameArray.map(doSearch))
+		.then(() => {
+		});
+};
 
+const displayBoardFromSearchParam = (searchParams) => {
 	searchParams.forEach((eachOption) => {
 		if (!eachOption.name)
 			eachOption.name = eachOption.topics.concept[0];
@@ -442,13 +449,8 @@ const displayBoardFromSearchParam = (searchParams) => {
 
 		addTagToColumnUp(column);
 		titleTooltipRoutine(column);
-
-		doSearch(column);
 	});
-
-	$('#mainContainer').css('display', 'block');
-	$('#mainContainer2').css('display', 'none');
-	//$('#mainContainer').animate({scrollLeft: $('#mainContainer').get(0).scrollWidth}, 1000);
+	getColumnsContent();
 };
 
 /*
