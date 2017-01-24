@@ -58,6 +58,7 @@ var columnsArrayIndex = 0;
 var addSharing = {};
 var currentUser = {};
 var maxToUpload; //Set the maximum content to upload in one call of search api
+var autoRefresh = {};
 
 var thisKEEEXED_PATH;
 var rootPath;
@@ -264,6 +265,7 @@ function resetDisplay(empty) {
 	currentBoard = null;
 	columnsNameArray = [];
 	columnsArrayIndex = 0;
+	window.clearTimeout(autoRefresh.timeoutID);
 	//Clear tags & re-generate
 	$('#concepts').empty();
 	searchTags();
@@ -429,6 +431,7 @@ const getColumnsContent = () => {
 	return Promise.all(columnsNameArray.map(doSearch))
 		.then(() => {
 			el.classList.remove("spin");
+			autoRefreshBoardContent();
 		});
 };
 
@@ -769,6 +772,15 @@ function readLoadedBoard(board) {
 		currentBoard = board;
 	});
 }
+
+const autoRefreshBoardContent = () => {
+	autoRefresh.timeoutID = window.setTimeout(getColumnsContent, 60000);
+};
+
+const manualRefreshBoardContent = () => {
+	window.clearTimeout(autoRefresh.timeoutID);
+	getColumnsContent();
+};
 
 /*
 ####################-End of board related functions-####################
