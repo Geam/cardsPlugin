@@ -338,11 +338,10 @@ const addColumnContent = (column, topicsReturned) => {
 			.then((users) => {
 				topicObject.shared = users || [];
 				generateColumnItem(column, topicObject, false);
-				column.nbItems += 1;
 			})
 			.catch((error) => {
 				logDisplay(error);
-				sideContainerColumnsList(column.id);
+				sideContainerColumnsList(column);
 			});
 	});
 };
@@ -350,11 +349,11 @@ const addColumnContent = (column, topicsReturned) => {
 const doSearch = (column) => {
 	kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 		.then((topicsReturned) => {
-			sideContainerColumnsList(column.id, topicsReturned.length);
 			if (!topicsReturned.length) {
 				return logDisplay(`${column.name}: No topics returned!`);
 			}
 			addColumnContent(column, topicsReturned);
+			sideContainerColumnsList(column, topicsReturned.length);
 		})
 		.catch((error) => {
 			logDisplay(`${error} on ${column.name}`);
@@ -584,7 +583,6 @@ function createTopic(column, topicName, topicDescription) {
 
 			// display the tile
 			const domTile = generateColumnItem(column, tile, true);
-			column.nbItems++;
 			logDisplay("Topic created !");
 			// TODO display stuff => dom.js
 			dom.hideColumnNewTopic(column);

@@ -156,7 +156,6 @@ function generateColumn(columnNumber, columnTitle) {
 	let column = {
 		"id": columnNumber,
 		"name": columnTitle,
-		"nbItems": 0,
 		"topics": {
 			"concept": [],
 			"idx": []
@@ -339,7 +338,7 @@ function titleChange(column) {
 	if (newTitle !== "" && newTitle != column.name) {
 		//Update array
 		column.name = newTitle;
-		sideContainerColumnsList(column.id);
+		sideContainerColumnsList(column);
 	}
 
 	dom.hideColumnEdit(column);
@@ -423,7 +422,6 @@ function clearComponents(){
 function clearColumnElements(column){
 	$(`#column${column.id}`).find('.columnMiddle').find(`.itemLiWrapper:not("#itemLiWrapper${column.id}-x ")`).remove();
 	//Clear search arrays
-	column.nbItems = 0;
 	column.listedTopics = [];
 	console.log(`column ${column.id} cleared`);
 }
@@ -440,8 +438,7 @@ function clearColumnElements(column){
  *
  * @param {Integer} column number
  */
-function sideContainerColumnsList(columnNumber, nbItems) {
-	const column = columnsNameArray[columnNumber];
+function sideContainerColumnsList(column, nbItems) {
 	var sideContainerColumnsLi = $('<li></li>');
 	var numbSpan = $('<span></span>');
 	var nameSpan = $('<span></span>');
@@ -452,12 +449,12 @@ function sideContainerColumnsList(columnNumber, nbItems) {
 	numbSpan.attr('id', 'sideNumbSpan'+column.id);
 	numbSpan.attr('class', 'badge');
 
-	if ($("#list-group-li-"+columnNumber).length) {
-		$("#list-group-li-"+columnNumber).find('span').empty();
-		$("#sideNumbSpan"+columnNumber).text(nbItems || column.nbItems);
-		$('#sideNameSpan'+columnNumber).text(column.name);
+	if ($("#list-group-li-"+column.id).length) {
+		$("#list-group-li-"+column.id).find('span').empty();
+		$("#sideNumbSpan"+column.id).text(nbItems || column.listedTopics.length);
+		$('#sideNameSpan'+column.id).text(column.name);
 	} else {
-		numbSpan.text(nbItems || column.nbItems);
+		numbSpan.text(nbItems || column.listedTopics.length);
 		nameSpan.text(column.name);
 		sideContainerColumnsLi.append(nameSpan);
 		sideContainerColumnsLi.append(numbSpan);
