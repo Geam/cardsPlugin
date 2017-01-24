@@ -94,6 +94,12 @@ html, body {
 	width: 40%;
 }
 
+.spin {
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+
 .conceptsLabel{
 	border-radius:5px;
 	margin-top: 5px;

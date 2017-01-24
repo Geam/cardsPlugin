@@ -428,6 +428,7 @@ const getColumnsContent = () => {
 	el.classList.add("spin");
 	return Promise.all(columnsNameArray.map(doSearch))
 		.then(() => {
+			el.classList.remove("spin");
 		});
 };
 
