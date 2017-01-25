@@ -427,10 +427,13 @@ function customSearchTopics(columnId) {
 
 const getColumnsContent = () => {
 	const el = document.querySelector("#refreshBoardBtn span");
+	if (autoRefresh.inProgress) return;
+	autoRefresh.inProgress = true;
 	el.classList.add("spin");
 	return Promise.all(columnsNameArray.map(doSearch))
 		.then(() => {
 			el.classList.remove("spin");
+			autoRefresh.inProgress = false;
 			autoRefreshBoardContent();
 		});
 };
