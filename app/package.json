@@ -12,6 +12,13 @@
         "keeex",
         "cards"
     ],
+    "window": {
+        "width": 1200,
+        "hwight": 700,
+        "min_width": 1200,
+        "min_height": 700,
+        "toolbar": false
+    },
     "author": "Cheikh SAVADOGO",
     "contributor": [
         "Marc Delage"
