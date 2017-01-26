@@ -369,7 +369,7 @@ const updateTileContent = (column, topicsToUpdate) => {
 			.then((newUsers) => {
 				if (!newUsers) return false;
 				tile.shared = tile.shared.concat(newUsers);
-				dom.addShare(dom.qs(`#column${column.id} .itemLiWrapper[idx=${topic.idx}] .sharedList`), newUsers);
+				dom.addShare(`#column${column.id} .itemLiWrapper[idx=${topic.idx}] .sharedList`, newUsers);
 				return true;
 			});
 	}))
@@ -387,6 +387,12 @@ const columnRemoveTile = (column, topicsToRemove) => {
 	return Promise.resolve();
 };
 
+const sortColumnContent = (column, topicsReturnedIdx) => {
+	$(`#column${column.id} .itemLiWrapper[idx]`).sort((a,b) => {
+		return topicsReturnedIdx.indexOf(a.getAttribute("idx")) - topicsReturnedIdx.indexOf(b.getAttribute("idx"));
+	}).appendTo(`#column${column.id} .columnMiddleUl`);
+};
+
 const updateColumnContent = (column, topicsReturned) => {
 	const columnContentIdx = column.listedTopics.map(e => e.data.idx);
 	const topicsReturnedIdx = topicsReturned.map(e => e.idx);
@@ -398,14 +404,16 @@ const updateColumnContent = (column, topicsReturned) => {
 	const topicsToRemove = column.listedTopics.filter(e => topicsReturnedIdx.indexOf(e.data.idx) === -1);
 	return columnRemoveTile(column, topicsToRemove)
 		.then(() => addColumnContent(column, topicsToAdd))
-		.then(() => updateTileContent(column, topicsToUpdate));
+		.then(() => updateTileContent(column, topicsToUpdate))
+		.then(() => sortColumnContent(column, topicsReturnedIdx));
 };
 
 const doSearch = (column) => {
 	return kxapiPromise.searchTopics(column.topics.idx, column.negtopics.idx, maxToUpload, searchContentType())
 		.then((topicsReturned) => {
 			sideContainerColumnsList(column, topicsReturned.length);
-			return updateColumnContent(column, topicsReturned);
+			return updateColumnContent(column, topicsReturned.sort((a, b) =>
+				new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime()));
 		})
 		.catch((error) => {
 			logDisplay(`${error} on ${column.name}`);
