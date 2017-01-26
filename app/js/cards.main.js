@@ -491,12 +491,12 @@ function scrum() {
 function crm() {
 	resetDisplay(true);
 	const workTrackingList = [
-		{ "concept": ["Prospect"]    , "idx": [predefinedTags["Prospect.crm"] || ""] },
-		{ "concept": ["Lead"]        , "idx": [predefinedTags["Lead.crm"] || ""] },
-		{ "concept": ["Opportunity"] , "idx": [predefinedTags["Opportunity.crm"] || ""] },
-		{ "concept": ["In progress"] , "idx": [predefinedTags["In progress.crm"] || ""] },
-		{ "concept": ["Won"]         , "idx": [predefinedTags["Won.crm"] || ""] },
-		{ "concept": ["Abandoned"]   , "idx": [predefinedTags["Abandoned.crm"] || ""] }
+		{ "concept": "Prospect"    , "idx": [predefinedTags["Prospect.crm"] || ""] },
+		{ "concept": "Lead"        , "idx": [predefinedTags["Lead.crm"] || ""] },
+		{ "concept": "Opportunity" , "idx": [predefinedTags["Opportunity.crm"] || ""] },
+		{ "concept": "In progress" , "idx": [predefinedTags["In progress.crm"] || ""] },
+		{ "concept": "Won"         , "idx": [predefinedTags["Won.crm"] || ""] },
+		{ "concept": "Abandoned"   , "idx": [predefinedTags["Abandoned.crm"] || ""] }
 	];
 	displayBoardFromSearchParam(searchParamsArray(workTrackingList));
 }
