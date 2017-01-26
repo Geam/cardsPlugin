@@ -382,7 +382,7 @@ const updateTileContent = (column, topicsToUpdate) => {
 const columnRemoveTile = (column, topicsToRemove) => {
 	if (topicsToRemove.length === 0) return Promise.resolve();
 	topicsToRemove.forEach(e => dom.removeTile(column, e.data.idx));
-	column.listedTopics = column.listedTopics.filter(e => topicsToRemove.indexOf(e.data.idx) === -1);
+	column.listedTopics = column.listedTopics.filter(e => topicsToRemove.map(e => e.data.idx).indexOf(e.data.idx) === -1);
 	logDisplay(`${column.name}: ${topicsToRemove.length} topics removed`);
 	return Promise.resolve();
 };

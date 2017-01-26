@@ -257,7 +257,7 @@ module.exports = (window) => {
 		},
 
 		"removeTile": (column, tileIdx) => {
-			const el = qs(`#column${column.id}`).querySelector(`.itemLiWrapper[idx=${tileIdx}]`);
+			const el = qs(`#column${column.id} .itemLiWrapper[idx=${tileIdx}]`);
 			el.remove();
 		},
 
