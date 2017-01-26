@@ -279,7 +279,6 @@ function generateColumn(columnNumber, columnTitle) {
 			.then(({refToAdd, refToRemove}) => {
 				tile.data.references = tile.data.references.concat(refToAdd);
 				columnsNameArray.forEach((c) => {
-					//clearColumnElements(c);
 					doSearch(c);
 				});
 			});
