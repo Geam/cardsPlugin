@@ -1,6 +1,6 @@
 {
     "name": "keeex_cards_plugin",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "description": "A task management plugin allowing to track work in scrum-like display working model",
     "main": "index.html",
     "icon": "keeex_cards.png",
