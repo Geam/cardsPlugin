@@ -63,7 +63,8 @@ function generateColumnItem(column, tile, first) {
 			};
 		}),
 		"templateResult": contactSelectTemplate,
-		"templateSelection": contactSelectTokenTemplate
+		"templateSelection": contactSelectTokenTemplate,
+		"placeholder": "Add Contact"
 	});
 
 	// display tile ctrl div
@@ -120,7 +121,8 @@ function generateAddColumnItem(column, domColumn) {
 			};
 		}),
 		"templateResult": contactSelectTemplate,
-		"templateSelection": contactSelectTokenTemplate
+		"templateSelection": contactSelectTokenTemplate,
+		"placeholder": "Add Contact"
 	});
 
 	// click on new topic "cancel"
