@@ -280,9 +280,7 @@ function generateColumn(columnNumber, columnTitle) {
 			updateTopicRef(tile, "reference", newColumn)
 			.then(({refToAdd, refToRemove}) => {
 				tile.data.references = tile.data.references.concat(refToAdd);
-				columnsNameArray.forEach((c) => {
-					doSearch(c);
-				});
+				getColumnsContent();
 			});
 		}
 	});
