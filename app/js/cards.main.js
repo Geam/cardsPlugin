@@ -558,6 +558,10 @@ function updateTopicRef(tile, theType, column) {
 			.then(() => {
 				const refObj = conceptsIdxArray.find(e => e.idx === refIdx);
 				logDisplay(`Reference ${refObj ? refObj.name : refIdx} added to topic !`);
+				if (idx !== "") {
+					return kxapiPromise.comment(idx,
+						`${currentUser.name} add reference ${refObj.name}`);
+				}
 			})
 			.catch((baseErr) => {
 				throw Error(`Error on making reference: ${baseErr}`);

@@ -109,6 +109,15 @@ module.exports = (kxapi) => {
 			});
 		},
 
+		"comment": (idx, message) => {
+			return new Promise((resolve, reject) => {
+				kxapi.comment(idx, message, (error, comment_list) => {
+					if (error) reject(`comment error: ${error}`);
+					resolve(comment_list);
+				});
+			});
+		},
+
 		"getAuthorFromTopic": (topic) => {
 			return new Promise((resolve, reject) => {
 				kxapi.getAuthor(topic.idx, (error, author) => {
