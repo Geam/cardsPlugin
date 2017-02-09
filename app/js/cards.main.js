@@ -539,11 +539,11 @@ function restoreBoard(columnsArray) {
  * Function used to add new reference to a topic
  */
 function updateTopicRef(tile, theType, column) {
-	var From = "";
+	var idx = "";
 
 	//Get topic idx
 	if ([ "reference", "version" ].indexOf(theType) > -1) {
-		From = tile.data.idx;
+		idx = tile.data.idx;
 	}
 	else if (theType !== "agreement") {
 		return logDisplay("Specify topic type");
@@ -553,11 +553,11 @@ function updateTopicRef(tile, theType, column) {
 	var topicsIdxs = column.topics.idx;
 
 
-	const addRef = curTopicIdx => () => {
-		return kxapiPromise.makeRef(theType, From, curTopicIdx)
+	const addRef = refIdx => () => {
+		return kxapiPromise.makeRef(theType, idx, refIdx)
 			.then(() => {
-				const refObj = conceptsIdxArray.find(e => e.idx === curTopicIdx);
-				logDisplay(`Reference ${refObj ? refObj.name : curTopicIdx} added to topic !`);
+				const refObj = conceptsIdxArray.find(e => e.idx === refIdx);
+				logDisplay(`Reference ${refObj ? refObj.name : refIdx} added to topic !`);
 			})
 			.catch((baseErr) => {
 				throw Error(`Error on making reference: ${baseErr}`);
