@@ -552,16 +552,17 @@ function updateTopicRef(tile, theType, column) {
 	//Get column topics
 	var topicsIdxs = column.topics.idx;
 
-
 	const addRef = refIdx => () => {
 		return kxapiPromise.makeRef(theType, idx, refIdx)
 			.then(() => {
 				const refObj = conceptsIdxArray.find(e => e.idx === refIdx);
 				logDisplay(`Reference ${refObj ? refObj.name : refIdx} added to topic !`);
-				if (idx !== "") {
-					return kxapiPromise.comment(idx,
-						`${currentUser.name} add reference ${refObj.name}`);
-				}
+				if (idx === "") return null;
+				return kxapiPromise.comment(idx,
+					`${currentUser.name} added reference to ${refObj.name}`)
+					.then(ret => {
+						kxapiPromise.share(ret.comment.idx, ret.path, tile.shared.map(e => e.profileIdx));
+					});
 			})
 			.catch((baseErr) => {
 				throw Error(`Error on making reference: ${baseErr}`);
